@@ -7,9 +7,8 @@ PASS clipboard-failure-recorded
 PASS completion-save-failure-is-not-success
 PASS middle-deletion-detected
 PASS interrupted-temp-ignored
-9 checks passed.
+PASS stamp-settings-roundtrip-and-validation
+10 checks passed.
 
-Build: .NET SDK 10.0.401 on Linux; WPF cross-target build succeeded.
-Warnings: 0. Errors: 0.
-Windows GUI, DPAPI, real clipboard, EMF and Office: NOT TESTED.
-Publish: win-x64 self-contained succeeded (runtime included).
+2026-09-18: .NET SDK 10.0.401, Linux, Windows cross-target build.
+Windows GUI, glyph appearance, DPAPI and real clipboard require manual verification.

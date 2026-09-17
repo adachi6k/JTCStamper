@@ -31,7 +31,7 @@ C# / .NET 10 / WPFを採用する。CoreはOSに依存しない履歴・モデ�
 
 ## データとHMAC
 
-保存先は `%LOCALAPPDATA%\JTCStamper`。開発フォルダーがOneDrive内でも、利用履歴と鍵をそこへ保存しない。
+標準保存先は `AppContext.BaseDirectory`（実行ファイルの隣）。配布版は`publish`内。書込みできないときはコピーを停止し、メニューから明示的に別の保存先を選択できる。選択はセッション中のみで、起動時は常に標準保存先とする。旧版のLocalAppData履歴は専用メニューで開く。自動移動・統合・削除は行わない。
 
 - `key.dpapi`: CSPRNGの256-bit HMAC秘密鍵をWindows DPAPI CurrentUserで保護。
 - `journal/000000000001.json` 以降: 連番の不変レコード。各レコードにバージョン、連番、前レコードMAC、種別、完全なイベントID、記録UTC、ペイロードを保持。
@@ -83,3 +83,9 @@ Microsoft一次資料:
 - https://learn.microsoft.com/en-us/dotnet/api/system.windows.clipboard.setdataobject
 - https://learn.microsoft.com/en-us/windows/win32/api/dpapi/nf-dpapi-cryptprotectdata
 - https://learn.microsoft.com/en-us/windows/win32/dataxchg/standard-clipboard-formats
+
+## 初回フィードバック反映
+
+描画版は`wpf-v2-short-date`。日付表示は先頭アポストロフィ付き`yy.MM.dd`、保持値はDateOnlyで4桁年。文字はBuildGeometryで字形を取り出し、可視境界を円内側半径41と区切り線との2単位の間隔に収めて一様拡大する。過去の生成記録のRenderer値は変更しない。
+
+画面上部の大きな名称を廃止し、ファイル・履歴・ヘルプメニューとステータスバーを配置。印面設定はバージョン付きJSON（`.jtcstamp`）に独立保存する。必須項目と長さを検証してから画面へ反映し、一時ファイル＋リネームで保存する。これは編集可能な設定であり、認証付き原本とは区別する。

@@ -21,19 +21,36 @@ public static class StampRenderer
                 double dx = Math.Sqrt(43 * 43 - (y - 48) * (y - 48));
                 dc.DrawLine(pen, new Point(48 - dx, y), new Point(48 + dx, y));
             }
-            DrawText(dc, stamp.Name, 21, 54, 17, red);
-            DrawText(dc, stamp.DisplayDate.ToString("yyyy.MM.dd", CultureInfo.InvariantCulture), 48, 77, 13, red);
-            DrawText(dc, stamp.Bottom, 75, 54, 16, red);
+            DrawText(dc, stamp.Name, 22, 24, red);
+            DrawText(dc, "\'" + stamp.DisplayDate.ToString("yy.MM.dd", CultureInfo.InvariantCulture), 48, 26, red);
+            DrawText(dc, stamp.Bottom, 74, 24, red);
         }
         var bitmap = new RenderTargetBitmap(384, 384, 384, 384, PixelFormats.Pbgra32);
         bitmap.Render(visual); bitmap.Freeze(); return bitmap;
     }
-    static void DrawText(DrawingContext dc, string value, double cy, double width, double size, Brush brush)
+    static void DrawText(DrawingContext dc, string value, double cy, double maxHeight, Brush brush)
     {
         var text = new FormattedText(value, CultureInfo.GetCultureInfo("ja-JP"), FlowDirection.LeftToRight,
-            new Typeface("Yu Gothic"), size, brush, 1);
-        if (text.Width > width) text.SetFontSize(size * width / text.Width);
-        dc.DrawText(text, new Point(48 - text.Width / 2, cy - text.Height / 2));
+            new Typeface("Yu Gothic"), 100, brush, 1);
+        var outline = text.BuildGeometry(new Point(0, 0));
+        var bounds = outline.Bounds;
+        if (bounds.IsEmpty || bounds.Width <= 0 || bounds.Height <= 0) return;
+        // Fit visible glyph bounds, not font line-height, inside the circle and separator bands.
+        double lo = 0, hi = maxHeight / bounds.Height;
+        for (int i = 0; i < 48; i++)
+        {
+            double scale = (lo + hi) / 2;
+            double x = bounds.Width * scale / 2;
+            double height = bounds.Height * scale;
+            double center = cy < 48 ? 31 - height / 2 : cy > 48 ? 65 + height / 2 : 48;
+            double y = Math.Abs(center - 48) + height / 2;
+            if (x * x + y * y <= 41 * 41) lo = scale; else hi = scale;
+        }
+        cy = cy < 48 ? 31 - bounds.Height * lo / 2 : cy > 48 ? 65 + bounds.Height * lo / 2 : 48;
+        outline.Transform = new MatrixTransform(lo, 0, 0, lo,
+            48 - (bounds.X + bounds.Width / 2) * lo,
+            cy - (bounds.Y + bounds.Height / 2) * lo);
+        dc.DrawGeometry(brush, null, outline);
     }
     public static byte[] Png(BitmapSource bitmap)
     {

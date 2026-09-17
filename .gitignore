@@ -13,3 +13,6 @@
 
 # Local editor settings
 .idea/
+
+# Personal stamp settings
+*.jtcstamp

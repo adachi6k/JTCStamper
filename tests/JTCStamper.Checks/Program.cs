@@ -97,6 +97,19 @@ try
         new CopyService(journal, new FakeClipboard()).GenerateAndCopy(stamp, [1]);
         Assert(journal.Read().Count == 3);
     });
+    Check("stamp-settings-roundtrip-and-validation", dir =>
+    {
+        var path = Path.Combine(dir, "sample.jtcstamp");
+        var settings = new StampSettings(1, "山田", new DateOnly(2100, 9, 18), "承認");
+        settings.Save(path); Assert(StampSettings.Load(path) == settings);
+        Throws(() => (settings with { Name = "" }).Save(path));
+        Assert(StampSettings.Load(path) == settings);
+        (settings with { Bottom = "確認" }).Save(path);
+        Assert(StampSettings.Load(path).Bottom == "確認");
+        File.WriteAllText(path, "{}"); Throws(() => StampSettings.Load(path));
+        File.WriteAllText(path, "{ invalid JSON"); Throws(() => StampSettings.Load(path));
+        Throws(() => (settings with { Version = 2 }).Save(path));
+    });
     Console.WriteLine($"{passed} checks passed.");
 }
 finally { Directory.Delete(root, true); CryptographicOperations.ZeroMemory(key); }
