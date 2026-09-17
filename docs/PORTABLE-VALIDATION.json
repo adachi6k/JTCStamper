@@ -1,0 +1,31 @@
+{
+  "file": "JTCStamper.App.exe",
+  "bytes": 141425332,
+  "sha256": "8abf1fdf9afa0252a0d29611d5985decd93e95bd9d9a0d06e340b13e83372fa9",
+  "architecture": "Windows x64 GUI",
+  "bundle_version": "6.0",
+  "bundled_entries": 384,
+  "native_icon_resources": true,
+  "native_code_matches_sdk_singlefilehost": true,
+  "required_entries_verified": [
+    "JTCStamper.App.dll",
+    "JTCStamper.Core.dll",
+    "PresentationFramework.dll",
+    "PresentationCore.dll",
+    "WindowsBase.dll",
+    "System.Private.CoreLib.dll",
+    "wpfgfx_cor3.dll"
+  ],
+  "runtime_frameworks": [
+    {
+      "name": "Microsoft.NETCore.App",
+      "version": "10.0.12"
+    },
+    {
+      "name": "Microsoft.WindowsDesktop.App",
+      "version": "10.0.12"
+    }
+  ],
+  "private_data_included": false,
+  "windows_execution": "NOT TESTED"
+}

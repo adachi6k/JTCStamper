@@ -6,6 +6,10 @@ JTCは「Just To Confirm」の略です。
 
 Windows用の日付印アプリ。C# / .NET 10 / WPF。
 
+## 単一EXE配布版
+
+`dist/win-x64/JTCStamper.App.exe`ひとつで配布できる版を追加しました。DLLや.NETの別途配布は不要です。作成は`publish-portable.cmd`、更新方法と検証範囲は[配布手順](docs/PORTABLE.md)を参照してください。Windows実機起動は未確認です。
+
 ## 起動
 
 Windows x64では、`start.cmd`を実行してください。`publish`内にランタイム同梱のビルド済みアプリを用意しています（Windows実機では未検証）。

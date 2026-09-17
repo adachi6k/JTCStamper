@@ -22,3 +22,6 @@
 
 # Runtime diagnostics
 *-error.log
+
+# Single-executable distribution
+/dist/
