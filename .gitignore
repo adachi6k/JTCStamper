@@ -19,3 +19,6 @@
 
 # Machine-specific shortcuts
 *.lnk
+
+# Runtime diagnostics
+*-error.log
