@@ -16,7 +16,7 @@
 
 .NET 10 SDKがあるWindowsで`publish-portable.cmd`を実行します。実際の設定は`src/JTCStamper.App/Properties/PublishProfiles/Portable.pubxml`です。
 
-単一ファイル・自己完結・ネイティブライブラリ同梱を有効化。トリミングと圧縮は無効です。デバッグ情報はアセンブリに埋め込み、PDBを別配布する必要をなくしています。
+単一ファイル・自己完結・ネイティブライブラリ同梱を有効化。トリミングは無効、バンドル圧縮は有効です。デバッグ情報はアセンブリに埋め込み、PDBを別配布する必要をなくしています。
 
 ## 実施した検証
 
@@ -39,3 +39,11 @@
 - https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/overview
 - https://github.com/dotnet/runtime/blob/main/src/installer/managed/Microsoft.NET.HostModel/Bundle/Manifest.cs
 - https://github.com/dotnet/runtime/blob/main/src/installer/managed/Microsoft.NET.HostModel/Bundle/FileEntry.cs
+
+## 圧縮版への更新
+
+Releaseビルドのままバンドル圧縮を有効化しました。141,425,332 bytes（約134.9MiB）から66,531,394 bytes（約63.4MiB）へ縮小、約53%削減です。元のアプリのアセンブリ合計は約1.3MiBで、大部分は同梱の実行環境です。
+
+圧縮後の384エントリーを読み取り、381エントリーの圧縮を確認。すべて展開サイズを検証し、実行環境は非圧縮版、アプリDLLは今回のビルド出力とのSHA-256一致を確認しました。ネイティブコードと9サイズのアイコンも確認済みです。
+
+圧縮により起動時の展開・メモリ処理の負荷は増えます。Windows実機の起動時間は未測定です。再配布時も.NETの事前インストールは不要な構成です。
