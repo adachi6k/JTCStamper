@@ -1,4 +1,6 @@
-# JTCスタンパー 設計 v0.1
+# JTC Stamper 設計 v0.1
+
+正式名称は **JTC Stamper**。JTCは **Just To Confirm** の略。タグラインは「確認した、その記録を。」。
 
 ## 目的と境界
 

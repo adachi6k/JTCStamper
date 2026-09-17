@@ -1,4 +1,8 @@
-# JTCスタンパー 最小実装
+# JTC Stamper — 最小実装
+
+**Just To Confirm — 確認した、その記録を。**
+
+JTCは「Just To Confirm」の略です。
 
 Windows用の日付印アプリ。C# / .NET 10 / WPF。
 
