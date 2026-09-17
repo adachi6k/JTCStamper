@@ -26,10 +26,10 @@
                 <GroupBox Header="印影" Margin="0,0,0,12">
                     <Border Background="White" Padding="12"><Image x:Name="Preview" Height="190" Stretch="Uniform"/></Border>
                 </GroupBox>
-                <TextBlock Text="氏名"/><TextBox x:Name="NameInput" Text="山田" MaxLength="16" TextChanged="InputsChanged"/>
+                <TextBlock Text="氏名"/><TextBox x:Name="NameInput" Text="JTC" MaxLength="16" TextChanged="InputsChanged"/>
                 <TextBlock Text="表示日付"/>
                 <DatePicker x:Name="DateInput" SelectedDateChanged="DateChanged" Margin="0,5,0,12"/>
-                <TextBlock Text="下段文字"/><TextBox x:Name="BottomInput" Text="確認" MaxLength="16" TextChanged="InputsChanged"/>
+                <TextBlock Text="下段文字"/><TextBox x:Name="BottomInput" Text="(印)" MaxLength="16" TextChanged="InputsChanged"/>
                 <Button x:Name="CopyButton" Content="生成して PNG コピー" Click="CopyClick"/>
             </StackPanel>
             <Grid Grid.Column="2">
