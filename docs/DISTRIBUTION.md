@@ -1,0 +1,30 @@
+# JTC Stamper 配布版の選び方
+
+迷った場合は「通常版」を選んでください。どちらもWindows x64向けで、機能・履歴・設定の形式は同じです。
+
+| 版 | EXEのサイズ | 必要なもの | 開発フォルダー内の場所 |
+|---|---:|---|---|
+| 通常版（推奨） | 約63.4MiB | .NETの別途インストール不要 | dist/win-x64/JTCStamper.App.exe |
+| 軽量版 | 約1.8MiB | .NET 10 Desktop Runtime x64 | dist/lite-win-x64/JTCStamper.App.exe |
+
+## 起動
+
+ZIPを使う場合は書込み可能な専用フォルダーへ展開し、JTCStamper.App.exeを起動してください。start.cmdは不要です。
+
+軽量版では対応する実行環境が導入済みである必要があります。[Microsoft公式ダウンロード](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)の「.NET Desktop Runtime」のWindows x64版を利用してください。10.0系の最新パッチを推奨します。通常の「.NET Runtime」だけではWPF用の実行環境が不足します。SDKは開発者向けであり、利用者は不要です。
+
+## 履歴を保持して更新・切替
+
+アプリを終了し、同じフォルダーのEXEだけを置き換えてください。通常版と軽量版は同じファイル名にしているため、同じ手順で切り替えられます。key.dpapi、journal、印面設定（.jtcstamp）は残します。
+
+別々のフォルダーで起動すると、履歴も別々になります。既存の履歴は［履歴］メニューから保存先を指定できます。鍵の別PC移行には従来のDPAPI制約があります。配布パッケージに個人の履歴・鍵・設定は含めていません。
+
+## 開発者向け
+
+publish-all.cmdで両方を順番にビルドします。通常版のみはpublish-portable.cmd、軽量版のみはpublish-lite.cmdです。両方Release、同じソースと保存形式を使用します。軽量版は実行環境を同梱せず、単一EXE圧縮を無効にしています。
+
+## 検証範囲
+
+両方のビルド、バンドル構成、アイコン、SHA-256を確認しました。軽量版は4エントリーのみで、WPFや.NET本体を含まず、Microsoft.WindowsDesktop.App 10.0系への依存設定を確認しています。
+
+Windows実機での両版の起動、未導入PCでの軽量版の案内表示、コピー・保存、版の切替は未確認です。コード署名は未実施です。

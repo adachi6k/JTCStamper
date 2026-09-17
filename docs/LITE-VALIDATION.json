@@ -1,0 +1,26 @@
+{
+  "file": "JTCStamper.App.exe",
+  "bytes": 1892953,
+  "sha256": "bf756a36340771a2e687c2a2ef6500b2e1129ed9728683ae3da29f6883c26344",
+  "configuration": "Release",
+  "type": "framework-dependent",
+  "architecture": "win-x64",
+  "required_frameworks": [
+    {
+      "name": "Microsoft.NETCore.App",
+      "version": "10.0.0"
+    },
+    {
+      "name": "Microsoft.WindowsDesktop.App",
+      "version": "10.0.0"
+    }
+  ],
+  "bundled_entries": [
+    "JTCStamper.App.dll",
+    "JTCStamper.App.runtimeconfig.json",
+    "JTCStamper.Core.dll",
+    "JTCStamper.App.deps.json"
+  ],
+  "icon_frames_verified": 9,
+  "windows_execution": "NOT TESTED"
+}
