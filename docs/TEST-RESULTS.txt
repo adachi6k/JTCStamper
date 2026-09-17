@@ -1,0 +1,15 @@
+PASS generated-copy-annotation-and-reopen
+PASS tampering-blocks-copy
+PASS wrong-key-rejected
+PASS generation-save-failure-blocks-copy
+PASS copy-intent-save-failure-blocks-copy
+PASS clipboard-failure-recorded
+PASS completion-save-failure-is-not-success
+PASS middle-deletion-detected
+PASS interrupted-temp-ignored
+9 checks passed.
+
+Build: .NET SDK 10.0.401 on Linux; WPF cross-target build succeeded.
+Warnings: 0. Errors: 0.
+Windows GUI, DPAPI, real clipboard, EMF and Office: NOT TESTED.
+Publish: win-x64 self-contained succeeded (runtime included).

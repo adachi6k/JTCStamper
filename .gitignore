@@ -1,0 +1,15 @@
+**/bin/
+**/obj/
+.vs/
+*.user
+
+# Published binaries (rebuild from source)
+/publish/
+
+# Local history, keys and exported originals
+*.dpapi
+*.jtc
+/journal/
+
+# Local editor settings
+.idea/
