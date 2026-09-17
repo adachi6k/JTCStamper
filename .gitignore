@@ -16,3 +16,6 @@
 
 # Personal stamp settings
 *.jtcstamp
+
+# Machine-specific shortcuts
+*.lnk
