@@ -12,7 +12,7 @@ using Microsoft.Win32;
 
 namespace JTCStamper.App;
 
-public sealed class VerificationWindow : Window
+public sealed class VerificationView : UserControl
 {
     readonly VerificationService service;
     readonly TextBlock result = new() { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 8) };
@@ -31,13 +31,20 @@ public sealed class VerificationWindow : Window
     string coverage = "";
     bool busy;
     Point? dragStart;
-    public Guid? SelectedEventId { get; private set; }
-    public VerificationWindow(Journal journal, string storageRoot)
+    public event Action<Guid>? HistoryRequested;
+    public bool IsBusy => busy;
+    bool disposed;
+    byte[]? lastBytes;
+    BitmapSource? lastBitmap;
+    bool lastOriginal;
+    readonly Button refresh = new() { Content = "再照合", IsEnabled = false };
+    public void CancelPending() { disposed = true; preview.ReleaseMouseCapture(); }
+
+    public VerificationView(Journal journal, string storageRoot)
     {
         service = new(journal);
-        Title = "画像から印影を照合"; Width = 880; Height = 800; MinWidth = 640; MinHeight = 680;
-        WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        var panel = new DockPanel { Margin = new Thickness(16) }; Content = panel;
+        var panel = new DockPanel { Margin = new Thickness(12) };
+        Content = new ScrollViewer { Content = panel, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
         var top = new StackPanel(); DockPanel.SetDock(top, Dock.Top); panel.Children.Add(top);
         top.Children.Add(new TextBlock { Text = "照合先：" + storageRoot, TextWrapping = TextWrapping.Wrap });
         top.Children.Add(new TextBlock { Text = "画像内の赤い円形印を探して、履歴の印面と比較します。見つからない場合は画像上で印影をドラッグして囲んでください。",
@@ -45,6 +52,7 @@ public sealed class VerificationWindow : Window
         var buttons = new WrapPanel(); top.Children.Add(buttons);
         file.Click += Open; buttons.Children.Add(file);
         clipboard.Click += FromClipboard; buttons.Children.Add(clipboard);
+        refresh.Click += RefreshInput; buttons.Children.Add(refresh);
         top.Children.Add(codeFilter);
         codeFilter.Checked += Recompare;
         codeFilter.Unchecked += Recompare;
@@ -54,10 +62,12 @@ public sealed class VerificationWindow : Window
         bottom.Children.Add(new TextBlock { Text = "画像の類似候補は認証済みの一致ではありません。無断コピーの検出・偽造の断定はできません。",
             TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 0) });
         candidates.SelectionChanged += (_, _) => show.IsEnabled = !busy && candidates.SelectedItem is Candidate;
-        show.Click += (_, _) => { if (candidates.SelectedItem is Candidate item) { SelectedEventId = item.Generation.EventId; DialogResult = true; } };
+        show.Click += (_, _) => { if (candidates.SelectedItem is Candidate item) { HistoryRequested?.Invoke(item.Generation.EventId); } };
         regions.SelectionChanged += async (_, _) => { if (!busy && regions.SelectedItem is RegionItem item) await Compare(item.Region); };
         preview.MouseLeftButtonDown += (_, e) => { if (!busy) { dragStart = ImagePoint(e.GetPosition(preview)); if (dragStart is not null) preview.CaptureMouse(); } };
         preview.MouseLeftButtonUp += ManualRegion;
+        candidates.MinHeight = 100;
+        candidates.MaxHeight = 220;
         panel.Children.Add(candidates);
     }
     sealed record Candidate(Generation Generation, string Evidence)
@@ -68,6 +78,7 @@ public sealed class VerificationWindow : Window
     void SetBusy(bool value)
     {
         busy = value; codeFilter.IsEnabled = !value; file.IsEnabled = clipboard.IsEnabled = regions.IsEnabled = !value;
+        refresh.IsEnabled = !value && (lastBytes is not null || lastBitmap is not null);
         show.IsEnabled = !value && candidates.SelectedItem is Candidate;
     }
     void Display(VerificationResult value)
@@ -84,13 +95,15 @@ public sealed class VerificationWindow : Window
     async void Open(object sender, RoutedEventArgs e)
     {
         var dialog = new OpenFileDialog { Filter = "画像・原本|*.png;*.jpg;*.jpeg;*.bmp;*.tif;*.tiff;*.jtc|画像|*.png;*.jpg;*.jpeg;*.bmp;*.tif;*.tiff|原本|*.jtc", CheckFileExists = true };
-        if (dialog.ShowDialog(this) != true) return;
+        if (dialog.ShowDialog(Window.GetWindow(this)) != true) return;
+        lastBytes = null; lastBitmap = null; lastOriginal = false;
         Reset(); SetBusy(true);
         try
         {
             using var stream = File.OpenRead(dialog.FileName);
             bool original = Path.GetExtension(dialog.FileName).Equals(".jtc", StringComparison.OrdinalIgnoreCase);
             var bytes = ReadLimited(stream, original ? 1024 * 1024 : 32 * 1024 * 1024);
+            lastBytes = bytes; lastOriginal = original;
             if (original) Display(service.Original(new UTF8Encoding(false, true).GetString(bytes).TrimStart('\uFEFF')));
             else await LoadImage(bytes, null);
         }
@@ -99,16 +112,29 @@ public sealed class VerificationWindow : Window
     }
     async void FromClipboard(object sender, RoutedEventArgs e)
     {
+        lastBytes = null; lastBitmap = null; lastOriginal = false;
         Reset(); SetBusy(true);
         try
         {
             var data = Clipboard.GetData("PNG");
-            if (data is Stream stream) { if (stream.CanSeek) stream.Position = 0; await LoadImage(ReadLimited(stream, 32 * 1024 * 1024), null); }
-            else if (data is byte[] bytes && bytes.Length <= 32 * 1024 * 1024) await LoadImage(bytes, null);
-            else if (Clipboard.GetImage() is BitmapSource bitmap) await LoadImage(null, bitmap);
+            if (data is Stream stream) { if (stream.CanSeek) stream.Position = 0; lastBytes = ReadLimited(stream, 32 * 1024 * 1024); await LoadImage(lastBytes, null); }
+            else if (data is byte[] bytes && bytes.Length <= 32 * 1024 * 1024) { lastBytes = bytes; await LoadImage(bytes, null); }
+            else if (Clipboard.GetImage() is BitmapSource bitmap) { lastBitmap = bitmap; await LoadImage(null, bitmap); }
             else Failed("クリップボードに画像がありません。");
         }
         catch (Exception ex) { Failed("クリップボードを読み取れませんでした：" + ex.Message); }
+        finally { SetBusy(false); }
+    }
+    async void RefreshInput(object sender, RoutedEventArgs e)
+    {
+        if (busy || disposed || (lastBytes is null && lastBitmap is null)) return;
+        Reset(); SetBusy(true);
+        try
+        {
+            if (lastOriginal) Display(service.Original(new UTF8Encoding(false, true).GetString(lastBytes!).TrimStart('\uFEFF')));
+            else await LoadImage(lastBytes, lastBitmap);
+        }
+        catch (Exception ex) { Failed("再照合できませんでした：" + ex.Message); }
         finally { SetBusy(false); }
     }
     async Task LoadImage(byte[]? bytes, BitmapSource? bitmap)
@@ -135,7 +161,7 @@ public sealed class VerificationWindow : Window
         mask = ToMask(source);
         result.Text = "画像内の印影を探しています…";
         var found = await Task.Run(() => ImageSearch.Detect(mask, width, height));
-        if (!IsVisible) return;
+        if (disposed) return;
         result.Text = "生成履歴の印面を準備しています…";
         history = service.ReadGenerations(); // Revalidates all HMACs before creating reference images.
         var groups = history.Reverse().Select(x => x.Stamp).Distinct().ToArray();
@@ -149,7 +175,7 @@ public sealed class VerificationWindow : Window
             var reference = ToMask(rendered);
             if (ImageSearch.Bounds(reference, rendered.PixelWidth, rendered.PixelHeight) is ImageRegion bounds)
                 templates.Add(new(stamp, ImageSearch.Normalize(reference, rendered.PixelWidth, rendered.PixelHeight, bounds)));
-            if (templates.Count % 8 == 0) { await Dispatcher.Yield(DispatcherPriority.Background); if (!IsVisible) return; }
+            if (templates.Count % 8 == 0) { await Dispatcher.Yield(DispatcherPriority.Background); if (disposed) return; }
         }
         coverage = $"比較対象：印面{templates.Count}種類。" + (groups.Length > 300 ? "直近300種類に限定しています。" : "") +
             (skipped > 0 ? $"過去画像を再現できない{skipped}種類は比較対象外です。" : "");
@@ -171,11 +197,11 @@ public sealed class VerificationWindow : Window
             var red = RingCode.RedStrength(ToPixels(crop), region.Width, region.Height);
             var localBox = new ImageRegion(0, 0, region.Width, region.Height);
             var reading = await Task.Run(() => RingCode.Decode(red, region.Width, region.Height, localBox));
-            if (!IsVisible) return;
+            if (disposed) return;
             bool filter = codeFilter.IsChecked == true && reading.Code.HasValue;
             var references = templates.Where(t => !filter || t.Stamp.GeometryCode == reading.Code).ToArray();
             var ranked = await Task.Run(() => ImageSearch.Rank(ink, references));
-            if (!IsVisible) return;
+            if (disposed) return;
             var rows = ranked.SelectMany(x => history.Where(g => g.Stamp == x.Stamp)
                 .Select(g => new Candidate(g, $"類似度 {x.Score:0.000} ／ " + $"12ビット {RingCode.Label(g.Stamp.GeometryCode!.Value)}"))).ToArray();
             candidates.ItemsSource = rows;

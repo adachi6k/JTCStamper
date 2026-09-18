@@ -13,19 +13,24 @@
                 <MenuItem Header="終了(_X)" Click="ExitClick"/>
             </MenuItem>
             <MenuItem Header="履歴(_H)">
+                <MenuItem Header="生成履歴を表示" Click="ShowHistoryClick"/>
+                <Separator/>
                 <MenuItem Header="実行ファイルのフォルダーを使用" Click="DefaultHistoryClick"/>
                 <MenuItem Header="保存先を選択…" Click="ChooseHistoryClick"/>
             </MenuItem>
-            <MenuItem Header="照合(_V)"><MenuItem Header="画像・原本を照合…" Click="VerifyClick"/></MenuItem>
+            <MenuItem Header="照合(_V)"><MenuItem Header="照合タブを開く" Click="VerifyClick"/></MenuItem>
             <MenuItem Header="ヘルプ(_H)"><MenuItem Header="バージョン情報" Click="AboutClick"/></MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom"><TextBlock x:Name="Status" TextWrapping="Wrap"/></StatusBar>
-        <Grid Margin="12">
-            <Grid.ColumnDefinitions><ColumnDefinition Width="260"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-            <StackPanel>
-                <GroupBox Header="印影" Margin="0,0,0,12">
-                    <Border Background="White" Padding="12"><Image x:Name="Preview" Height="190" Stretch="Uniform"/></Border>
+        <TabControl x:Name="MainTabs" Margin="8">
+            <TabItem x:Name="CreateTab" Header="作成">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid Margin="16">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="320"/><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <GroupBox Header="印影" VerticalAlignment="Top">
+                    <Border Background="White" Padding="12"><Image x:Name="Preview" Height="280" Stretch="Uniform"/></Border>
                 </GroupBox>
+            <StackPanel Grid.Column="2" MaxWidth="360" HorizontalAlignment="Stretch">
                 <TextBlock Text="氏名"/><TextBox x:Name="NameInput" Text="JTC" MaxLength="16" TextChanged="InputsChanged"/>
                 <TextBlock Text="表示日付"/>
                 <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
@@ -39,7 +44,14 @@
                 <Button x:Name="CopyButton" Content="生成して PNG コピー" Click="CopyClick"/>
                 <TextBlock Text="円周の短い欠けは生成時に決まります。" TextWrapping="Wrap" Foreground="DimGray"/>
             </StackPanel>
-            <Grid Grid.Column="2">
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem x:Name="VerificationTab" Header="照合" IsEnabled="False">
+                <ContentControl x:Name="VerificationHost" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+            </TabItem>
+            <TabItem x:Name="HistoryTab" Header="履歴">
+            <Grid Margin="12">
                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="2*"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                 <TextBlock Text="生成履歴" Margin="0,0,0,6"/>
                 <ListBox x:Name="History" Grid.Row="1" DisplayMemberPath="Label" SelectionChanged="HistoryChanged"/>
@@ -51,6 +63,7 @@
                     <TextBlock Text="コピー記録は貼付完了を示しません。" Foreground="DimGray"/>
                 </StackPanel>
             </Grid>
-        </Grid>
+            </TabItem>
+        </TabControl>
     </DockPanel>
 </Window>

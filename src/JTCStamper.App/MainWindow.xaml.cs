@@ -13,11 +13,21 @@ public partial class MainWindow : Window
     void VerifyClick(object sender, RoutedEventArgs e)
     {
         if (journal is null) { Status.Text = "照合する履歴の保存先を開いてください。"; return; }
-        var window = new VerificationWindow(journal, storageRoot) { Owner = this };
-        if (window.ShowDialog() == true && window.SelectedEventId is Guid id)
+        MainTabs.SelectedItem = VerificationTab;
+    }
+    void ShowHistoryClick(object sender, RoutedEventArgs e) => MainTabs.SelectedItem = HistoryTab;
+    VerificationView? verification;
+    void InstallVerification()
+    {
+        verification?.CancelPending();
+        verification = new VerificationView(journal!, storageRoot);
+        verification.HistoryRequested += id =>
         {
-            try { RefreshHistory(id); } catch (Exception ex) { Status.Text = ex.Message; }
-        }
+            try { RefreshHistory(id); MainTabs.SelectedItem = HistoryTab; }
+            catch (Exception ex) { Status.Text = "履歴を開けません: " + ex.Message; }
+        };
+        VerificationHost.Content = verification;
+        VerificationTab.IsEnabled = true;
     }
     Journal? journal;
     bool ready;
@@ -35,18 +45,20 @@ public partial class MainWindow : Window
         Activated += (_, _) => RefreshToday();
         dateTimer.Start();
         SwitchJournal(dataRoot);
-        Closed += (_, _) => { dateTimer.Stop(); journal?.Dispose(); };
+        Closed += (_, _) => { dateTimer.Stop(); verification?.CancelPending(); journal?.Dispose(); };
     }
     void SwitchJournal(string root)
     {
         try
         {
             if (journal is not null && Path.GetFullPath(root) == Path.GetFullPath(storageRoot)) return;
+            if (verification?.IsBusy == true) { Status.Text = "照合が完了してから履歴の保存先を変更してください。"; return; }
             var key = KeyStore.Load(root);
             Journal next;
             try { next = new Journal(Path.Combine(root, "journal"), key); }
             finally { CryptographicOperations.ZeroMemory(key); }
             journal?.Dispose(); journal = next; storageRoot = root;
+            InstallVerification();
             CopyButton.IsEnabled = true; RefreshHistory(); Status.Text = "履歴保存先: " + root;
         }
         catch (Exception ex)
@@ -165,6 +177,7 @@ public partial class MainWindow : Window
     void RefreshHistory(Guid? select = null)
     {
         if (journal is null) return;
+        select ??= (History.SelectedItem as HistoryRow)?.Id;
         var records = journal.Read();
         History.ItemsSource = new VerificationService(journal).ReadGenerations().Reverse().Select(g =>
         {

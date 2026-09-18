@@ -71,6 +71,25 @@ internal static class SmokeTest
                 Require(((Image)window.FindName("Preview")).Source is not null, "Initial preview is empty.");
                 Require(((TextBox)window.FindName("NameInput")).Text == "JTC" &&
                     ((TextBox)window.FindName("BottomInput")).Text == "(印)", "Unexpected initial values.");
+                var tabs = (TabControl)window.FindName("MainTabs");
+                var createTab = (TabItem)window.FindName("CreateTab");
+                var verifyTab = (TabItem)window.FindName("VerificationTab");
+                var historyTab = (TabItem)window.FindName("HistoryTab");
+                var host = (ContentControl)window.FindName("VerificationHost");
+                var view = host.Content;
+                Require(view is VerificationView && verifyTab.IsEnabled, "Verification tab is not initialized.");
+                var note = (TextBox)window.FindName("NoteInput");
+                note.Text = "tab-state-check";
+                tabs.SelectedItem = verifyTab;
+                await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+                tabs.SelectedItem = historyTab;
+                tabs.SelectedItem = createTab;
+                tabs.SelectedItem = verifyTab;
+                Require(ReferenceEquals(view, host.Content), "Verification view was recreated on tab switch.");
+                Require(note.Text == "tab-state-check" && ((TextBox)window.FindName("NameInput")).Text == "JTC", "Tab switch lost input state.");
+                Require(Window.GetWindow((VerificationView)view!) == window, "Verification is not hosted in the main window.");
+                note.Clear(); tabs.SelectedItem = createTab;
+                checks.Add(new("main-tabs-preserve-view-and-inputs", "passed"));
                 var dateInput = (DatePicker)window.FindName("DateInput");
                 var dateButton = (Button)window.FindName("DateModeButton");
                 var dateLabel = (TextBlock)window.FindName("DateModeLabel");
