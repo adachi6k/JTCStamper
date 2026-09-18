@@ -37,7 +37,7 @@
                 <Button x:Name="DateModeButton" Content="日付を指定…" Click="DateModeClick" HorizontalAlignment="Left"/>
                 <TextBlock Text="下段文字"/><TextBox x:Name="BottomInput" Text="(印)" MaxLength="16" TextChanged="InputsChanged"/>
                 <Button x:Name="CopyButton" Content="生成して PNG コピー" Click="CopyClick"/>
-                <TextBlock Text="線の角度と円内の目盛りは生成時に決まります。" TextWrapping="Wrap" Foreground="DimGray"/>
+                <TextBlock Text="円周の短い欠けは生成時に決まります。" TextWrapping="Wrap" Foreground="DimGray"/>
             </StackPanel>
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="2*"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>

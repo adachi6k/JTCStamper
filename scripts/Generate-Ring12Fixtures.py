@@ -6,6 +6,7 @@ from PIL import Image, ImageDraw, ImageFont
 import math, json, sys, io
 out=Path(sys.argv[1]);out.mkdir(parents=True,exist_ok=True)
 font=ImageFont.truetype(sys.argv[2],400)
+gap_degrees=float(sys.argv[3]) if len(sys.argv)>3 else 3.5
 S=8;red=(195,32,40);manifest=[]
 def cells(code):
     crc=0
@@ -16,17 +17,20 @@ def cells(code):
     return [(word>>(27-i))&1 for i in range(28)]
 def render(code,name):
     im=Image.new('RGB',(96*S,96*S),'white');d=ImageDraw.Draw(im)
-    d.ellipse((5*S,5*S,91*S,91*S),outline=red,width=round(1.1*S))
+    intervals=[];start=0
+    if code is not None:
+        for i,bit in enumerate(cells(code)):
+            if bit:
+                a=(37 if i<14 else 217)+(i%14)*106/13
+                intervals.append((start,a-gap_degrees/2));start=a+gap_degrees/2
+    intervals.append((start,360))
+    for start,end in intervals:
+        d.arc((5*S,5*S,91*S,91*S),start,end,fill=red,width=round(1.1*S))
     delta=(code&3)*2-3 if code is not None else 0
     for y,sign in ((33,1),(63,-1)):
         a=math.radians(sign*delta/2);c=math.cos(a);s=math.sin(a);v=y-48
         half=math.sqrt(43**2-v*v*c*c);t0=-v*s-half;t1=-v*s+half
         d.line(((48+t0*c)*S,(y+t0*s)*S,(48+t1*c)*S,(y+t1*s)*S),fill=red,width=round(1.1*S))
-    if code is not None:
-        for i,bit in enumerate(cells(code)):
-            if not bit:continue
-            a=math.radians((37 if i<14 else 217)+(i%14)*106/13)
-            d.line(tuple(v*S for radius in (38.5,42.7) for v in (48+radius*math.cos(a),48+radius*math.sin(a))),fill=red,width=round(1.6*S))
     for text,band in ((name,-1),("'26.09.18",0),('(印)',1)):
         bounds=font.getbbox(text);glyph=Image.new('L',(bounds[2]-bounds[0],bounds[3]-bounds[1]),0)
         ImageDraw.Draw(glyph).text((-bounds[0],-bounds[1]),text,font=font,fill=255)
@@ -34,7 +38,7 @@ def render(code,name):
         for _ in range(40):
             scale=(lo+hi)/2;h=glyph.height*scale;w=glyph.width*scale
             cy=30-h/2 if band<0 else 66+h/2 if band>0 else 48
-            if (w/2)**2+(abs(cy-48)+h/2)**2 <=36**2:lo=scale
+            if (w/2)**2+(abs(cy-48)+h/2)**2 <=41**2:lo=scale
             else:hi=scale
         w=max(1,round(glyph.width*lo*S));h=max(1,round(glyph.height*lo*S))
         cy=30*S-h/2 if band<0 else 66*S+h/2 if band>0 else 48*S

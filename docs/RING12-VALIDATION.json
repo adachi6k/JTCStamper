@@ -1,12 +1,14 @@
 {
   "Source": "Independent Pillow synthetic raster; NOT WPF/Office",
   "Encoded": 432,
-  "Correct": 407,
+  "Correct": 430,
   "Wrong": 0,
-  "Unreadable": 25,
+  "Unreadable": 2,
   "Controls": 72,
   "ControlClassified": 0,
   "AuthenticationFalseAcceptanceRate": "NOT EVALUATED: code classification is not authentication",
+  "Renderer": "wpf-v5-gap12",
+  "GapDegrees": 3.5,
   "RasterConditions": {
     "88px PNG": {
       "Total": 108,
@@ -16,9 +18,9 @@
     },
     "88px JPEG80": {
       "Total": 108,
-      "Correct": 83,
+      "Correct": 106,
       "Wrong": 0,
-      "Unreadable": 25
+      "Unreadable": 2
     },
     "176px PNG": {
       "Total": 108,
@@ -33,5 +35,6 @@
       "Unreadable": 0
     }
   },
-  "WindowsWpfOffice": "NOT TESTED"
+  "WindowsWpfOffice": "NOT TESTED",
+  "IndependentHoldout": "NOT EVALUATED; these fixtures were used during development"
 }

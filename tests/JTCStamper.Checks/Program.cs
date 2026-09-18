@@ -270,6 +270,24 @@ try
         Assert(RingCode.Decode(new float[88 * 88], 88, 88, new(0, 0, 88, 88)).Code is null);
         Assert(RingCode.Decode(RingFixture(66, 0, 0), 66, 66, new(0, 0, 66, 66)).Code is null);
     });
+    Check("gap12-disconnected-circle-discovery", dir =>
+    {
+        foreach (int size in new[] { 88, 176, 352 })
+        {
+            int side = size + 40;
+            var mask = new bool[side * side];
+            var red = RingFixture(size, 1, -4);
+            for (int y = 0; y < size; y++) for (int x = 0; x < size; x++)
+                mask[(y + 20) * side + x + 20] = red[y * size + x] > 0.15;
+            // A closed interior glyph must not become a second detected stamp.
+            for (int y = 0; y < side; y++) for (int x = 0; x < side; x++)
+                if (Math.Abs(Math.Sqrt(Math.Pow(x - side / 2.0, 2) + Math.Pow(y - side / 2.0, 2)) - 16) < 1)
+                    mask[y * side + x] = true;
+            var found = ImageSearch.Detect(mask, side, side);
+            Assert(found.Count == 1);
+            Assert(Math.Abs(found[0].Width - size) <= 2 && Math.Abs(found[0].Height - size) <= 2);
+        }
+    });
     Console.WriteLine($"{passed} checks passed.");
 }
 finally { Directory.Delete(root, true); CryptographicOperations.ZeroMemory(key); }
@@ -291,11 +309,11 @@ static float[] RingFixture(int size, int code, double rotation)
             double yy = ((y + (sy + 0.5) / 4) / size - 0.5) * 87.1;
             double radius = Math.Sqrt(xx * xx + yy * yy);
             bool ink = Math.Abs(radius - 43) < 0.55;
-            if (!ink && radius >= 38 && radius < 43)
+            if (ink)
                 foreach (var a in axes)
                 {
                     double along = xx * a.Cos + yy * a.Sin, across = -xx * a.Sin + yy * a.Cos;
-                    if (along >= 38.5 && along <= 42.7 && Math.Abs(across) <= 0.8) { ink = true; break; }
+                    if (along > 0 && Math.Abs(Math.Atan2(across, along) * 180 / Math.PI) < RingCode.GapDegrees / 2) { ink = false; break; }
                 }
             if (ink) hit++;
         }

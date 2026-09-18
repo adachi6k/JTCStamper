@@ -16,7 +16,15 @@ public static class StampRenderer
             var red = new SolidColorBrush(Color.FromRgb(195, 32, 40));
             var pen = new Pen(red, 1.1);
             // Design coordinates: 96 units. Circle, separators and text are independent primitives.
-            dc.DrawEllipse(null, pen, new Point(48, 48), 43, 43);
+            var gaps = RingCode.Encode(stamp.GeometryCode!.Value);
+            double start = 0;
+            for (int i = 0; i < gaps.Length; i++) if (gaps[i])
+            {
+                double center = RingCode.CellAngle(i);
+                DrawArc(dc, pen, start, center - RingCode.GapDegrees / 2);
+                start = center + RingCode.GapDegrees / 2;
+            }
+            DrawArc(dc, pen, start, 360);
             foreach (double y in new[] { 33.0, 63.0 })
             {
                 double difference = RingCode.SeparatorDifference(stamp.GeometryCode!.Value);
@@ -26,22 +34,25 @@ public static class StampRenderer
                 double t0 = -offset * sine - half, t1 = -offset * sine + half;
                 dc.DrawLine(pen, new Point(48 + t0 * cosine, y + t0 * sine), new Point(48 + t1 * cosine, y + t1 * sine));
             }
-            {
-                var marks = RingCode.Encode(stamp.GeometryCode!.Value);
-                var markPen = new Pen(red, 1.6);
-                for (int i = 0; i < marks.Length; i++) if (marks[i])
-                {
-                    double angle = RingCode.CellAngle(i) * Math.PI / 180;
-                    dc.DrawLine(markPen, new Point(48 + 38.5 * Math.Cos(angle), 48 + 38.5 * Math.Sin(angle)),
-                        new Point(48 + 42.7 * Math.Cos(angle), 48 + 42.7 * Math.Sin(angle)));
-                }
-            }
             DrawText(dc, stamp.Name, 22, 24, red);
             DrawText(dc, "\'" + stamp.DisplayDate.ToString("yy.MM.dd", CultureInfo.InvariantCulture), 48, 24, red);
             DrawText(dc, stamp.Bottom, 74, 24, red);
         }
         var bitmap = new RenderTargetBitmap(384, 384, 384, 384, PixelFormats.Pbgra32);
         bitmap.Render(visual); bitmap.Freeze(); return bitmap;
+    }
+    static void DrawArc(DrawingContext dc, Pen pen, double startDegrees, double endDegrees)
+    {
+        if (endDegrees <= startDegrees) return;
+        Point At(double degrees) => new(48 + 43 * Math.Cos(degrees * Math.PI / 180), 48 + 43 * Math.Sin(degrees * Math.PI / 180));
+        var geometry = new StreamGeometry();
+        using (var context = geometry.Open())
+        {
+            context.BeginFigure(At(startDegrees), false, false);
+            context.ArcTo(At(endDegrees), new Size(43, 43), 0, endDegrees - startDegrees > 180,
+                SweepDirection.Clockwise, true, false);
+        }
+        geometry.Freeze(); dc.DrawGeometry(null, pen, geometry);
     }
     static void DrawText(DrawingContext dc, string value, double cy, double maxHeight, Brush brush)
     {
@@ -59,7 +70,7 @@ public static class StampRenderer
             double height = bounds.Height * scale;
             double center = cy < 48 ? 30 - height / 2 : cy > 48 ? 66 + height / 2 : 48;
             double y = Math.Abs(center - 48) + height / 2;
-            if (x * x + y * y <= 36 * 36) lo = scale; else hi = scale;
+            if (x * x + y * y <= 41 * 41) lo = scale; else hi = scale;
         }
         cy = cy < 48 ? 30 - bounds.Height * lo / 2 : cy > 48 ? 66 + bounds.Height * lo / 2 : 48;
         outline.Transform = new MatrixTransform(lo, 0, 0, lo,

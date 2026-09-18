@@ -23,6 +23,58 @@ public static class ImageSearch
     public static IReadOnlyList<ImageRegion> Detect(bool[] mask, int width, int height)
     {
         Validate(mask, width, height);
+        var found = new List<ImageRegion>();
+        // Search multiple scales so short gaps reconnect for discovery. Decode always uses original pixels.
+        for (int scale = 1; scale <= 64 && Math.Min(width, height) / scale >= 28; scale *= 2)
+        {
+            int w = (width + scale - 1) / scale, h = (height + scale - 1) / scale;
+            var reduced = scale == 1 ? mask : new bool[w * h];
+            if (scale > 1)
+                for (int y = 0; y < height; y++) for (int x = 0; x < width; x++)
+                    if (mask[y * width + x]) reduced[(y / scale) * w + x / scale] = true;
+            foreach (var region in DetectSingle(reduced, w, h))
+            {
+                ImageRegion mapped = region;
+                if (scale > 1)
+                {
+                    int left = width, top = height, right = -1, bottom = -1;
+                    int x0 = Math.Max(0, (region.X - 1) * scale), y0 = Math.Max(0, (region.Y - 1) * scale);
+                    int x1 = Math.Min(width, (region.X + region.Width + 1) * scale), y1 = Math.Min(height, (region.Y + region.Height + 1) * scale);
+                    for (int y = y0; y < y1; y++) for (int x = x0; x < x1; x++) if (mask[y * width + x])
+                    { left = Math.Min(left, x); right = Math.Max(right, x); top = Math.Min(top, y); bottom = Math.Max(bottom, y); }
+                    if (right < left) continue;
+                    mapped = new(left, top, right - left + 1, bottom - top + 1);
+                }
+                int duplicate = found.FindIndex(old => Overlap(old, mapped) > 0.6);
+                if (duplicate < 0) found.Add(mapped);
+                else
+                {
+                    var old = found[duplicate];
+                    // A fine-scale component may omit a detached arc. Prefer a containing,
+                    // more circular box from a coarser search, without expanding into nearby ink.
+                    if (mapped.X <= old.X && mapped.Y <= old.Y &&
+                        mapped.X + mapped.Width >= old.X + old.Width && mapped.Y + mapped.Height >= old.Y + old.Height &&
+                        (double)mapped.Width * mapped.Height <= 1.15 * old.Width * old.Height &&
+                        Math.Abs(Math.Log((double)mapped.Width / mapped.Height)) < Math.Abs(Math.Log((double)old.Width / old.Height)))
+                        found[duplicate] = mapped;
+                }
+            }
+        }
+        // A closed glyph inside an already detected stamp is not a second stamp.
+        return found.Where(inner => !found.Any(outer => outer != inner &&
+            (long)outer.Width * outer.Height > 2L * inner.Width * inner.Height &&
+            inner.X >= outer.X && inner.Y >= outer.Y && inner.X + inner.Width <= outer.X + outer.Width && inner.Y + inner.Height <= outer.Y + outer.Height))
+            .OrderBy(x => x.Y).ThenBy(x => x.X).ToArray();
+    }
+    static double Overlap(ImageRegion a, ImageRegion b)
+    {
+        double area = Math.Max(0, Math.Min(a.X + a.Width, b.X + b.Width) - Math.Max(a.X, b.X)) *
+            (double)Math.Max(0, Math.Min(a.Y + a.Height, b.Y + b.Height) - Math.Max(a.Y, b.Y));
+        return area / ((double)a.Width * a.Height + (double)b.Width * b.Height - area);
+    }
+    static IReadOnlyList<ImageRegion> DetectSingle(bool[] mask, int width, int height)
+    {
+        Validate(mask, width, height);
         // Join small antialiasing/JPEG gaps in a circle. Classification uses the original mask.
         var joined = new bool[mask.Length];
         for (int y = 1; y < height - 1; y++)
