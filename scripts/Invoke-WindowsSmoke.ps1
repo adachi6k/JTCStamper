@@ -21,8 +21,10 @@ function Invoke-Phase([string]$Exe, [string]$DataRoot, [string]$Phase, [string]$
     $arguments = '--smoke-test --test-root "' + $DataRoot + '" --phase ' + $Phase
     if ($IncludeClipboard) { $arguments += ' --clipboard' }
     $reportPath = Join-Path $DataRoot ('report-' + $Phase + '.json')
-    # Only remove a previous generated report; all journal/settings/key files remain untouched.
+    # Only remove previous generated reports; all journal/settings/key files remain untouched.
     if (Test-Path -LiteralPath $reportPath) { Remove-Item -LiteralPath $reportPath }
+    $geometryReport = Join-Path $DataRoot ('geometry-' + $Phase + '.json')
+    if (Test-Path -LiteralPath $geometryReport) { Remove-Item -LiteralPath $geometryReport }
     $process = $null
     $passed = $false
     $detail = ''
@@ -52,7 +54,7 @@ function Invoke-Phase([string]$Exe, [string]$DataRoot, [string]$Phase, [string]$
         $artifact = Join-Path $results $Label
         New-Item -ItemType Directory -Path $artifact -Force | Out-Null
         # Allowlist artifacts. Never publish a key, journal, baseline, or arbitrary test directory.
-        foreach ($file in @(('report-' + $Phase + '.json'), ('window-' + $Phase + '.png'), ('stamp-' + $Phase + '.png'))) {
+        foreach ($file in @(('report-' + $Phase + '.json'), ('window-' + $Phase + '.png'), ('stamp-' + $Phase + '.png'), ('geometry-' + $Phase + '.json'))) {
             $source = Join-Path $DataRoot $file
             if (Test-Path -LiteralPath $source) { Copy-Item -LiteralPath $source -Destination $artifact }
         }

@@ -55,6 +55,8 @@ public sealed class VerificationService(Journal journal)
         var g = JsonSerializer.Deserialize<Generation>(entry.Payload) ?? throw new InvalidDataException();
         if (g.EventId != entry.EventId || g.Stamp is null || g.PngSha256 is null ||
             g.PngSha256.Length != 64 || !g.PngSha256.All(Uri.IsHexDigit)) throw new InvalidDataException();
+        GeometryCode.Validate(g.Stamp);
+        if (g.Stamp.GeometryCode is int code && GeometryCode.ForEvent(g.EventId) != code) throw new InvalidDataException("イベントと幾何コードが矛盾しています。");
         return g;
     }
     static VerificationResult Guard(Func<VerificationResult> action)

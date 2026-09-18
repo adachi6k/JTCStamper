@@ -140,6 +140,64 @@ internal static class SmokeTest
                 }
             });
 
+            Check("geometry-rendered-decoding-and-controls", () =>
+            {
+                var observations = new List<object>(); int correct = 0, wrong = 0, unreadable = 0, flatClassified = 0, mimicClassified = 0;
+                GeometryReading Read(Stamp specimen, int diameter, int angle, bool jpeg)
+                {
+                    var reference = StampRenderer.Render(specimen);
+                    double size = diameter * 96.0 / 87.1;
+                    var visual = new DrawingVisual();
+                    using (var dc = visual.RenderOpen())
+                    {
+                        dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, 300, 300));
+                        dc.PushTransform(new RotateTransform(angle, 150, 150));
+                        dc.DrawImage(reference, new Rect(150 - size / 2, 150 - size / 2, size, size));
+                        dc.Pop();
+                    }
+                    var page = new RenderTargetBitmap(300, 300, 96, 96, PixelFormats.Pbgra32); page.Render(visual);
+                    BitmapSource decoded = page;
+                    using var stream = new MemoryStream();
+                    if (jpeg)
+                    {
+                        var encoder = new JpegBitmapEncoder { QualityLevel = 80 }; encoder.Frames.Add(BitmapFrame.Create(page));
+                        encoder.Save(stream); stream.Position = 0;
+                        decoded = BitmapDecoder.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad).Frames[0];
+                    }
+                    var converted = new FormatConvertedBitmap(decoded, PixelFormats.Bgra32, null, 0);
+                    var pixels = new byte[300 * 300 * 4]; converted.CopyPixels(pixels, 300 * 4, 0);
+                    var regions = ImageSearch.Detect(ImageSearch.RedMask(pixels, 300, 300), 300, 300);
+                    return regions.Count != 1 ? new(null, null, null, "Detection failed") :
+                        GeometryCode.Decode(GeometryCode.RedStrength(pixels, 300, 300), 300, 300, regions[0]);
+                }
+                foreach (string name in new[] { "JTC", "田中" }) foreach (int code in Enumerable.Range(0, 4))
+                foreach (int diameter in new[] { 88, 176 }) foreach (int condition in new[] { 0, 1, 2 })
+                {
+                    var specimen = stamp with { Name = name, Renderer = GeometryCode.Renderer, GeometryCode = code };
+                    var reading = Read(specimen, diameter, condition == 2 ? 4 : 0, condition != 0);
+                    if (reading.Code == code) correct++; else if (reading.Code is null) unreadable++; else wrong++;
+                    observations.Add(new { Kind = "encoded", Name = name, Expected = (int?)code, Diameter = diameter, Condition = condition, Reading = reading });
+                }
+                foreach (int condition in new[] { 0, 1, 2 })
+                {
+                    var flat = Read(stamp, 88, condition == 2 ? 4 : 0, condition != 0);
+                    if (flat.Code is not null) flatClassified++;
+                    observations.Add(new { Kind = "unencoded-control", Expected = (int?)null, Diameter = 88, Condition = condition, Reading = flat });
+                    // An imitation with the same angles may yield a code. That is not authentication.
+                    var mimic = Read(stamp with { Name = "模倣", Renderer = GeometryCode.Renderer, GeometryCode = 2 }, 88, condition == 2 ? 4 : 0, condition != 0);
+                    if (mimic.Code is not null) mimicClassified++;
+                    observations.Add(new { Kind = "imitation-with-angles", Expected = (int?)null, Diameter = 88, Condition = condition, Reading = mimic });
+                }
+                File.WriteAllText(Path.Combine(root, $"geometry-{phase}.json"), JsonSerializer.Serialize(new
+                {
+                    SchemaVersion = 1, EncodedTotal = 48, Correct = correct, WrongCode = wrong, Unreadable = unreadable,
+                    UnencodedControls = 3, UnencodedClassified = flatClassified, ImitationControls = 3, ImitationClassified = mimicClassified,
+                    AuthenticationFalseAcceptanceRate = "NOT EVALUATED: decoding is candidate retrieval, not authentication", Observations = observations
+                }, new JsonSerializerOptions { WriteIndented = true }));
+                Require(correct == 48 && wrong == 0 && unreadable == 0 && flatClassified == 0,
+                    $"Geometry: correct={correct}/48 wrong={wrong} unreadable={unreadable} flatClassified={flatClassified}/3; see geometry report.");
+            });
+
             if (phase == "seed")
             {
                 Check("settings-file-save-reload-and-validation", () =>
@@ -163,7 +221,7 @@ internal static class SmokeTest
                         using (var journal = new Journal(Path.Combine(root, "journal"), key))
                         {
                             Require(png is not null, "Rendering prerequisite failed.");
-                            id = new CopyService(journal, new FakeClipboard()).GenerateAndCopy(stamp, png!);
+                            id = new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, coded => StampRenderer.Png(StampRenderer.Render(coded)));
                             var original = journal.Read()[0].Signed;
                             journal.Annotate(id, "Isolated smoke test; no paste observed");
                             Require(journal.Read()[0].Signed == original, "Annotation modified generation.");
@@ -172,6 +230,7 @@ internal static class SmokeTest
                         var records = reopened.Read();
                         Require(records.Count == 4 && records.All(x => x.Entry.EventId == id), "Reopen mismatch.");
                         var generation = JsonSerializer.Deserialize<Generation>(records[0].Entry.Payload)!;
+                        Require(generation.Stamp.GeometryCode == GeometryCode.ForEvent(id), "Geometry code was not preserved in journal.");
                         Require(generation.Stamp.DisplayDate == stamp.DisplayDate &&
                             Math.Abs((DateTimeOffset.UtcNow - generation.CreatedUtc).TotalMinutes) < 5,
                             "Displayed date and creation timestamp were not preserved separately.");

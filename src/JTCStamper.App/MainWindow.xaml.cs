@@ -144,7 +144,7 @@ public partial class MainWindow : Window
         }
     }
 
-    void UpdatePreview() { if (!ready) return; try { Preview.Source = StampRenderer.Render(Current()); } catch { Preview.Source = null; } }
+    void UpdatePreview() { if (!ready) return; try { Preview.Source = StampRenderer.Render(Current() with { Renderer = GeometryCode.Renderer, GeometryCode = 0 }); } catch { Preview.Source = null; } }
     void InputsChanged(object sender, TextChangedEventArgs e) => UpdatePreview();
     void DateChanged(object sender, SelectionChangedEventArgs e) => UpdatePreview();
     void CopyClick(object sender, RoutedEventArgs e)
@@ -153,8 +153,13 @@ public partial class MainWindow : Window
         try
         {
             RefreshToday();
-            var stamp = Current(); var png = StampRenderer.Png(StampRenderer.Render(stamp));
-            var id = new CopyService(journal, new WindowsClipboard()).GenerateAndCopy(stamp, png);
+            var stamp = Current();
+            var id = new CopyService(journal, new WindowsClipboard()).GenerateCodedAndCopy(stamp, coded =>
+            {
+                var bitmap = StampRenderer.Render(coded);
+                Preview.Source = bitmap;
+                return StampRenderer.Png(bitmap);
+            });
             RefreshHistory(id); Status.Text = $"PNGコピーと記録が完了しました。貼付は未確認です。イベントID: {id}";
         }
         catch (Exception ex)

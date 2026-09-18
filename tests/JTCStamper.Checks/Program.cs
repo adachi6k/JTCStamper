@@ -200,9 +200,75 @@ try
         Throws(() => ImageSearch.Normalize(mask, 4, 1, new(-1, 0, 3, 1)));
         Throws(() => ImageSearch.RedMask([], int.MaxValue, int.MaxValue));
     });
+    Check("geometry-generation-event-binding-original-and-failure", dir =>
+    {
+        using var journal = new Journal(dir, key); var clipboard = new FakeClipboard();
+        Stamp? rendered = null;
+        var id = new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, coded => { rendered = coded; return [1, 2, 3]; });
+        var first = journal.Read()[0];
+        var generation = JsonSerializer.Deserialize<Generation>(first.Entry.Payload)!;
+        Assert(generation.Stamp == rendered && generation.Stamp.GeometryCode == GeometryCode.ForEvent(id));
+        Assert(generation.Stamp.Renderer == GeometryCode.Renderer && clipboard.Calls == 1);
+        Assert(new VerificationService(journal).Original(JsonSerializer.Serialize(first.Signed)).Matches.Single().EventId == id);
+        var before = journal.Read().ToArray();
+        Throws(() => new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, _ => throw new InvalidOperationException("Render failed")));
+        Assert(before.SequenceEqual(journal.Read()) && clipboard.Calls == 1);
+        Throws(() => new CopyService(journal, clipboard).GenerateAndCopy(generation.Stamp, [4]));
+        Throws(() => GeometryCode.Validate(stamp with { GeometryCode = 4, Renderer = GeometryCode.Renderer }));
+        Throws(() => GeometryCode.Validate(stamp with { GeometryCode = 0 }));
+        var oldJson = "{\"Name\":\"old\",\"DisplayDate\":\"2000-01-01\",\"Bottom\":\"old\",\"Renderer\":\"wpf-v2-short-date\"}";
+        Assert(JsonSerializer.Deserialize<Stamp>(oldJson)!.GeometryCode is null);
+        Directory.CreateDirectory(Path.Combine(dir, "000000000004.json"));
+        Throws(() => new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, _ => [4, 5, 6]));
+        Assert(clipboard.Calls == 1 && before.SequenceEqual(journal.Read()));
+    });
+    Check("geometry-decode-synthetic-symbols-and-reject-flat", dir =>
+    {
+        int correct = 0;
+        foreach (int size in new[] { 66, 88, 176 }) foreach (double rotation in new[] { -4.0, 0, 4.0 })
+        foreach (int code in Enumerable.Range(0, 4))
+        {
+            var red = GeometryFixture(size, GeometryCode.Difference(code), rotation);
+            var reading = GeometryCode.Decode(red, size, size, new(0, 0, size, size));
+            if (reading.Code != code) throw new Exception($"geometry size={size} rotation={rotation} expected={code} actual={reading.Code} delta={reading.DifferenceDegrees} {reading.Reason}");
+            correct++;
+        }
+        Console.WriteLine($"  synthetic decoding {correct}/36 (not real-image accuracy)");
+        foreach (double rotation in new[] { -4.0, 0, 4.0 })
+        {
+            var flat = GeometryFixture(88, 0, rotation);
+            Assert(GeometryCode.Decode(flat, 88, 88, new(0, 0, 88, 88)).Code is null);
+        }
+        foreach (double boundary in new[] { -6.0, -2, 0, 2, 6 })
+            Assert(GeometryCode.Decode(GeometryFixture(88, boundary, 0), 88, 88, new(0, 0, 88, 88)).Code is null);
+        Assert(GeometryCode.Decode(new float[88 * 88], 88, 88, new(0, 0, 88, 88)).Code is null);
+        Assert(GeometryCode.Decode(GeometryFixture(44, 3, 0), 44, 44, new(0, 0, 44, 44)).Code is null);
+    });
     Console.WriteLine($"{passed} checks passed.");
 }
 finally { Directory.Delete(root, true); CryptographicOperations.ZeroMemory(key); }
+// Area sampled analytic separators; tests line extraction independently of WPF/fonts.
+static float[] GeometryFixture(int size, double difference, double rotation)
+{
+    var red = new float[size * size];
+    double a = rotation * Math.PI / 180, cosine = Math.Cos(a), sine = Math.Sin(a);
+    for (int y = 0; y < size; y++) for (int x = 0; x < size; x++)
+    {
+        int hit = 0;
+        for (int sy = 0; sy < 8; sy++) for (int sx = 0; sx < 8; sx++)
+        {
+            double xx = ((x + (sx + 0.5) / 8) / size - 0.5) * 87.1;
+            double yy = ((y + (sy + 0.5) / 8) / size - 0.5) * 87.1;
+            double u = xx * cosine + yy * sine, v = -xx * sine + yy * cosine;
+            double slope = Math.Tan(difference / 2 * Math.PI / 180);
+            bool upper = Math.Abs(v + 15 - slope * u) < 0.55;
+            bool lower = Math.Abs(v - 15 + slope * u) < 0.55;
+            if (Math.Abs(u) < 38 && (upper || lower)) hit++;
+        }
+        red[y * size + x] = hit / 64f * 0.64f;
+    }
+    return red;
+}
 // Deterministic synthetic circle/separator/glyph fixtures; not a real-world accuracy benchmark.
 static void PaintStamp(bool[] page, int width, int height, double cx, double cy, double size, bool alternate, double angle = 0)
 {

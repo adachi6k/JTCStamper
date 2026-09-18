@@ -24,6 +24,9 @@ public sealed class VerificationWindow : Window
     readonly Button clipboard = new() { Content = "クリップボードの画像を照合" };
     BitmapSource? source;
     bool[]? mask;
+    float[]? redStrength;
+    ImageRegion? selectedRegion;
+    readonly CheckBox codeFilter = new() { Content = "読取コードで絞る（コードなしの旧履歴は残す）", IsChecked = true };
     IReadOnlyList<Generation> history = [];
     readonly List<StampTemplate> templates = [];
     string coverage = "";
@@ -43,6 +46,9 @@ public sealed class VerificationWindow : Window
         var buttons = new WrapPanel(); top.Children.Add(buttons);
         file.Click += Open; buttons.Children.Add(file);
         clipboard.Click += FromClipboard; buttons.Children.Add(clipboard);
+        top.Children.Add(codeFilter);
+        codeFilter.Checked += Recompare;
+        codeFilter.Unchecked += Recompare;
         top.Children.Add(preview); top.Children.Add(regions); top.Children.Add(result);
         var bottom = new StackPanel(); DockPanel.SetDock(bottom, Dock.Bottom); panel.Children.Add(bottom);
         bottom.Children.Add(show);
@@ -62,7 +68,7 @@ public sealed class VerificationWindow : Window
     sealed record RegionItem(ImageRegion Region, string Label) { public override string ToString() => Label; }
     void SetBusy(bool value)
     {
-        busy = value; file.IsEnabled = clipboard.IsEnabled = regions.IsEnabled = !value;
+        busy = value; codeFilter.IsEnabled = !value; file.IsEnabled = clipboard.IsEnabled = regions.IsEnabled = !value;
         show.IsEnabled = !value && candidates.SelectedItem is Candidate;
     }
     void Display(VerificationResult value)
@@ -73,7 +79,7 @@ public sealed class VerificationWindow : Window
     void Failed(string reason) => Display(new(VerificationStatus.Indeterminate, reason, []));
     void Reset()
     {
-        source = null; mask = null; preview.Source = null; regions.ItemsSource = null; candidates.ItemsSource = null;
+        source = null; mask = null; redStrength = null; selectedRegion = null; preview.Source = null; regions.ItemsSource = null; candidates.ItemsSource = null;
         templates.Clear(); history = []; coverage = ""; show.IsEnabled = false;
     }
     async void Open(object sender, RoutedEventArgs e)
@@ -127,7 +133,9 @@ public sealed class VerificationWindow : Window
         source = scale < 1 ? new TransformedBitmap(bitmap, new ScaleTransform(scale, scale)) : bitmap;
         source.Freeze(); Draw(null);
         var width = source.PixelWidth; var height = source.PixelHeight;
-        mask = ToMask(source);
+        var sourcePixels = ToPixels(source);
+        mask = ImageSearch.RedMask(sourcePixels, width, height);
+        redStrength = GeometryCode.RedStrength(sourcePixels, width, height);
         result.Text = "画像内の印影を探しています…";
         var found = await Task.Run(() => ImageSearch.Detect(mask, width, height));
         if (!IsVisible) return;
@@ -157,29 +165,43 @@ public sealed class VerificationWindow : Window
     async Task Compare(ImageRegion region)
     {
         if (source is null || mask is null) return;
+        selectedRegion = region;
         SetBusy(true); candidates.ItemsSource = null; Draw(region); result.Text = "選択した印影を履歴と比較しています…";
         try
         {
             var ink = ImageSearch.Normalize(mask, source.PixelWidth, source.PixelHeight, region);
-            var references = templates.ToArray();
+            var reading = redStrength is null ? new GeometryReading(null, null, null, "読み取り対象がありません。")
+                : GeometryCode.Decode(redStrength, source.PixelWidth, source.PixelHeight, region);
+            bool filter = codeFilter.IsChecked == true && reading.Code.HasValue;
+            var references = templates.Where(t => !filter || t.Stamp.GeometryCode is null || t.Stamp.GeometryCode == reading.Code).ToArray();
             var ranked = await Task.Run(() => ImageSearch.Rank(ink, references));
             if (!IsVisible) return;
             var rows = ranked.SelectMany(x => history.Where(g => g.Stamp == x.Stamp)
-                .Select(g => new Candidate(g, $"類似度 {x.Score:0.000}（確率ではありません）"))).ToArray();
+                .Select(g => new Candidate(g, $"類似度 {x.Score:0.000} ／ " + (g.Stamp.GeometryCode is int code ? $"コード {GeometryCode.Label(code)}" : "旧履歴・コードなし")))).ToArray();
             candidates.ItemsSource = rows;
             result.Text = "判定不能（画像の類似候補を検索）\n" + (rows.Length > 0
                 ? $"似た印面の履歴が{rows.Length}件あります。文字と日付を確認してください。画像からイベントIDを復元した結果ではありません。"
-                : "類似候補を見つけられませんでした。未記録・低解像度・色や形の変化などを区別できないため、偽造とは判断できません。") + "\n" + coverage;
+                : "類似候補を見つけられませんでした。未記録・低解像度・色や形の変化などを区別できないため、偽造とは判断できません。") + "\n" + (reading.Code is int decoded
+                    ? $"幾何コード候補：{GeometryCode.Label(decoded)} ／ 角度差 {reading.DifferenceDegrees:0.00}°。" + (filter ? "コードが異なる履歴を除外しています。" : "コードによる絞り込みは無効です。")
+                    : "幾何コード：判定不能。" + reading.Reason) + "\n" + coverage;
         }
         catch (Exception ex) { Failed("画像を比較できませんでした：" + ex.Message); }
         finally { SetBusy(false); }
     }
+    async void Recompare(object sender, RoutedEventArgs e)
+    {
+        if (!busy && selectedRegion is ImageRegion region) await Compare(region);
+    }
     static bool[] ToMask(BitmapSource bitmap)
+    {
+        return ImageSearch.RedMask(ToPixels(bitmap), bitmap.PixelWidth, bitmap.PixelHeight);
+    }
+    static byte[] ToPixels(BitmapSource bitmap)
     {
         var converted = new FormatConvertedBitmap(bitmap, PixelFormats.Bgra32, null, 0);
         var bytes = new byte[checked(bitmap.PixelWidth * bitmap.PixelHeight * 4)];
         converted.CopyPixels(bytes, bitmap.PixelWidth * 4, 0);
-        return ImageSearch.RedMask(bytes, bitmap.PixelWidth, bitmap.PixelHeight);
+        return bytes;
     }
     void Draw(ImageRegion? selected)
     {
