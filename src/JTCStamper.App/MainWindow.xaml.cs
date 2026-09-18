@@ -3,6 +3,8 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
+using System.Windows.Media;
 using JTCStamper.Core;
 using Microsoft.Win32;
 namespace JTCStamper.App;
@@ -10,6 +12,8 @@ public partial class MainWindow : Window
 {
     Journal? journal;
     bool ready;
+    readonly StampDateSelection dateSelection = new();
+    readonly DispatcherTimer dateTimer = new() { Interval = TimeSpan.FromSeconds(15) };
     string? settingsPath;
     string storageRoot = AppContext.BaseDirectory;
     public sealed record HistoryRow(Guid Id, string Label);
@@ -17,9 +21,12 @@ public partial class MainWindow : Window
     internal MainWindow(string dataRoot)
     {
         InitializeComponent(); DateInput.SelectedDate = DateTime.Today;
-        ready = true; UpdatePreview();
+        ready = true; RefreshDateControls(); UpdatePreview();
+        dateTimer.Tick += (_, _) => RefreshToday();
+        Activated += (_, _) => RefreshToday();
+        dateTimer.Start();
         SwitchJournal(dataRoot);
-        Closed += (_, _) => journal?.Dispose();
+        Closed += (_, _) => { dateTimer.Stop(); journal?.Dispose(); };
     }
     void SwitchJournal(string root)
     {
@@ -47,8 +54,8 @@ public partial class MainWindow : Window
         {
             var settings = StampSettings.Load(dialog.FileName);
             NameInput.Text = settings.Name; BottomInput.Text = settings.Bottom;
-            DateInput.SelectedDate = settings.DisplayDate.ToDateTime(TimeOnly.MinValue);
-            settingsPath = dialog.FileName; UpdatePreview(); Status.Text = "設定を読み込みました: " + settingsPath;
+            dateSelection.UseToday(); RefreshDateControls();
+            settingsPath = dialog.FileName; UpdatePreview(); Status.Text = "設定を読み込みました。日付は当日に戻しました: " + settingsPath;
         }
         catch (Exception ex) { Status.Text = "設定を読み込めません: " + ex.Message; }
     }
@@ -90,10 +97,44 @@ public partial class MainWindow : Window
     {
         if (string.IsNullOrWhiteSpace(NameInput.Text) || string.IsNullOrWhiteSpace(BottomInput.Text))
             throw new ArgumentException("氏名と下段文字を入力してください。");
-        // Parse the editable text too, so an uncommitted/invalid date cannot silently use an older value.
-        if (!DateTime.TryParse(DateInput.Text, out var date)) throw new ArgumentException("有効な日付を入力してください。");
-        return new(NameInput.Text.Trim(), DateOnly.FromDateTime(date), BottomInput.Text.Trim(), "wpf-v2-short-date");
+        if (dateSelection.IsSpecified)
+        {
+            // Invalid/uncommitted input must not fall back to a previous date.
+            if (!DateTime.TryParse(DateInput.Text, out var specified)) throw new ArgumentException("有効な指定日を入力してください。");
+            dateSelection.Specify(DateOnly.FromDateTime(specified));
+        }
+        return new(NameInput.Text.Trim(), dateSelection.Resolve(), BottomInput.Text.Trim(), "wpf-v2-short-date");
     }
+    void DateModeClick(object sender, RoutedEventArgs e)
+    {
+        if (dateSelection.IsSpecified) dateSelection.UseToday();
+        else dateSelection.Specify(dateSelection.Resolve());
+        RefreshDateControls(); UpdatePreview();
+        if (dateSelection.IsSpecified) { DateInput.Focus(); DateInput.IsDropDownOpen = true; }
+    }
+    void RefreshDateControls()
+    {
+        var specified = dateSelection.IsSpecified;
+        DateModeLabel.Text = specified ? "指定日" : "当日";
+        DateModeLabel.Foreground = specified ? Brushes.DarkOrange : SystemColors.ControlTextBrush;
+        DateModeButton.Content = specified ? "当日に戻す" : "日付を指定…";
+        TodayDisplay.Visibility = specified ? Visibility.Collapsed : Visibility.Visible;
+        DateInput.Visibility = specified ? Visibility.Visible : Visibility.Collapsed;
+        DateInput.IsEnabled = specified;
+        DateInput.IsDropDownOpen = false;
+        var date = dateSelection.Resolve();
+        TodayDisplay.Text = date.ToString("yyyy/MM/dd");
+        DateInput.SelectedDate = date.ToDateTime(TimeOnly.MinValue);
+    }
+    void RefreshToday()
+    {
+        if (!ready || dateSelection.IsSpecified) return;
+        if (TodayDisplay.Text != dateSelection.Resolve().ToString("yyyy/MM/dd"))
+        {
+            RefreshDateControls(); UpdatePreview();
+        }
+    }
+
     void UpdatePreview() { if (!ready) return; try { Preview.Source = StampRenderer.Render(Current()); } catch { Preview.Source = null; } }
     void InputsChanged(object sender, TextChangedEventArgs e) => UpdatePreview();
     void DateChanged(object sender, SelectionChangedEventArgs e) => UpdatePreview();
@@ -102,6 +143,7 @@ public partial class MainWindow : Window
         if (journal is null) return;
         try
         {
+            RefreshToday();
             var stamp = Current(); var png = StampRenderer.Png(StampRenderer.Render(stamp));
             var id = new CopyService(journal, new WindowsClipboard()).GenerateAndCopy(stamp, png);
             RefreshHistory(id); Status.Text = $"PNGコピーと記録が完了しました。貼付は未確認です。イベントID: {id}";

@@ -12,3 +12,5 @@ PASS stamp-settings-roundtrip-and-validation
 
 2026-09-18: .NET SDK 10.0.401, Linux, Windows cross-target build.
 Windows GUI, glyph appearance, DPAPI and real clipboard require manual verification.
+
+2026-09-18 date-mode update: 11 Core checks passed, including date rollover and explicit override. Windows UI checks not executed.

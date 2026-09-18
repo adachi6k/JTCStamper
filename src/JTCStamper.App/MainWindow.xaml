@@ -28,7 +28,13 @@
                 </GroupBox>
                 <TextBlock Text="氏名"/><TextBox x:Name="NameInput" Text="JTC" MaxLength="16" TextChanged="InputsChanged"/>
                 <TextBlock Text="表示日付"/>
-                <DatePicker x:Name="DateInput" SelectedDateChanged="DateChanged" Margin="0,5,0,12"/>
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <TextBlock x:Name="DateModeLabel" Text="当日" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock x:Name="TodayDisplay" VerticalAlignment="Center"/>
+                    <DatePicker x:Name="DateInput" Visibility="Collapsed" IsEnabled="False"
+                                SelectedDateChanged="DateChanged" Width="155"/>
+                </StackPanel>
+                <Button x:Name="DateModeButton" Content="日付を指定…" Click="DateModeClick" HorizontalAlignment="Left"/>
                 <TextBlock Text="下段文字"/><TextBox x:Name="BottomInput" Text="(印)" MaxLength="16" TextChanged="InputsChanged"/>
                 <Button x:Name="CopyButton" Content="生成して PNG コピー" Click="CopyClick"/>
             </StackPanel>

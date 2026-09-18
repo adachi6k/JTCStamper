@@ -110,6 +110,21 @@ try
         File.WriteAllText(path, "{ invalid JSON"); Throws(() => StampSettings.Load(path));
         Throws(() => (settings with { Version = 2 }).Save(path));
     });
+    Check("date-default-rollover-and-explicit-override", dir =>
+    {
+        var today = new DateOnly(2026, 9, 18);
+        var selection = new StampDateSelection(() => today);
+        Assert(!selection.IsSpecified && selection.Resolve() == today);
+        today = today.AddDays(1);
+        Assert(selection.Resolve() == today);
+        selection.Specify(new DateOnly(1900, 1, 1));
+        today = today.AddDays(1);
+        Assert(selection.IsSpecified && selection.Resolve() == new DateOnly(1900, 1, 1));
+        selection.Specify(new DateOnly(2100, 12, 31));
+        Assert(selection.Resolve() == new DateOnly(2100, 12, 31));
+        selection.UseToday();
+        Assert(!selection.IsSpecified && selection.Resolve() == today);
+    });
     Console.WriteLine($"{passed} checks passed.");
 }
 finally { Directory.Delete(root, true); CryptographicOperations.ZeroMemory(key); }

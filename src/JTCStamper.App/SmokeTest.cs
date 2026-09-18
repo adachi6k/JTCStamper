@@ -71,6 +71,18 @@ internal static class SmokeTest
                 Require(((Image)window.FindName("Preview")).Source is not null, "Initial preview is empty.");
                 Require(((TextBox)window.FindName("NameInput")).Text == "JTC" &&
                     ((TextBox)window.FindName("BottomInput")).Text == "(印)", "Unexpected initial values.");
+                var dateInput = (DatePicker)window.FindName("DateInput");
+                var dateButton = (Button)window.FindName("DateModeButton");
+                var dateLabel = (TextBlock)window.FindName("DateModeLabel");
+                Require(!dateInput.IsEnabled && dateLabel.Text == "当日", "Default date is not locked to today.");
+                dateButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Require(dateInput.IsEnabled && dateLabel.Text == "指定日", "Explicit date button failed.");
+                dateInput.SelectedDate = new DateTime(2100, 1, 1);
+                dateInput.IsDropDownOpen = false;
+                dateButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Require(!dateInput.IsEnabled && dateInput.SelectedDate == DateTime.Today && dateLabel.Text == "当日",
+                    "Return to today failed.");
+                checks.Add(new("today-default-and-explicit-date-button", "passed"));
                 var capture = new RenderTargetBitmap((int)Math.Ceiling(window.ActualWidth),
                     (int)Math.Ceiling(window.ActualHeight), 96, 96, PixelFormats.Pbgra32);
                 capture.Render(window);
