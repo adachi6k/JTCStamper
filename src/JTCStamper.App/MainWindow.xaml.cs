@@ -13,11 +13,12 @@ public partial class MainWindow : Window
     string? settingsPath;
     string storageRoot = AppContext.BaseDirectory;
     public sealed record HistoryRow(Guid Id, string Label);
-    public MainWindow()
+    public MainWindow() : this(AppContext.BaseDirectory) { }
+    internal MainWindow(string dataRoot)
     {
         InitializeComponent(); DateInput.SelectedDate = DateTime.Today;
         ready = true; UpdatePreview();
-        SwitchJournal(AppContext.BaseDirectory);
+        SwitchJournal(dataRoot);
         Closed += (_, _) => journal?.Dispose();
     }
     void SwitchJournal(string root)

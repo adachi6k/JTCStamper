@@ -5,17 +5,24 @@ using System.Windows.Media.Imaging;
 namespace JTCStamper.App;
 public partial class App : Application
 {
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        if (e.Args.Length > 0)
+        {
+            // Never fall back to a normal launch when test arguments are malformed.
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            int code = await SmokeTest.RunAsync(e.Args);
+            Shutdown(code);
+            return;
+        }
         try
         {
             var window = new MainWindow();
             // An optional decoration must never prevent the app from starting.
             try
             {
-                var icon = BitmapFrame.Create(new Uri("pack://application:,,,/Assets/jtc-icon.png"),
-                    BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                var icon = LoadWindowIcon();
                 icon.Freeze(); window.Icon = icon;
             }
             catch (Exception iconError) { WriteDiagnostic("icon-error.log", iconError); }
@@ -30,6 +37,9 @@ public partial class App : Application
             Shutdown(1);
         }
     }
+
+    internal static BitmapFrame LoadWindowIcon() => BitmapFrame.Create(
+        new Uri("pack://application:,,,/Assets/jtc-icon.png"), BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
 
     static string WriteDiagnostic(string filename, Exception error)
     {

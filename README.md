@@ -78,3 +78,9 @@ EMF、Office経由の実機検証、幾何コード、画像からの照合、�
 ## 起動時の診断
 
 起動時の例外はダイアログと実行ファイル隣の`startup-error.log`に記録します。書込み不可なら一時フォルダーの`JTCStamper`へ保存します。ウィンドウ用PNGアイコンの読込失敗は`icon-error.log`に記録し、本体の起動を続けます。
+
+## Windowsスモークテスト
+
+`publish-all.cmd`で2版を作成後、`run-smoke.cmd`で通常版・軽量版の起動、描画、保存、再起動、版の切替を自動確認できます。`run-smoke.cmd -IncludeClipboard`は実際のクリップボードも検査します（現在の内容を上書き）。レポートは`test-results/windows-smoke`に保存します。
+
+[手順と検証範囲](docs/WINDOWS-SMOKE.md)、[将来のGitHub Actions用雛形](docs/ci/windows-smoke.yml)を用意しています。Windows実行は未検証です。

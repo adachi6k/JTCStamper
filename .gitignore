@@ -25,3 +25,6 @@
 
 # Single-executable distribution
 /dist/
+
+# Local test artifacts
+/test-results/

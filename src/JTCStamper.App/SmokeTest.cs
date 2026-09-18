@@ -1,0 +1,241 @@
+using System.IO;
+using System.Security.Cryptography;
+using System.Text.Json;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using JTCStamper.Core;
+
+namespace JTCStamper.App;
+
+// Runs inside the actual published EXE, on WPF's STA thread. Only disposable, marked roots are accepted.
+internal static class SmokeTest
+{
+    const string Marker = "JTCStamper isolated smoke data v1";
+    sealed record CheckResult(string Name, string Status, string? Detail = null);
+    static void Require(bool condition, string message)
+    {
+        if (!condition) throw new InvalidDataException(message);
+    }
+
+    public static async Task<int> RunAsync(string[] args)
+    {
+        string root;
+        string phase;
+        bool clipboard;
+        try
+        {
+            Require(args.Length is 5 or 6 && args[0] == "--smoke-test" && args[1] == "--test-root" &&
+                args[3] == "--phase", "Invalid smoke-test arguments.");
+            phase = args[4]; Require(phase is "seed" or "verify", "Invalid test phase.");
+            clipboard = args.Length == 6;
+            Require(!clipboard || args[5] == "--clipboard", "Invalid clipboard option.");
+            root = Path.GetFullPath(args[2]);
+            var temp = Path.TrimEndingDirectorySeparator(Path.GetFullPath(Path.GetTempPath())) + Path.DirectorySeparatorChar;
+            Require(root.StartsWith(temp, StringComparison.OrdinalIgnoreCase), "Test root must be inside TEMP.");
+            Require(File.ReadAllText(Path.Combine(root, ".jtc-smoke-root")).Trim() == Marker, "Missing smoke-test marker.");
+            // Reject junction/symlink traversal anywhere between the root and its volume root.
+            for (var dir = new DirectoryInfo(root); dir is not null; dir = dir.Parent)
+                Require((dir.Attributes & FileAttributes.ReparsePoint) == 0, "Reparse points are not allowed in a test path.");
+            if (phase == "seed") Require(!File.Exists(Path.Combine(root, "key.dpapi")) &&
+                !Directory.Exists(Path.Combine(root, "journal")), "Seed requires an unused test root.");
+        }
+        catch { return 2; }
+
+        var checks = new List<CheckResult>();
+        void Check(string name, Action action)
+        {
+            try { action(); checks.Add(new(name, "passed")); }
+            catch (Exception ex) { checks.Add(new(name, "failed", ex.ToString())); }
+        }
+        var started = DateTimeOffset.UtcNow;
+        var stamp = new Stamp("JTC", new DateOnly(2100, 1, 1), "(印)", "wpf-v2-short-date");
+        byte[]? png = null;
+        try
+        {
+            MainWindow? window = null;
+            try
+            {
+                window = new MainWindow(root);
+                window.Icon = App.LoadWindowIcon();
+                var rendered = new TaskCompletionSource();
+                window.ContentRendered += (_, _) => rendered.TrySetResult();
+                window.Show();
+                Require(await Task.WhenAny(rendered.Task, Task.Delay(15000)) == rendered.Task, "Window render timeout.");
+                await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+                Require(window.IsVisible && window.ActualWidth > 0, "Window not visible.");
+                Require(((Button)window.FindName("CopyButton")).IsEnabled, "Journal initialization failed: " +
+                    ((TextBlock)window.FindName("Status")).Text);
+                Require(((Image)window.FindName("Preview")).Source is not null, "Initial preview is empty.");
+                Require(((TextBox)window.FindName("NameInput")).Text == "JTC" &&
+                    ((TextBox)window.FindName("BottomInput")).Text == "(印)", "Unexpected initial values.");
+                var capture = new RenderTargetBitmap((int)Math.Ceiling(window.ActualWidth),
+                    (int)Math.Ceiling(window.ActualHeight), 96, 96, PixelFormats.Pbgra32);
+                capture.Render(window);
+                File.WriteAllBytes(Path.Combine(root, $"window-{phase}.png"), StampRenderer.Png(capture));
+                checks.Add(new("real-window-startup-preview-and-icon", "passed"));
+            }
+            catch (Exception ex) { checks.Add(new("real-window-startup-preview-and-icon", "failed", ex.ToString())); }
+            finally { window?.Close(); }
+
+            Check("render-png-date-and-transparent-margin", () =>
+            {
+                var bitmap = StampRenderer.Render(stamp);
+                Require(bitmap.PixelWidth == 384 && bitmap.PixelHeight == 384, "Unexpected PNG size.");
+                png = StampRenderer.Png(bitmap);
+                var pixels = new byte[384 * 384 * 4]; bitmap.CopyPixels(pixels, 384 * 4, 0);
+                Require(pixels[3] == 0 && pixels.Where((_, i) => i % 4 == 3).Any(x => x != 0), "Unexpected transparency.");
+                var sameShortYear = StampRenderer.Png(StampRenderer.Render(stamp with { DisplayDate = new DateOnly(1900, 1, 1) }));
+                Require(png.SequenceEqual(sameShortYear), "Two-digit year rendering mismatch.");
+                var changedDate = StampRenderer.Png(StampRenderer.Render(stamp with { DisplayDate = new DateOnly(2100, 1, 2) }));
+                Require(!png.SequenceEqual(changedDate), "Date change did not change image.");
+                File.WriteAllBytes(Path.Combine(root, $"stamp-{phase}.png"), png);
+            });
+
+            if (phase == "seed")
+            {
+                Check("settings-file-save-reload-and-validation", () =>
+                {
+                    var settings = new StampSettings(1, stamp.Name, stamp.DisplayDate, stamp.Bottom);
+                    var path = Path.Combine(root, "test.jtcstamp"); settings.Save(path);
+                    Require(StampSettings.Load(path) == settings, "Settings roundtrip failed.");
+                    bool rejected = false;
+                    try { (settings with { Name = "" }).Save(path); } catch (InvalidDataException) { rejected = true; }
+                    Require(rejected && StampSettings.Load(path) == settings, "Invalid save changed settings.");
+                });
+                Check("dpapi-journal-annotation-reopen", () =>
+                {
+                    var key = KeyStore.Load(root);
+                    try
+                    {
+                        var reopenedKey = KeyStore.Load(root);
+                        try { Require(key.SequenceEqual(reopenedKey), "DPAPI key roundtrip failed."); }
+                        finally { CryptographicOperations.ZeroMemory(reopenedKey); }
+                        Guid id;
+                        using (var journal = new Journal(Path.Combine(root, "journal"), key))
+                        {
+                            Require(png is not null, "Rendering prerequisite failed.");
+                            id = new CopyService(journal, new FakeClipboard()).GenerateAndCopy(stamp, png!);
+                            var original = journal.Read()[0].Signed;
+                            journal.Annotate(id, "Isolated smoke test; no paste observed");
+                            Require(journal.Read()[0].Signed == original, "Annotation modified generation.");
+                        }
+                        using var reopened = new Journal(Path.Combine(root, "journal"), key);
+                        var records = reopened.Read();
+                        Require(records.Count == 4 && records.All(x => x.Entry.EventId == id), "Reopen mismatch.");
+                        var generation = JsonSerializer.Deserialize<Generation>(records[0].Entry.Payload)!;
+                        Require(generation.Stamp.DisplayDate == stamp.DisplayDate &&
+                            Math.Abs((DateTimeOffset.UtcNow - generation.CreatedUtc).TotalMinutes) < 5,
+                            "Displayed date and creation timestamp were not preserved separately.");
+                    }
+                    finally { CryptographicOperations.ZeroMemory(key); }
+                });
+                Check("persistence-failure-prevents-clipboard", () =>
+                {
+                    var key = RandomNumberGenerator.GetBytes(32);
+                    try
+                    {
+                        var folder = Path.Combine(root, "failure-case");
+                        using var journal = new Journal(folder, key);
+                        Directory.CreateDirectory(Path.Combine(folder, "000000000001.json"));
+                        var spy = new FakeClipboard(); bool rejected = false;
+                        try { new CopyService(journal, spy).GenerateAndCopy(stamp, png ?? [1]); }
+                        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { rejected = true; }
+                        Require(rejected && spy.Calls == 0, "Clipboard called despite failed persistence.");
+                    }
+                    finally { CryptographicOperations.ZeroMemory(key); }
+                });
+                Check("hmac-tamper-detection", () =>
+                {
+                    var key = RandomNumberGenerator.GetBytes(32);
+                    try
+                    {
+                        var folder = Path.Combine(root, "tamper-case");
+                        using var journal = new Journal(folder, key);
+                        journal.Append("Generated", Guid.NewGuid(), new { Text = "before" });
+                        var path = Directory.GetFiles(folder, "*.json").Single();
+                        File.WriteAllText(path, File.ReadAllText(path).Replace("before", "after"));
+                        bool rejected = false;
+                        try { journal.Read(); } catch (InvalidDataException) { rejected = true; }
+                        Require(rejected, "Tampered HMAC accepted.");
+                    }
+                    finally { CryptographicOperations.ZeroMemory(key); }
+                });
+                if (clipboard)
+                {
+                    Check("windows-clipboard-png-roundtrip", () =>
+                    {
+                        Require(Environment.UserInteractive, "Interactive Windows session required.");
+                        Require(png is not null, "Rendering prerequisite failed.");
+                        new WindowsClipboard().Copy(png!);
+                        VerifyClipboard(png!);
+                    });
+                }
+                else checks.Add(new("windows-clipboard-png-roundtrip", "skipped", "Not requested; use -IncludeClipboard."));
+                Check("write-restart-baseline", () => File.WriteAllText(Path.Combine(root, "baseline.json"),
+                    JsonSerializer.Serialize(Snapshot(root))));
+            }
+            else
+            {
+                Check("restart-and-executable-replacement-data-preserved", () =>
+                {
+                    var expected = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(Path.Combine(root, "baseline.json")))!;
+                    var actual = Snapshot(root);
+                    Require(expected.Count == actual.Count && expected.All(x => actual.TryGetValue(x.Key, out var hash) && hash == x.Value),
+                        "Persisted data changed after restart/replacement.");
+                    Require(StampSettings.Load(Path.Combine(root, "test.jtcstamp")).DisplayDate.Year == 2100, "Settings date lost.");
+                    var key = KeyStore.Load(root);
+                    try
+                    {
+                        using var journal = new Journal(Path.Combine(root, "journal"), key);
+                        Require(journal.Read().Count == 4, "History or annotation lost.");
+                    }
+                    finally { CryptographicOperations.ZeroMemory(key); }
+                });
+                if (clipboard) Check("clipboard-survives-process-exit", () =>
+                {
+                    Require(png is not null, "Rendering prerequisite failed.");
+                    VerifyClipboard(png!);
+                });
+                else checks.Add(new("clipboard-survives-process-exit", "skipped", "Not requested; use -IncludeClipboard."));
+            }
+        }
+        catch (Exception ex) { checks.Add(new("fatal", "failed", ex.ToString())); }
+        var passed = checks.All(x => x.Status != "failed");
+        var report = new { SchemaVersion = 1, Phase = phase, StartedUtc = started, FinishedUtc = DateTimeOffset.UtcNow,
+            Framework = System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,
+            Passed = passed, ClipboardRequested = clipboard, Checks = checks };
+        try { File.WriteAllText(Path.Combine(root, $"report-{phase}.json"), JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true })); }
+        catch { return 3; }
+        return passed ? 0 : 1;
+    }
+
+    static void VerifyClipboard(byte[] png)
+    {
+                        Require(Clipboard.ContainsData("PNG") && Clipboard.ContainsImage(), "Clipboard formats missing.");
+                        var payload = Clipboard.GetData("PNG");
+                        var bytes = payload switch
+                        {
+                            MemoryStream stream => stream.ToArray(),
+                            byte[] array => array,
+                            _ => throw new InvalidDataException("Unexpected PNG clipboard payload.")
+                        };
+                        Require(bytes.SequenceEqual(png!), "PNG clipboard bytes changed.");
+                        var image = Clipboard.GetImage();
+                        Require(image is not null && image.PixelWidth == 384 && image.PixelHeight == 384, "Bitmap fallback missing.");
+    }
+
+    static Dictionary<string, string> Snapshot(string root)
+    {
+        var paths = new[] { Path.Combine(root, "key.dpapi"), Path.Combine(root, "test.jtcstamp") }
+            .Concat(Directory.GetFiles(Path.Combine(root, "journal"), "*.json"));
+        return paths.ToDictionary(x => Path.GetRelativePath(root, x), x => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(x))));
+    }
+    sealed class FakeClipboard : IClipboard
+    {
+        public int Calls { get; private set; }
+        public void Copy(byte[] png) => Calls++;
+    }
+}
