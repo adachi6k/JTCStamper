@@ -94,3 +94,5 @@ dotnet run --project src/JTCStamper.App -c Release
 現在の12-bit方式と合成画像評価の結果は[docs/RING12-CODE.md](docs/RING12-CODE.md)を参照してください。
 
 対応する印影は現在の12-bit形式のみです。非対応形式の原本は拒否し、履歴の非対応記録は照合対象から除外します。保存済みの履歴・鍵の自動削除は行いません。
+
+円周の半透明化については[アルファブレンディング比較](docs/ALPHA-COMPARISON.md)を実施しました。小さいJPEGでの復号率低下を確認したため、現在は完全な欠け方式を維持しています。
