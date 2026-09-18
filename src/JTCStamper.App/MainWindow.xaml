@@ -17,7 +17,7 @@
                 <MenuItem Header="保存先を選択…" Click="ChooseHistoryClick"/>
                 <MenuItem Header="旧バージョンの履歴を開く" Click="LegacyHistoryClick"/>
             </MenuItem>
-            <MenuItem Header="照合(_V)"><MenuItem Header="原本・PNGを照合…" Click="VerifyClick"/></MenuItem>
+            <MenuItem Header="照合(_V)"><MenuItem Header="画像・原本を照合…" Click="VerifyClick"/></MenuItem>
             <MenuItem Header="ヘルプ(_H)"><MenuItem Header="バージョン情報" Click="AboutClick"/></MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom"><TextBlock x:Name="Status" TextWrapping="Wrap"/></StatusBar>

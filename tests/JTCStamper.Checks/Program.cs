@@ -153,9 +153,73 @@ try
         Assert(verify.Image([1, 2, 3]).Status == VerificationStatus.Indeterminate);
         Assert(verify.Original(original).Status == VerificationStatus.Indeterminate);
     });
+    Check("image-search-document-two-stamps-and-red-rectangle", dir =>
+    {
+        const int w = 640, h = 480;
+        var page = new bool[w * h];
+        PaintStamp(page, w, h, 80, 100, 88, false);
+        PaintStamp(page, w, h, 390, 280, 160, true);
+        for (int y = 30; y < 80; y++) for (int x = 480; x < 560; x++) page[y * w + x] = true;
+        var found = ImageSearch.Detect(page, w, h);
+        Assert(found.Count == 2);
+        Assert(found.Any(x => x.X < 80 && x.X + x.Width > 80));
+        Assert(found.Any(x => x.X < 390 && x.X + x.Width > 390));
+        var reference = new bool[384 * 384]; PaintStamp(reference, 384, 384, 192, 192, 352, false);
+        var bounds = ImageSearch.Bounds(reference, 384, 384)!;
+        var template = new StampTemplate(stamp, ImageSearch.Normalize(reference, 384, 384, bounds));
+        var other = new bool[384 * 384]; PaintStamp(other, 384, 384, 192, 192, 352, true);
+        var otherStamp = stamp with { Name = "別印" };
+        var templates = new[] { template, new StampTemplate(otherStamp, ImageSearch.Normalize(other, 384, 384, ImageSearch.Bounds(other, 384, 384)!)) };
+        foreach (var region in found)
+        {
+            var ranked = ImageSearch.Rank(ImageSearch.Normalize(page, w, h, region), templates);
+            Assert(ranked.Count > 0 && ranked[0].Stamp == (region.X < 200 ? stamp : otherStamp));
+            Console.WriteLine($"  synthetic top score {ranked[0].Score:0.000}");
+        }
+        Assert(ImageSearch.Rank(new bool[96 * 96], templates).Count == 0);
+    });
+    Check("image-search-small-rotations-and-size-changes", dir =>
+    {
+        var reference = new bool[384 * 384]; PaintStamp(reference, 384, 384, 192, 192, 352, false);
+        var template = new StampTemplate(stamp, ImageSearch.Normalize(reference, 384, 384, ImageSearch.Bounds(reference, 384, 384)!));
+        foreach (int size in new[] { 64, 88, 160 }) foreach (int angle in new[] { -7, 0, 5 })
+        {
+            var page = new bool[320 * 240]; PaintStamp(page, 320, 240, 183, 118, size, false, angle);
+            var found = ImageSearch.Detect(page, 320, 240);
+            Assert(found.Count == 1);
+            var ranked = ImageSearch.Rank(ImageSearch.Normalize(page, 320, 240, found[0]), [template]);
+            Assert(ranked.Count == 1);
+        }
+    });
+    Check("image-search-red-alpha-limits-and-empty", dir =>
+    {
+        var mask = ImageSearch.RedMask([40,32,195,255, 0,0,0,255, 40,32,195,0, 255,255,255,255], 4, 1);
+        Assert(mask.SequenceEqual(new[] { true, false, false, false }));
+        Assert(ImageSearch.Detect(new bool[10000], 100, 100).Count == 0);
+        Assert(ImageSearch.Bounds(new bool[10000], 100, 100) is null);
+        Throws(() => ImageSearch.Normalize(mask, 4, 1, new(-1, 0, 3, 1)));
+        Throws(() => ImageSearch.RedMask([], int.MaxValue, int.MaxValue));
+    });
     Console.WriteLine($"{passed} checks passed.");
 }
 finally { Directory.Delete(root, true); CryptographicOperations.ZeroMemory(key); }
+// Deterministic synthetic circle/separator/glyph fixtures; not a real-world accuracy benchmark.
+static void PaintStamp(bool[] page, int width, int height, double cx, double cy, double size, bool alternate, double angle = 0)
+{
+    for (int y = 0; y < height; y++) for (int x = 0; x < width; x++)
+    {
+        double dx = (x - cx) * 96 / size, dy = (y - cy) * 96 / size;
+        double radians = angle * Math.PI / 180;
+        (dx, dy) = (dx * Math.Cos(radians) - dy * Math.Sin(radians), dx * Math.Sin(radians) + dy * Math.Cos(radians));
+        double radius = Math.Sqrt(dx * dx + dy * dy);
+        bool circle = Math.Abs(radius - 43) <= 0.8;
+        bool lines = Math.Abs(Math.Abs(dy) - 15) <= 0.8 && radius <= 43;
+        bool text = alternate
+            ? Math.Abs(dx) < 20 && (Math.Abs(dy + 26) < 2 || Math.Abs(dy) < 2 || Math.Abs(dy - 26) < 2)
+            : Math.Abs(dx) < 25 && Math.Abs(dx % 10) < 2 && Math.Abs(dy) < 34 && Math.Abs(Math.Abs(dy) - 15) > 5;
+        if (circle || lines || text) page[y * width + x] = true;
+    }
+}
 sealed class FakeClipboard : IClipboard
 {
     public int Calls { get; private set; }

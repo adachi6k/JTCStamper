@@ -106,6 +106,40 @@ internal static class SmokeTest
                 File.WriteAllBytes(Path.Combine(root, $"stamp-{phase}.png"), png);
             });
 
+            Check("image-search-rendered-document-and-jpeg", () =>
+            {
+                bool[] Mask(BitmapSource image)
+                {
+                    var converted = new FormatConvertedBitmap(image, PixelFormats.Bgra32, null, 0);
+                    var pixels = new byte[image.PixelWidth * image.PixelHeight * 4];
+                    converted.CopyPixels(pixels, image.PixelWidth * 4, 0);
+                    return ImageSearch.RedMask(pixels, image.PixelWidth, image.PixelHeight);
+                }
+                var reference = StampRenderer.Render(stamp);
+                var referenceMask = Mask(reference);
+                var bounds = ImageSearch.Bounds(referenceMask, 384, 384)!;
+                var template = new StampTemplate(stamp, ImageSearch.Normalize(referenceMask, 384, 384, bounds));
+                foreach (int angle in new[] { 0, 4 })
+                {
+                    var visual = new DrawingVisual();
+                    using (var dc = visual.RenderOpen())
+                    {
+                        dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, 640, 480));
+                        dc.PushTransform(new RotateTransform(angle, 240, 190));
+                        dc.DrawImage(reference, new Rect(192, 142, 96, 96));
+                        dc.Pop();
+                    }
+                    var page = new RenderTargetBitmap(640, 480, 96, 96, PixelFormats.Pbgra32); page.Render(visual);
+                    var encoder = new JpegBitmapEncoder { QualityLevel = 85 }; encoder.Frames.Add(BitmapFrame.Create(page));
+                    using var stream = new MemoryStream(); encoder.Save(stream); stream.Position = 0;
+                    var decoded = BitmapDecoder.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad).Frames[0];
+                    var mask = Mask(decoded); var found = ImageSearch.Detect(mask, 640, 480);
+                    Require(found.Count == 1, "Expected one embedded rendered stamp.");
+                    var ranked = ImageSearch.Rank(ImageSearch.Normalize(mask, 640, 480, found[0]), [template]);
+                    Require(ranked.Count == 1 && ranked[0].Stamp == stamp, "Rendered stamp candidate missing.");
+                }
+            });
+
             if (phase == "seed")
             {
                 Check("settings-file-save-reload-and-validation", () =>

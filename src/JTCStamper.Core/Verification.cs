@@ -43,6 +43,8 @@ public sealed class VerificationService(Journal journal)
         return new(VerificationStatus.Match, "原本の認証情報・イベントID・生成記録の内容が一致しました。貼付完了や画像の利用者を証明するものではありません。", [generation]);
     });
 
+    public IReadOnlyList<Generation> ReadGenerations() => Generations().Select(x => x.Generation).ToArray();
+
     List<(Generation Generation, SignedEntry Signed)> Generations() => journal.Read()
         .Where(x => x.Entry.Kind == "Generated").Select(x => (Parse(x.Entry), x.Signed)).ToList();
 
