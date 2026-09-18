@@ -1,0 +1,37 @@
+{
+  "Source": "Independent Pillow synthetic raster; NOT WPF/Office",
+  "Encoded": 432,
+  "Correct": 407,
+  "Wrong": 0,
+  "Unreadable": 25,
+  "Controls": 72,
+  "ControlClassified": 0,
+  "AuthenticationFalseAcceptanceRate": "NOT EVALUATED: code classification is not authentication",
+  "RasterConditions": {
+    "88px PNG": {
+      "Total": 108,
+      "Correct": 108,
+      "Wrong": 0,
+      "Unreadable": 0
+    },
+    "88px JPEG80": {
+      "Total": 108,
+      "Correct": 83,
+      "Wrong": 0,
+      "Unreadable": 25
+    },
+    "176px PNG": {
+      "Total": 108,
+      "Correct": 108,
+      "Wrong": 0,
+      "Unreadable": 0
+    },
+    "176px JPEG80": {
+      "Total": 108,
+      "Correct": 108,
+      "Wrong": 0,
+      "Unreadable": 0
+    }
+  },
+  "WindowsWpfOffice": "NOT TESTED"
+}

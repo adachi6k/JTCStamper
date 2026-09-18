@@ -2,17 +2,31 @@ using System.Security.Cryptography;
 
 namespace JTCStamper.Core;
 
-public sealed record GeometryReading(int? Code, double? DifferenceDegrees, double? RotationDegrees, string Reason);
+public sealed record GeometryReading(int? Code, double? DifferenceDegrees, double? RotationDegrees, string Reason, int Bits = 2);
 
 public static class GeometryCode
 {
     public const string Renderer = "wpf-v3-angle2";
     public static int ForEvent(Guid eventId) => SHA256.HashData(eventId.ToByteArray())[0] & 3;
     public static double Difference(int code) => code is >= 0 and <= 3 ? code * 2 - 3 : throw new ArgumentOutOfRangeException(nameof(code));
-    public static string Label(int code) => Convert.ToString(code, 2).PadLeft(2, '0');
+    public static string Label(int code, int bits = 2) => Convert.ToString(code, 2).PadLeft(bits, '0');
+    public static int Bits(Stamp stamp) => stamp.Renderer == RingCode.Renderer ? 12 : stamp.GeometryCode.HasValue ? 2 : 0;
+    public static int EventCode(Guid id, string renderer) => renderer == RingCode.Renderer ? RingCode.ForEvent(id) : ForEvent(id);
+    public static bool Compatible(Stamp stamp, GeometryReading reading)
+    {
+        if (stamp.GeometryCode is not int stored || reading.Code is not int read) return true;
+        int bits = Math.Min(Bits(stamp), reading.Bits);
+        return (stored & ((1 << bits) - 1)) == (read & ((1 << bits) - 1));
+    }
     public static void Validate(Stamp stamp)
     {
-        if (stamp.Renderer == Renderer ? stamp.GeometryCode is null or < 0 or > 3 : stamp.GeometryCode is not null)
+        bool valid = stamp.Renderer switch
+        {
+            RingCode.Renderer => stamp.GeometryCode is >= 0 and <= 4095,
+            Renderer => stamp.GeometryCode is >= 0 and <= 3,
+            _ => stamp.GeometryCode is null
+        };
+        if (!valid)
             throw new InvalidDataException("幾何コードと描画方式が一致しません。");
     }
     public static float[] RedStrength(byte[] bgra, int width, int height)

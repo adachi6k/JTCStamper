@@ -144,7 +144,7 @@ public partial class MainWindow : Window
         }
     }
 
-    void UpdatePreview() { if (!ready) return; try { Preview.Source = StampRenderer.Render(Current() with { Renderer = GeometryCode.Renderer, GeometryCode = 0 }); } catch { Preview.Source = null; } }
+    void UpdatePreview() { if (!ready) return; try { Preview.Source = StampRenderer.Render(Current() with { Renderer = RingCode.Renderer, GeometryCode = 0 }); } catch { Preview.Source = null; } }
     void InputsChanged(object sender, TextChangedEventArgs e) => UpdatePreview();
     void DateChanged(object sender, SelectionChangedEventArgs e) => UpdatePreview();
     void CopyClick(object sender, RoutedEventArgs e)

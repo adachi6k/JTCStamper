@@ -19,22 +19,34 @@ public static class StampRenderer
             dc.DrawEllipse(null, pen, new Point(48, 48), 43, 43);
             foreach (double y in new[] { 33.0, 63.0 })
             {
-                double difference = stamp.GeometryCode is int code ? GeometryCode.Difference(code) : 0;
+                double difference = stamp.GeometryCode is int code ? GeometryCode.Difference(code & 3) : 0;
                 double angle = (y < 48 ? difference / 2 : -difference / 2) * Math.PI / 180;
                 double cosine = Math.Cos(angle), sine = Math.Sin(angle), offset = y - 48;
                 double half = Math.Sqrt(43 * 43 - offset * offset * cosine * cosine);
                 double t0 = -offset * sine - half, t1 = -offset * sine + half;
                 dc.DrawLine(pen, new Point(48 + t0 * cosine, y + t0 * sine), new Point(48 + t1 * cosine, y + t1 * sine));
             }
+            bool ring = stamp.Renderer == RingCode.Renderer;
+            if (ring)
+            {
+                var marks = RingCode.Encode(stamp.GeometryCode!.Value);
+                var markPen = new Pen(red, 1.6);
+                for (int i = 0; i < marks.Length; i++) if (marks[i])
+                {
+                    double angle = RingCode.CellAngle(i) * Math.PI / 180;
+                    dc.DrawLine(markPen, new Point(48 + 38.5 * Math.Cos(angle), 48 + 38.5 * Math.Sin(angle)),
+                        new Point(48 + 42.7 * Math.Cos(angle), 48 + 42.7 * Math.Sin(angle)));
+                }
+            }
             bool coded = stamp.GeometryCode.HasValue;
-            DrawText(dc, stamp.Name, 22, 24, red, coded);
-            DrawText(dc, "\'" + stamp.DisplayDate.ToString("yy.MM.dd", CultureInfo.InvariantCulture), 48, coded ? 24 : 26, red, coded);
-            DrawText(dc, stamp.Bottom, 74, 24, red, coded);
+            DrawText(dc, stamp.Name, 22, 24, red, coded, ring);
+            DrawText(dc, "\'" + stamp.DisplayDate.ToString("yy.MM.dd", CultureInfo.InvariantCulture), 48, coded ? 24 : 26, red, coded, ring);
+            DrawText(dc, stamp.Bottom, 74, 24, red, coded, ring);
         }
         var bitmap = new RenderTargetBitmap(384, 384, 384, 384, PixelFormats.Pbgra32);
         bitmap.Render(visual); bitmap.Freeze(); return bitmap;
     }
-    static void DrawText(DrawingContext dc, string value, double cy, double maxHeight, Brush brush, bool coded)
+    static void DrawText(DrawingContext dc, string value, double cy, double maxHeight, Brush brush, bool coded, bool ring)
     {
         var text = new FormattedText(value, CultureInfo.GetCultureInfo("ja-JP"), FlowDirection.LeftToRight,
             new Typeface("Yu Gothic"), 100, brush, 1);
@@ -50,7 +62,7 @@ public static class StampRenderer
             double height = bounds.Height * scale;
             double center = cy < 48 ? (coded ? 30 : 31) - height / 2 : cy > 48 ? (coded ? 66 : 65) + height / 2 : 48;
             double y = Math.Abs(center - 48) + height / 2;
-            if (x * x + y * y <= 41 * 41) lo = scale; else hi = scale;
+            if (x * x + y * y <= (ring ? 36 * 36 : 41 * 41)) lo = scale; else hi = scale;
         }
         cy = cy < 48 ? (coded ? 30 : 31) - bounds.Height * lo / 2 : cy > 48 ? (coded ? 66 : 65) + bounds.Height * lo / 2 : 48;
         outline.Transform = new MatrixTransform(lo, 0, 0, lo,

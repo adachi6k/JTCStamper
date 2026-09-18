@@ -207,8 +207,8 @@ try
         var id = new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, coded => { rendered = coded; return [1, 2, 3]; });
         var first = journal.Read()[0];
         var generation = JsonSerializer.Deserialize<Generation>(first.Entry.Payload)!;
-        Assert(generation.Stamp == rendered && generation.Stamp.GeometryCode == GeometryCode.ForEvent(id));
-        Assert(generation.Stamp.Renderer == GeometryCode.Renderer && clipboard.Calls == 1);
+        Assert(generation.Stamp == rendered && generation.Stamp.GeometryCode == RingCode.ForEvent(id));
+        Assert(generation.Stamp.Renderer == RingCode.Renderer && clipboard.Calls == 1);
         Assert(new VerificationService(journal).Original(JsonSerializer.Serialize(first.Signed)).Matches.Single().EventId == id);
         var before = journal.Read().ToArray();
         Throws(() => new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, _ => throw new InvalidOperationException("Render failed")));
@@ -244,9 +244,99 @@ try
         Assert(GeometryCode.Decode(new float[88 * 88], 88, 88, new(0, 0, 88, 88)).Code is null);
         Assert(GeometryCode.Decode(GeometryFixture(44, 3, 0), 44, 44, new(0, 0, 44, 44)).Code is null);
     });
+    Check("ring12-all-values-crc-and-version-compatibility", dir =>
+    {
+        foreach (int code in Enumerable.Range(0, 4096))
+        {
+            var cells = RingCode.Encode(code);
+            Assert(RingCode.ReadCells(cells) == code);
+            for (int i = 0; i < cells.Length; i++)
+            {
+                cells[i] = !cells[i]; Assert(RingCode.ReadCells(cells) is null); cells[i] = !cells[i];
+            }
+        }
+        foreach (var id in Enumerable.Range(0, 100).Select(_ => Guid.NewGuid()))
+            Assert((RingCode.ForEvent(id) & 3) == GeometryCode.ForEvent(id));
+        var modern = stamp with { Renderer = RingCode.Renderer, GeometryCode = 0xABC };
+        var old = stamp with { Renderer = GeometryCode.Renderer, GeometryCode = 0 };
+        GeometryCode.Validate(modern); GeometryCode.Validate(old);
+        Assert(GeometryCode.Compatible(modern, new(0, null, null, "", 2)));
+        Assert(!GeometryCode.Compatible(modern, new(1, null, null, "", 2)));
+        Assert(GeometryCode.Compatible(old, new(0xABC, null, null, "", 12)));
+        Assert(!GeometryCode.Compatible(modern, new(0xBBC, null, null, "", 12)));
+        Assert(GeometryCode.Compatible(stamp, new(0xABC, null, null, "", 12)));
+        Throws(() => RingCode.Encode(4096));
+        Throws(() => GeometryCode.Validate(modern with { GeometryCode = 4096 }));
+    });
+    Check("ring12-and-legacy-signed-history-coexist", dir =>
+    {
+        using var journal = new Journal(dir, key);
+        var oldId = Guid.NewGuid();
+        var oldStamp = stamp with { Renderer = GeometryCode.Renderer, GeometryCode = GeometryCode.ForEvent(oldId) };
+        var original = journal.Append("Generated", oldId, new Generation(oldId, DateTimeOffset.UtcNow, oldStamp, new string('A', 64)));
+        var currentId = new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, _ => [8, 9]);
+        var verify = new VerificationService(journal);
+        Assert(verify.Original(JsonSerializer.Serialize(original)).Matches.Single().EventId == oldId);
+        var all = verify.ReadGenerations();
+        Assert(all.Count == 2 && all.Single(x => x.EventId == currentId).Stamp.Renderer == RingCode.Renderer);
+        Assert(journal.Read()[0].Signed == original);
+    });
+    Check("ring12-raster-size-rotation-and-controls", dir =>
+    {
+        int correct = 0;
+        foreach (int size in new[] { 88, 176 }) foreach (double rotation in new[] { -4.0, 0, 4.0 })
+        foreach (int code in new[] { 0, 1, 0x555, 0xAAA, 0xABC, 4095 })
+        {
+            var red = RingFixture(size, code, rotation);
+            var box = new ImageRegion(0, 0, size, size);
+            var angles = GeometryCode.Decode(red, size, size, box);
+            var reading = RingCode.Decode(red, size, size, box, angles);
+            if (reading.Code != code) throw new Exception($"ring12 size={size} rotation={rotation} expected={code} actual={reading.Code} {reading.Reason}");
+            correct++;
+        }
+        Console.WriteLine($"  synthetic ring decoding {correct}/36 (not real-image accuracy)");
+        var unknown = new GeometryReading(null, null, null, "");
+        foreach (int code in Enumerable.Range(0, 4))
+        {
+            var old = GeometryFixture(88, GeometryCode.Difference(code), 0);
+            Assert(RingCode.Decode(old, 88, 88, new(0, 0, 88, 88), unknown).Code is null);
+        }
+        Assert(RingCode.Decode(new float[88 * 88], 88, 88, new(0, 0, 88, 88), unknown).Code is null);
+        Assert(RingCode.Decode(RingFixture(66, 0, 0), 66, 66, new(0, 0, 66, 66), unknown).Code is null);
+    });
     Console.WriteLine($"{passed} checks passed.");
 }
 finally { Directory.Delete(root, true); CryptographicOperations.ZeroMemory(key); }
+static float[] RingFixture(int size, int code, double rotation)
+{
+    var red = GeometryFixture(size, GeometryCode.Difference(code & 3), rotation);
+    var cells = RingCode.Encode(code);
+    var axes = Enumerable.Range(0, RingCode.CellCount).Where(i => cells[i]).Select(i =>
+    {
+        double a = (RingCode.CellAngle(i) + rotation) * Math.PI / 180;
+        return (Cos: Math.Cos(a), Sin: Math.Sin(a));
+    }).ToArray();
+    for (int y = 0; y < size; y++) for (int x = 0; x < size; x++)
+    {
+        int hit = 0;
+        for (int sy = 0; sy < 4; sy++) for (int sx = 0; sx < 4; sx++)
+        {
+            double xx = ((x + (sx + 0.5) / 4) / size - 0.5) * 87.1;
+            double yy = ((y + (sy + 0.5) / 4) / size - 0.5) * 87.1;
+            double radius = Math.Sqrt(xx * xx + yy * yy);
+            bool ink = Math.Abs(radius - 43) < 0.55;
+            if (!ink && radius >= 38 && radius < 43)
+                foreach (var a in axes)
+                {
+                    double along = xx * a.Cos + yy * a.Sin, across = -xx * a.Sin + yy * a.Cos;
+                    if (along >= 38.5 && along <= 42.7 && Math.Abs(across) <= 0.8) { ink = true; break; }
+                }
+            if (ink) hit++;
+        }
+        red[y * size + x] = Math.Max(red[y * size + x], hit / 16f * 0.64f);
+    }
+    return red;
+}
 // Area sampled analytic separators; tests line extraction independently of WPF/fonts.
 static float[] GeometryFixture(int size, double difference, double rotation)
 {

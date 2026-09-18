@@ -87,7 +87,7 @@ public sealed class CopyService(Journal journal, IClipboard clipboard)
     public Guid GenerateCodedAndCopy(Stamp stamp, Func<Stamp, byte[]> render)
     {
         var id = Guid.NewGuid();
-        var coded = stamp with { Renderer = GeometryCode.Renderer, GeometryCode = GeometryCode.ForEvent(id) };
+        var coded = stamp with { Renderer = RingCode.Renderer, GeometryCode = RingCode.ForEvent(id) };
         var png = render(coded);
         return SaveAndCopy(id, coded, png);
     }

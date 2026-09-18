@@ -23,6 +23,8 @@ function Invoke-Phase([string]$Exe, [string]$DataRoot, [string]$Phase, [string]$
     $reportPath = Join-Path $DataRoot ('report-' + $Phase + '.json')
     # Only remove previous generated reports; all journal/settings/key files remain untouched.
     if (Test-Path -LiteralPath $reportPath) { Remove-Item -LiteralPath $reportPath }
+    $ringReport = Join-Path $DataRoot ('ring12-' + $Phase + '.json')
+    if (Test-Path -LiteralPath $ringReport) { Remove-Item -LiteralPath $ringReport }
     $geometryReport = Join-Path $DataRoot ('geometry-' + $Phase + '.json')
     if (Test-Path -LiteralPath $geometryReport) { Remove-Item -LiteralPath $geometryReport }
     $process = $null
@@ -54,7 +56,7 @@ function Invoke-Phase([string]$Exe, [string]$DataRoot, [string]$Phase, [string]$
         $artifact = Join-Path $results $Label
         New-Item -ItemType Directory -Path $artifact -Force | Out-Null
         # Allowlist artifacts. Never publish a key, journal, baseline, or arbitrary test directory.
-        foreach ($file in @(('report-' + $Phase + '.json'), ('window-' + $Phase + '.png'), ('stamp-' + $Phase + '.png'), ('geometry-' + $Phase + '.json'))) {
+        foreach ($file in @(('report-' + $Phase + '.json'), ('window-' + $Phase + '.png'), ('stamp-' + $Phase + '.png'), ('geometry-' + $Phase + '.json'), ('ring12-' + $Phase + '.json'))) {
             $source = Join-Path $DataRoot $file
             if (Test-Path -LiteralPath $source) { Copy-Item -LiteralPath $source -Destination $artifact }
         }
