@@ -7,15 +7,13 @@ var results = new List<object>(); int correct = 0, wrong = 0, unreadable = 0, co
 foreach (var item in fixtures)
 {
     var bytes = File.ReadAllBytes(Path.Combine(Path.GetDirectoryName(Path.GetFullPath(args[0]))!, item.File));
-    var red = GeometryCode.RedStrength(bytes, item.Width, item.Height);
+    var red = RingCode.RedStrength(bytes, item.Width, item.Height);
     var mask = ImageSearch.RedMask(bytes, item.Width, item.Height);
     var regions = ImageSearch.Detect(mask, item.Width, item.Height);
-    GeometryReading reading = new(null, null, null, "Detection failed", 12);
-    GeometryReading? angles = null;
+    RingReading reading = new(null, null, "Detection failed");
     if (regions.Count == 1)
     {
-        angles = GeometryCode.Decode(red, item.Width, item.Height, regions[0]);
-        reading = RingCode.Decode(red, item.Width, item.Height, regions[0], angles);
+        reading = RingCode.Decode(red, item.Width, item.Height, regions[0]);
     }
     if (item.Kind == "encoded")
     {
@@ -24,7 +22,7 @@ foreach (var item in fixtures)
         else wrong++;
     }
     else if (reading.Code.HasValue) controlClassified++;
-    results.Add(new { Fixture = item, Regions = regions.Count, Bounds = regions, AngleReading = angles, Reading = reading });
+    results.Add(new { Fixture = item, Regions = regions.Count, Bounds = regions, Reading = reading });
 }
 var report = new { Source = "Independent Pillow synthetic raster; NOT WPF/Office", Encoded = fixtures.Count(x => x.Kind == "encoded"), Correct = correct, Wrong = wrong, Unreadable = unreadable,
     Controls = fixtures.Count(x => x.Kind != "encoded"), ControlClassified = controlClassified,

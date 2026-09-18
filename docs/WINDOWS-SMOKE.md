@@ -39,7 +39,7 @@ PowerShell 7の`pwsh -File`でも同じスクリプトを使えます。会社�
 
 ## データの分離
 
-`%TEMP%/JTCStamper-Smoke-<GUID>/`に専用EXEと合成データを作成します。アプリは`--smoke-test --test-root ... --phase seed|verify`でのみテストモードに入り、TEMP内の専用マーカーと未使用状態を検証します。不正引数では通常起動へフォールバックしません。実際の保存先・旧LocalAppData履歴・保存済み設定を参照しません。
+`%TEMP%/JTCStamper-Smoke-<GUID>/`に専用EXEと合成データを作成します。アプリは`--smoke-test --test-root ... --phase seed|verify`でのみテストモードに入り、TEMP内の専用マーカーと未使用状態を検証します。不正引数では通常起動へフォールバックしません。実際の保存先・保存済み設定を参照しません。
 
 テスト用鍵・履歴はTEMPに残し、結果フォルダーにはJSONレポートと合成PNGだけをコピーします。GitHub Actionsへアップロードする対象もこの結果フォルダーだけです。プロセスがタイムアウトした場合はバッチが起動したプロセスのみ終了します。
 
@@ -55,10 +55,6 @@ PowerShell 7の`pwsh -File`でも同じスクリプトを使えます。会社�
 
 C#のWindows向けビルド、通常版・軽量版のpublish、Coreテストを実施。Windows実機テストとPowerShellスクリプトの実行は未実施です。WSLからWindowsプロセスを起動する接続が`UtilBindVsockAnyPort: socket failed`で失敗するためです。生成済みレポートを装った成功結果は用意していません。
 
-## 幾何コードの追加評価
-
-符号付き印影48条件（2氏名・4値・2サイズ・3変換）の復号結果をgeometry-<phase>.jsonに出力します。正解／誤読／判定不能を別々に記録し、無変調対照と角度を合わせた模倣対照も別集計します。このJSONは結果フォルダーへコピーします。模倣がコードとして分類されることは、認証の成功を意味しません。実画像に対する誤受入率の評価は別途必要です。今回のWindows評価も未実施です。詳細はGEOMETRY-CODE.mdを参照してください。
-
 ## 12-bitの追加評価
 
-ring12-<phase>.jsonに、WPFによる72条件（2氏名・6値・2サイズ・PNG/JPEG80/JPEG80+4度）と対照を記録し、結果フォルダーへコピーします。旧2-bit評価は別のgeometryレポートとして維持します。Windows評価は未実施です。実施済みの独立Pillow合成画像評価はRING12-CODE.mdを参照してください。
+ring12-<phase>.jsonに、WPFによる72条件（2氏名・6値・2サイズ・PNG/JPEG80/JPEG80+4度）と対照を記録し、結果フォルダーへコピーします。Windows評価は未実施です。実施済みの独立Pillow合成画像評価はRING12-CODE.mdを参照してください。

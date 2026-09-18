@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace JTCStamper.Core;
 
-public sealed record Stamp(string Name, DateOnly DisplayDate, string Bottom, string Renderer = "wpf-v1", int? GeometryCode = null);
+public sealed record Stamp(string Name, DateOnly DisplayDate, string Bottom, string Renderer = RingCode.Renderer, int? GeometryCode = null);
 public sealed record Generation(Guid EventId, DateTimeOffset CreatedUtc, Stamp Stamp, string PngSha256);
 public sealed record Entry(int Version, long Sequence, string PreviousMac, string Kind, Guid EventId,
     DateTimeOffset RecordedUtc, string Payload);
@@ -78,12 +78,6 @@ public sealed class Journal : IDisposable
 public interface IClipboard { void Copy(byte[] png); }
 public sealed class CopyService(Journal journal, IClipboard clipboard)
 {
-    public Guid GenerateAndCopy(Stamp stamp, byte[] png)
-    {
-        GeometryCode.Validate(stamp);
-        if (stamp.GeometryCode is not null) throw new ArgumentException("符号付きの生成には描画コールバックを使用してください。");
-        return SaveAndCopy(Guid.NewGuid(), stamp, png);
-    }
     public Guid GenerateCodedAndCopy(Stamp stamp, Func<Stamp, byte[]> render)
     {
         var id = Guid.NewGuid();

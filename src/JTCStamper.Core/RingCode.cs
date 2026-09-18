@@ -2,11 +2,33 @@ using System.Security.Cryptography;
 
 namespace JTCStamper.Core;
 
+public sealed record RingReading(int? Code, double? RotationDegrees, string Reason);
+
 // 12 payload bits + 8-bit format/orientation marker + CRC-8. None is authentication.
 public static class RingCode
 {
     public const string Renderer = "wpf-v4-ring12";
     public const int CellCount = 28;
+    public static string Label(int code) => Convert.ToString(code, 2).PadLeft(12, '0');
+    public static double SeparatorDifference(int code) => (code & 3) * 2 - 3;
+    public static void Validate(Stamp stamp)
+    {
+        if (stamp.Renderer != Renderer) throw new NotSupportedException("対応していない印影形式です。現在の12ビット形式のみ使用できます。");
+        if (stamp.GeometryCode is null or < 0 or > 4095) throw new InvalidDataException("12ビットの幾何コードが不正です。");
+    }
+    public static float[] RedStrength(byte[] bgra, int width, int height)
+    {
+        if (width <= 0 || height <= 0 || (long)width * height > 12_000_000 || (long)width * height * 4 != bgra.Length)
+            throw new ArgumentException();
+        var red = new float[width * height];
+        for (int i = 0; i < red.Length; i++)
+        {
+            int p = i * 4;
+            red[i] = Math.Max(0, bgra[p + 2] - Math.Max(bgra[p], bgra[p + 1])) / 255f * (bgra[p + 3] / 255f);
+        }
+        return red;
+    }
+
     const byte Sync = 0xD3;
     public static int ForEvent(Guid id)
     {
@@ -43,12 +65,12 @@ public static class RingCode
         }
         return crc;
     }
-    public static GeometryReading Decode(float[] red, int width, int height, ImageRegion box, GeometryReading angleReading)
+    public static RingReading Decode(float[] red, int width, int height, ImageRegion box)
     {
         if (width <= 0 || height <= 0 || (long)width * height != red.Length || box.X < 0 || box.Y < 0 || box.Width <= 0 || box.Height <= 0 ||
             (long)box.X + box.Width > width || (long)box.Y + box.Height > height) throw new ArgumentException();
         if (box.Width < 80 || box.Height < 80 || Math.Abs((double)box.Width / box.Height - 1) > 0.04)
-            return new(null, null, null, "12ビットの読み取りには直径80px以上の円形領域が必要です。", 12);
+            return new(null, null, "12ビットの読み取りには直径80px以上の円形領域が必要です。");
         var accepted = new Dictionary<int, double>();
         // Search a bounded orientation range without using a known payload or history.
         for (double rotation = -8; rotation <= 8; rotation += 0.25)
@@ -79,13 +101,13 @@ public static class RingCode
             double threshold = (on + off) / 2, margin = (on - off) * 0.16;
             if (values.Any(v => Math.Abs(v - threshold) < margin)) continue;
             int? code = ReadCells(values.Select(v => v >= threshold).ToArray());
-            if (code is null || (angleReading.Code is int low && (code.Value & 3) != low)) continue;
+            if (code is null) continue;
             if (!accepted.ContainsKey(code.Value)) accepted.Add(code.Value, rotation);
         }
-        if (accepted.Count != 1) return new(null, angleReading.DifferenceDegrees, null,
-            accepted.Count == 0 ? "目盛り・形式マーカー・CRCを確認できませんでした。" : "複数のコードが読めたため確定しません。", 12);
+        if (accepted.Count != 1) return new(null, null,
+            accepted.Count == 0 ? "目盛り・形式マーカー・CRCを確認できませんでした。" : "複数のコードが読めたため確定しません。");
         var match = accepted.Single();
-        return new(match.Key, angleReading.DifferenceDegrees, match.Value, "12ビット候補です。CRCは誤読検査であり認証ではありません。", 12);
+        return new(match.Key, match.Value, "12ビット候補です。CRCは誤読検査であり認証ではありません。");
     }
     static double Sample(float[] red, int width, int height, double x, double y)
     {

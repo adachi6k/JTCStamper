@@ -93,12 +93,6 @@ public partial class MainWindow : Window
         var dialog = new OpenFolderDialog { Title = "履歴と鍵を保存するフォルダー" };
         if (dialog.ShowDialog() == true) SwitchJournal(dialog.FolderName);
     }
-    void LegacyHistoryClick(object sender, RoutedEventArgs e)
-    {
-        var root = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "JTCStamper");
-        if (!Directory.Exists(root)) { Status.Text = "旧保存先の履歴はありません。"; return; }
-        SwitchJournal(root);
-    }
     void ExitClick(object sender, RoutedEventArgs e) => Close();
     void AboutClick(object sender, RoutedEventArgs e) => MessageBox.Show(this,
         "JTC Stamper\nJust To Confirm — 確認した、その記録を。", "バージョン情報", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -112,7 +106,7 @@ public partial class MainWindow : Window
             if (!DateTime.TryParse(DateInput.Text, out var specified)) throw new ArgumentException("有効な指定日を入力してください。");
             dateSelection.Specify(DateOnly.FromDateTime(specified));
         }
-        return new(NameInput.Text.Trim(), dateSelection.Resolve(), BottomInput.Text.Trim(), "wpf-v2-short-date");
+        return new(NameInput.Text.Trim(), dateSelection.Resolve(), BottomInput.Text.Trim(), RingCode.Renderer);
     }
     void DateModeClick(object sender, RoutedEventArgs e)
     {
@@ -172,9 +166,8 @@ public partial class MainWindow : Window
     {
         if (journal is null) return;
         var records = journal.Read();
-        History.ItemsSource = records.Where(x => x.Entry.Kind == "Generated").Reverse().Select(x =>
+        History.ItemsSource = new VerificationService(journal).ReadGenerations().Reverse().Select(g =>
         {
-            var g = JsonSerializer.Deserialize<Generation>(x.Entry.Payload)!;
             var state = records.Any(r => r.Entry.EventId == g.EventId && r.Entry.Kind == "CopyCompleted") ? "コピー記録あり" : "コピー未完了／不明";
             return new HistoryRow(g.EventId, $"{g.CreatedUtc.ToLocalTime():yyyy/MM/dd HH:mm:ss}  {g.Stamp.Name}  印面 {g.Stamp.DisplayDate:yyyy/MM/dd}  {state}");
         }).ToList();

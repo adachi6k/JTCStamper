@@ -15,7 +15,6 @@
             <MenuItem Header="履歴(_H)">
                 <MenuItem Header="実行ファイルのフォルダーを使用" Click="DefaultHistoryClick"/>
                 <MenuItem Header="保存先を選択…" Click="ChooseHistoryClick"/>
-                <MenuItem Header="旧バージョンの履歴を開く" Click="LegacyHistoryClick"/>
             </MenuItem>
             <MenuItem Header="照合(_V)"><MenuItem Header="画像・原本を照合…" Click="VerifyClick"/></MenuItem>
             <MenuItem Header="ヘルプ(_H)"><MenuItem Header="バージョン情報" Click="AboutClick"/></MenuItem>

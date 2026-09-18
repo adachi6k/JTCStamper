@@ -46,22 +46,31 @@ public sealed class VerificationService(Journal journal)
     public IReadOnlyList<Generation> ReadGenerations() => Generations().Select(x => x.Generation).ToArray();
 
     List<(Generation Generation, SignedEntry Signed)> Generations() => journal.Read()
-        .Where(x => x.Entry.Kind == "Generated").Select(x => (Parse(x.Entry), x.Signed)).ToList();
+        .Where(x => x.Entry.Kind == "Generated" && IsCurrent(x.Entry)).Select(x => (Parse(x.Entry), x.Signed)).ToList();
+
+    static bool IsCurrent(Entry entry)
+    {
+        using var document = JsonDocument.Parse(entry.Payload);
+        return document.RootElement.TryGetProperty("Stamp", out var stamp) &&
+            stamp.TryGetProperty("Renderer", out var renderer) && renderer.GetString() == RingCode.Renderer;
+    }
 
     static Generation Parse(Entry entry)
     {
         if (entry.Version != 1 || entry.Kind != "Generated" || entry.EventId == Guid.Empty)
             throw new InvalidDataException();
+        if (!IsCurrent(entry)) throw new NotSupportedException("対応していない印影形式です。現在の12ビット形式のみ照合できます。");
         var g = JsonSerializer.Deserialize<Generation>(entry.Payload) ?? throw new InvalidDataException();
         if (g.EventId != entry.EventId || g.Stamp is null || g.PngSha256 is null ||
             g.PngSha256.Length != 64 || !g.PngSha256.All(Uri.IsHexDigit)) throw new InvalidDataException();
-        GeometryCode.Validate(g.Stamp);
-        if (g.Stamp.GeometryCode is int code && GeometryCode.EventCode(g.EventId, g.Stamp.Renderer) != code) throw new InvalidDataException("イベントと幾何コードが矛盾しています。");
+        RingCode.Validate(g.Stamp);
+        if (g.Stamp.GeometryCode is int code && RingCode.ForEvent(g.EventId) != code) throw new InvalidDataException("イベントと幾何コードが矛盾しています。");
         return g;
     }
     static VerificationResult Guard(Func<VerificationResult> action)
     {
         try { return action(); }
+        catch (NotSupportedException ex) { return new(VerificationStatus.Indeterminate, ex.Message, []); }
         catch (Exception ex) when (ex is InvalidDataException or IOException or UnauthorizedAccessException or JsonException or ArgumentException or FormatException or CryptographicException)
         {
             return new(VerificationStatus.Indeterminate, "原本または履歴を検証できませんでした。別PC・別の鍵、ファイルの破損、読み取りエラーなどが考えられます。", []);

@@ -25,7 +25,7 @@ public sealed class VerificationWindow : Window
     BitmapSource? source;
     bool[]? mask;
     ImageRegion? selectedRegion;
-    readonly CheckBox codeFilter = new() { Content = "読取コードで絞る（旧履歴は読めた範囲で照合）", IsChecked = true };
+    readonly CheckBox codeFilter = new() { Content = "12ビットの読取コードで絞る", IsChecked = true };
     IReadOnlyList<Generation> history = [];
     readonly List<StampTemplate> templates = [];
     string coverage = "";
@@ -168,31 +168,22 @@ public sealed class VerificationWindow : Window
         {
             var ink = ImageSearch.Normalize(mask, source.PixelWidth, source.PixelHeight, region);
             var crop = new CroppedBitmap(source, new Int32Rect(region.X, region.Y, region.Width, region.Height));
-            var red = GeometryCode.RedStrength(ToPixels(crop), region.Width, region.Height);
+            var red = RingCode.RedStrength(ToPixels(crop), region.Width, region.Height);
             var localBox = new ImageRegion(0, 0, region.Width, region.Height);
-            var readings = await Task.Run(() =>
-            {
-                var angle = GeometryCode.Decode(red, region.Width, region.Height, localBox);
-                var ring = RingCode.Decode(red, region.Width, region.Height, localBox, angle);
-                return (Angle: angle, Ring: ring);
-            });
+            var reading = await Task.Run(() => RingCode.Decode(red, region.Width, region.Height, localBox));
             if (!IsVisible) return;
-            var ringReading = readings.Ring;
-            var reading = ringReading.Code.HasValue ? ringReading : readings.Angle;
             bool filter = codeFilter.IsChecked == true && reading.Code.HasValue;
-            var references = templates.Where(t => !filter || GeometryCode.Compatible(t.Stamp, reading)).ToArray();
+            var references = templates.Where(t => !filter || t.Stamp.GeometryCode == reading.Code).ToArray();
             var ranked = await Task.Run(() => ImageSearch.Rank(ink, references));
             if (!IsVisible) return;
             var rows = ranked.SelectMany(x => history.Where(g => g.Stamp == x.Stamp)
-                .Select(g => new Candidate(g, $"類似度 {x.Score:0.000} ／ " + (g.Stamp.GeometryCode is int code ? $"{GeometryCode.Bits(g.Stamp)}ビット {GeometryCode.Label(code, GeometryCode.Bits(g.Stamp))}" : "旧履歴・コードなし")))).ToArray();
+                .Select(g => new Candidate(g, $"類似度 {x.Score:0.000} ／ " + $"12ビット {RingCode.Label(g.Stamp.GeometryCode!.Value)}"))).ToArray();
             candidates.ItemsSource = rows;
             result.Text = "判定不能（画像の類似候補を検索）\n" + (rows.Length > 0
                 ? $"似た印面の履歴が{rows.Length}件あります。文字と日付を確認してください。画像からイベントIDを復元した結果ではありません。"
                 : "類似候補を見つけられませんでした。未記録・低解像度・色や形の変化などを区別できないため、偽造とは判断できません。") + "\n" + (reading.Code is int decoded
-                    ? $"{reading.Bits}ビット候補：{GeometryCode.Label(decoded, reading.Bits)} ／ 角度差 {reading.DifferenceDegrees:0.00}°。" + (filter ? "コードが異なる履歴を除外しています。" : "コードによる絞り込みは無効です。")
-                    : "幾何コード：判定不能。" + reading.Reason) +
-                (reading.Bits == 12 ? "\n旧2ビット履歴は下位2ビットだけで比較します。" : "") +
-                (reading.Bits == 2 && ringReading is not null ? "\n12ビットは未確定。" + ringReading.Reason + " 2ビットだけの一致では候補が多く残ります。" : "") + "\n" + coverage;
+                    ? $"12ビット候補：{RingCode.Label(decoded)}。" + (filter ? "異なるコードの履歴を除外しています。" : "コードによる絞り込みは無効です。")
+                    : "12ビット：判定不能。" + reading.Reason) + "\n" + coverage;
         }
         catch (Exception ex) { Failed("画像を比較できませんでした：" + ex.Message); }
         finally { SetBusy(false); }

@@ -51,7 +51,7 @@ internal static class SmokeTest
             catch (Exception ex) { checks.Add(new(name, "failed", ex.ToString())); }
         }
         var started = DateTimeOffset.UtcNow;
-        var stamp = new Stamp("JTC", new DateOnly(2100, 1, 1), "(印)", "wpf-v2-short-date");
+        var stamp = new Stamp("JTC", new DateOnly(2100, 1, 1), "(印)", RingCode.Renderer, 0);
         byte[]? png = null;
         try
         {
@@ -140,37 +140,6 @@ internal static class SmokeTest
                 }
             });
 
-            Check("geometry-rendered-decoding-and-controls", () =>
-            {
-                var observations = new List<object>(); int correct = 0, wrong = 0, unreadable = 0, flatClassified = 0, mimicClassified = 0;
-                foreach (string name in new[] { "JTC", "田中" }) foreach (int code in Enumerable.Range(0, 4))
-                foreach (int diameter in new[] { 88, 176 }) foreach (int condition in new[] { 0, 1, 2 })
-                {
-                    var specimen = stamp with { Name = name, Renderer = GeometryCode.Renderer, GeometryCode = code };
-                    var reading = ReadGeometry(specimen, diameter, condition == 2 ? 4 : 0, condition != 0);
-                    if (reading.Code == code) correct++; else if (reading.Code is null) unreadable++; else wrong++;
-                    observations.Add(new { Kind = "encoded", Name = name, Expected = (int?)code, Diameter = diameter, Condition = condition, Reading = reading });
-                }
-                foreach (int condition in new[] { 0, 1, 2 })
-                {
-                    var flat = ReadGeometry(stamp, 88, condition == 2 ? 4 : 0, condition != 0);
-                    if (flat.Code is not null) flatClassified++;
-                    observations.Add(new { Kind = "unencoded-control", Expected = (int?)null, Diameter = 88, Condition = condition, Reading = flat });
-                    // An imitation with the same angles may yield a code. That is not authentication.
-                    var mimic = ReadGeometry(stamp with { Name = "模倣", Renderer = GeometryCode.Renderer, GeometryCode = 2 }, 88, condition == 2 ? 4 : 0, condition != 0);
-                    if (mimic.Code is not null) mimicClassified++;
-                    observations.Add(new { Kind = "imitation-with-angles", Expected = (int?)null, Diameter = 88, Condition = condition, Reading = mimic });
-                }
-                File.WriteAllText(Path.Combine(root, $"geometry-{phase}.json"), JsonSerializer.Serialize(new
-                {
-                    SchemaVersion = 1, EncodedTotal = 48, Correct = correct, WrongCode = wrong, Unreadable = unreadable,
-                    UnencodedControls = 3, UnencodedClassified = flatClassified, ImitationControls = 3, ImitationClassified = mimicClassified,
-                    AuthenticationFalseAcceptanceRate = "NOT EVALUATED: decoding is candidate retrieval, not authentication", Observations = observations
-                }, new JsonSerializerOptions { WriteIndented = true }));
-                Require(correct == 48 && wrong == 0 && unreadable == 0 && flatClassified == 0,
-                    $"Geometry: correct={correct}/48 wrong={wrong} unreadable={unreadable} flatClassified={flatClassified}/3; see geometry report.");
-            });
-
             Check("ring12-rendered-decoding-and-controls", () =>
             {
                 var observations = new List<object>(); int correct = 0, wrong = 0, unreadable = 0, flatClassified = 0, mimicClassified = 0;
@@ -178,16 +147,16 @@ internal static class SmokeTest
                 foreach (int diameter in new[] { 88, 176 }) foreach (int condition in new[] { 0, 1, 2 })
                 {
                     var specimen = stamp with { Name = name, Renderer = RingCode.Renderer, GeometryCode = code };
-                    var reading = ReadGeometry(specimen, diameter, condition == 2 ? 4 : 0, condition != 0, true);
+                    var reading = ReadGeometry(specimen, diameter, condition == 2 ? 4 : 0, condition != 0);
                     if (reading.Code == code) correct++; else if (reading.Code is null) unreadable++; else wrong++;
                     observations.Add(new { Kind = "encoded", Name = name, Expected = (int?)code, Diameter = diameter, Condition = condition, Reading = reading });
                 }
                 foreach (int condition in new[] { 0, 1, 2 })
                 {
-                    var flat = ReadGeometry(stamp, 88, condition == 2 ? 4 : 0, condition != 0, true);
+                    var flat = ReadGeometry(stamp with { GeometryCode = null }, 88, condition == 2 ? 4 : 0, condition != 0);
                     if (flat.Code is not null) flatClassified++;
                     observations.Add(new { Kind = "unencoded-control", Expected = (int?)null, Reading = flat });
-                    var mimic = ReadGeometry(stamp with { Name = "模倣", Renderer = RingCode.Renderer, GeometryCode = 0xABC }, 88, condition == 2 ? 4 : 0, condition != 0, true);
+                    var mimic = ReadGeometry(stamp with { Name = "模倣", Renderer = RingCode.Renderer, GeometryCode = 0xABC }, 88, condition == 2 ? 4 : 0, condition != 0);
                     if (mimic.Code is not null) mimicClassified++;
                     observations.Add(new { Kind = "imitation-with-valid-code", Expected = (int?)null, Reading = mimic });
                 }
@@ -233,7 +202,7 @@ internal static class SmokeTest
                         var records = reopened.Read();
                         Require(records.Count == 4 && records.All(x => x.Entry.EventId == id), "Reopen mismatch.");
                         var generation = JsonSerializer.Deserialize<Generation>(records[0].Entry.Payload)!;
-                        Require(generation.Stamp.GeometryCode == GeometryCode.EventCode(id, generation.Stamp.Renderer), "Geometry code was not preserved in journal.");
+                        Require(generation.Stamp.GeometryCode == RingCode.ForEvent(id), "Geometry code was not preserved in journal.");
                         Require(generation.Stamp.DisplayDate == stamp.DisplayDate &&
                             Math.Abs((DateTimeOffset.UtcNow - generation.CreatedUtc).TotalMinutes) < 5,
                             "Displayed date and creation timestamp were not preserved separately.");
@@ -249,7 +218,7 @@ internal static class SmokeTest
                         using var journal = new Journal(folder, key);
                         Directory.CreateDirectory(Path.Combine(folder, "000000000001.json"));
                         var spy = new FakeClipboard(); bool rejected = false;
-                        try { new CopyService(journal, spy).GenerateAndCopy(stamp, png ?? [1]); }
+                        try { new CopyService(journal, spy).GenerateCodedAndCopy(stamp, _ => png ?? [1]); }
                         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { rejected = true; }
                         Require(rejected && spy.Calls == 0, "Clipboard called despite failed persistence.");
                     }
@@ -335,9 +304,24 @@ internal static class SmokeTest
                         Require(image is not null && image.PixelWidth == 384 && image.PixelHeight == 384, "Bitmap fallback missing.");
     }
 
-    static GeometryReading ReadGeometry(Stamp specimen, int diameter, int angle, bool jpeg, bool twelve = false)
+    static RingReading ReadGeometry(Stamp specimen, int diameter, int angle, bool jpeg)
     {
-        var reference = StampRenderer.Render(specimen);
+        BitmapSource reference;
+        if (specimen.GeometryCode.HasValue) reference = StampRenderer.Render(specimen);
+        else
+        {
+            // Negative test image, not an application rendering format.
+            var control = new DrawingVisual();
+            using (var dc = control.RenderOpen())
+            {
+                var pen = new Pen(new SolidColorBrush(Color.FromRgb(195, 32, 40)), 1.1);
+                dc.DrawEllipse(null, pen, new Point(48, 48), 43, 43);
+                dc.DrawLine(pen, new Point(8, 33), new Point(88, 33));
+                dc.DrawLine(pen, new Point(8, 63), new Point(88, 63));
+            }
+            var image = new RenderTargetBitmap(384, 384, 384, 384, PixelFormats.Pbgra32);
+            image.Render(control); reference = image;
+        }
         double size = diameter * 96.0 / 87.1;
         var visual = new DrawingVisual();
         using (var dc = visual.RenderOpen())
@@ -359,10 +343,9 @@ internal static class SmokeTest
         var converted = new FormatConvertedBitmap(decoded, PixelFormats.Bgra32, null, 0);
         var pixels = new byte[300 * 300 * 4]; converted.CopyPixels(pixels, 300 * 4, 0);
         var regions = ImageSearch.Detect(ImageSearch.RedMask(pixels, 300, 300), 300, 300);
-        if (regions.Count != 1) return new(null, null, null, "Detection failed", twelve ? 12 : 2);
-        var red = GeometryCode.RedStrength(pixels, 300, 300);
-        var angles = GeometryCode.Decode(red, 300, 300, regions[0]);
-        return twelve ? RingCode.Decode(red, 300, 300, regions[0], angles) : angles;
+        if (regions.Count != 1) return new(null, null, "Detection failed");
+        var red = RingCode.RedStrength(pixels, 300, 300);
+        return RingCode.Decode(red, 300, 300, regions[0]);
     }
 
     static Dictionary<string, string> Snapshot(string root)

@@ -22,8 +22,8 @@ try
         using (var journal = new Journal(dir, key))
         {
             var clipboard = new FakeClipboard();
-            first = new CopyService(journal, clipboard).GenerateAndCopy(stamp, [1, 2, 3]);
-            var second = new CopyService(journal, clipboard).GenerateAndCopy(stamp with { DisplayDate = new DateOnly(2100, 1, 1) }, [1, 2, 3]);
+            first = new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
+            var second = new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp with { DisplayDate = new DateOnly(2100, 1, 1) }, _ => [1, 2, 3]);
             Assert(first != second && clipboard.Calls == 2);
             var before = journal.Read()[0].Signed;
             journal.Annotate(first, "用途: 稟議資料（貼付は未確認）");
@@ -44,7 +44,7 @@ try
         var file = Directory.GetFiles(dir, "*.json").Single();
         File.WriteAllText(file, File.ReadAllText(file).Replace("before", "tamper"));
         var clipboard = new FakeClipboard();
-        Throws(() => new CopyService(journal, clipboard).GenerateAndCopy(stamp, [1]));
+        Throws(() => new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, _ => [1]));
         Assert(clipboard.Calls == 0);
     });
     Check("wrong-key-rejected", dir =>
@@ -57,7 +57,7 @@ try
         using var journal = new Journal(dir, key);
         Directory.CreateDirectory(Path.Combine(dir, "000000000001.json"));
         var clipboard = new FakeClipboard();
-        Throws(() => new CopyService(journal, clipboard).GenerateAndCopy(stamp, [1]));
+        Throws(() => new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, _ => [1]));
         Assert(clipboard.Calls == 0 && journal.Read().Count == 0);
     });
     Check("copy-intent-save-failure-blocks-copy", dir =>
@@ -65,14 +65,14 @@ try
         using var journal = new Journal(dir, key);
         Directory.CreateDirectory(Path.Combine(dir, "000000000002.json"));
         var clipboard = new FakeClipboard();
-        Throws(() => new CopyService(journal, clipboard).GenerateAndCopy(stamp, [1]));
+        Throws(() => new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, _ => [1]));
         Assert(clipboard.Calls == 0 && journal.Read().Count == 1);
     });
     Check("clipboard-failure-recorded", dir =>
     {
         using var journal = new Journal(dir, key);
         var clipboard = new FakeClipboard { Action = () => throw new IOException("Clipboard busy") };
-        Throws(() => new CopyService(journal, clipboard).GenerateAndCopy(stamp, [1]));
+        Throws(() => new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, _ => [1]));
         Assert(journal.Read().Last().Entry.Kind == "CopyFailed");
         Assert(!journal.Read().Any(x => x.Entry.Kind == "CopyCompleted"));
     });
@@ -80,13 +80,13 @@ try
     {
         using var journal = new Journal(dir, key);
         var clipboard = new FakeClipboard { Action = () => Directory.CreateDirectory(Path.Combine(dir, "000000000003.json")) };
-        Throws(() => new CopyService(journal, clipboard).GenerateAndCopy(stamp, [1]));
+        Throws(() => new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, _ => [1]));
         Assert(clipboard.Calls == 1 && journal.Read().Last().Entry.Kind == "CopyRequested");
     });
     Check("middle-deletion-detected", dir =>
     {
         using var journal = new Journal(dir, key);
-        new CopyService(journal, new FakeClipboard()).GenerateAndCopy(stamp, [1]);
+        new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, _ => [1]);
         File.Delete(Path.Combine(dir, "000000000002.json")); Throws(() => journal.Read());
     });
     Check("interrupted-temp-ignored", dir =>
@@ -94,7 +94,7 @@ try
         using var journal = new Journal(dir, key);
         File.WriteAllText(Path.Combine(dir, "crash.tmp"), "partial data");
         Assert(journal.Read().Count == 0);
-        new CopyService(journal, new FakeClipboard()).GenerateAndCopy(stamp, [1]);
+        new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, _ => [1]);
         Assert(journal.Read().Count == 3);
     });
     Check("stamp-settings-roundtrip-and-validation", dir =>
@@ -129,8 +129,8 @@ try
     {
         using var journal = new Journal(dir, key);
         var service = new CopyService(journal, new FakeClipboard());
-        var first = service.GenerateAndCopy(stamp, [1, 2, 3]);
-        var second = service.GenerateAndCopy(stamp, [1, 2, 3]);
+        var first = service.GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
+        var second = service.GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
         var before = journal.Read().ToArray();
         var verify = new VerificationService(journal);
         var result = verify.Image([1, 2, 3]);
@@ -213,38 +213,14 @@ try
         var before = journal.Read().ToArray();
         Throws(() => new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, _ => throw new InvalidOperationException("Render failed")));
         Assert(before.SequenceEqual(journal.Read()) && clipboard.Calls == 1);
-        Throws(() => new CopyService(journal, clipboard).GenerateAndCopy(generation.Stamp, [4]));
-        Throws(() => GeometryCode.Validate(stamp with { GeometryCode = 4, Renderer = GeometryCode.Renderer }));
-        Throws(() => GeometryCode.Validate(stamp with { GeometryCode = 0 }));
-        var oldJson = "{\"Name\":\"old\",\"DisplayDate\":\"2000-01-01\",\"Bottom\":\"old\",\"Renderer\":\"wpf-v2-short-date\"}";
-        Assert(JsonSerializer.Deserialize<Stamp>(oldJson)!.GeometryCode is null);
+        Throws(() => RingCode.Validate(stamp with { GeometryCode = 4096 }));
+        Throws(() => RingCode.Validate(stamp));
+        Throws(() => RingCode.Validate(stamp with { Renderer = "unsupported", GeometryCode = 0 }));
         Directory.CreateDirectory(Path.Combine(dir, "000000000004.json"));
         Throws(() => new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, _ => [4, 5, 6]));
         Assert(clipboard.Calls == 1 && before.SequenceEqual(journal.Read()));
     });
-    Check("geometry-decode-synthetic-symbols-and-reject-flat", dir =>
-    {
-        int correct = 0;
-        foreach (int size in new[] { 66, 88, 176 }) foreach (double rotation in new[] { -4.0, 0, 4.0 })
-        foreach (int code in Enumerable.Range(0, 4))
-        {
-            var red = GeometryFixture(size, GeometryCode.Difference(code), rotation);
-            var reading = GeometryCode.Decode(red, size, size, new(0, 0, size, size));
-            if (reading.Code != code) throw new Exception($"geometry size={size} rotation={rotation} expected={code} actual={reading.Code} delta={reading.DifferenceDegrees} {reading.Reason}");
-            correct++;
-        }
-        Console.WriteLine($"  synthetic decoding {correct}/36 (not real-image accuracy)");
-        foreach (double rotation in new[] { -4.0, 0, 4.0 })
-        {
-            var flat = GeometryFixture(88, 0, rotation);
-            Assert(GeometryCode.Decode(flat, 88, 88, new(0, 0, 88, 88)).Code is null);
-        }
-        foreach (double boundary in new[] { -6.0, -2, 0, 2, 6 })
-            Assert(GeometryCode.Decode(GeometryFixture(88, boundary, 0), 88, 88, new(0, 0, 88, 88)).Code is null);
-        Assert(GeometryCode.Decode(new float[88 * 88], 88, 88, new(0, 0, 88, 88)).Code is null);
-        Assert(GeometryCode.Decode(GeometryFixture(44, 3, 0), 44, 44, new(0, 0, 44, 44)).Code is null);
-    });
-    Check("ring12-all-values-crc-and-version-compatibility", dir =>
+    Check("ring12-all-values-crc-and-validation", dir =>
     {
         foreach (int code in Enumerable.Range(0, 4096))
         {
@@ -255,30 +231,22 @@ try
                 cells[i] = !cells[i]; Assert(RingCode.ReadCells(cells) is null); cells[i] = !cells[i];
             }
         }
-        foreach (var id in Enumerable.Range(0, 100).Select(_ => Guid.NewGuid()))
-            Assert((RingCode.ForEvent(id) & 3) == GeometryCode.ForEvent(id));
-        var modern = stamp with { Renderer = RingCode.Renderer, GeometryCode = 0xABC };
-        var old = stamp with { Renderer = GeometryCode.Renderer, GeometryCode = 0 };
-        GeometryCode.Validate(modern); GeometryCode.Validate(old);
-        Assert(GeometryCode.Compatible(modern, new(0, null, null, "", 2)));
-        Assert(!GeometryCode.Compatible(modern, new(1, null, null, "", 2)));
-        Assert(GeometryCode.Compatible(old, new(0xABC, null, null, "", 12)));
-        Assert(!GeometryCode.Compatible(modern, new(0xBBC, null, null, "", 12)));
-        Assert(GeometryCode.Compatible(stamp, new(0xABC, null, null, "", 12)));
+        RingCode.Validate(stamp with { GeometryCode = 0xABC });
         Throws(() => RingCode.Encode(4096));
-        Throws(() => GeometryCode.Validate(modern with { GeometryCode = 4096 }));
+        Throws(() => RingCode.Validate(stamp with { GeometryCode = 4096 }));
     });
-    Check("ring12-and-legacy-signed-history-coexist", dir =>
+    Check("unsupported-record-does-not-block-current-history", dir =>
     {
         using var journal = new Journal(dir, key);
         var oldId = Guid.NewGuid();
-        var oldStamp = stamp with { Renderer = GeometryCode.Renderer, GeometryCode = GeometryCode.ForEvent(oldId) };
+        var oldStamp = stamp with { Renderer = "unsupported", GeometryCode = 0 };
         var original = journal.Append("Generated", oldId, new Generation(oldId, DateTimeOffset.UtcNow, oldStamp, new string('A', 64)));
         var currentId = new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, _ => [8, 9]);
         var verify = new VerificationService(journal);
-        Assert(verify.Original(JsonSerializer.Serialize(original)).Matches.Single().EventId == oldId);
+        Assert(verify.Original(JsonSerializer.Serialize(original)).Status == VerificationStatus.Indeterminate);
+        Assert(verify.Image([8, 9]).Matches.Single().EventId == currentId);
         var all = verify.ReadGenerations();
-        Assert(all.Count == 2 && all.Single(x => x.EventId == currentId).Stamp.Renderer == RingCode.Renderer);
+        Assert(all.Count == 1 && all.Single(x => x.EventId == currentId).Stamp.Renderer == RingCode.Renderer);
         Assert(journal.Read()[0].Signed == original);
     });
     Check("ring12-raster-size-rotation-and-controls", dir =>
@@ -289,27 +257,25 @@ try
         {
             var red = RingFixture(size, code, rotation);
             var box = new ImageRegion(0, 0, size, size);
-            var angles = GeometryCode.Decode(red, size, size, box);
-            var reading = RingCode.Decode(red, size, size, box, angles);
+            var reading = RingCode.Decode(red, size, size, box);
             if (reading.Code != code) throw new Exception($"ring12 size={size} rotation={rotation} expected={code} actual={reading.Code} {reading.Reason}");
             correct++;
         }
         Console.WriteLine($"  synthetic ring decoding {correct}/36 (not real-image accuracy)");
-        var unknown = new GeometryReading(null, null, null, "");
         foreach (int code in Enumerable.Range(0, 4))
         {
-            var old = GeometryFixture(88, GeometryCode.Difference(code), 0);
-            Assert(RingCode.Decode(old, 88, 88, new(0, 0, 88, 88), unknown).Code is null);
+            var old = SeparatorFixture(88, RingCode.SeparatorDifference(code), 0);
+            Assert(RingCode.Decode(old, 88, 88, new(0, 0, 88, 88)).Code is null);
         }
-        Assert(RingCode.Decode(new float[88 * 88], 88, 88, new(0, 0, 88, 88), unknown).Code is null);
-        Assert(RingCode.Decode(RingFixture(66, 0, 0), 66, 66, new(0, 0, 66, 66), unknown).Code is null);
+        Assert(RingCode.Decode(new float[88 * 88], 88, 88, new(0, 0, 88, 88)).Code is null);
+        Assert(RingCode.Decode(RingFixture(66, 0, 0), 66, 66, new(0, 0, 66, 66)).Code is null);
     });
     Console.WriteLine($"{passed} checks passed.");
 }
 finally { Directory.Delete(root, true); CryptographicOperations.ZeroMemory(key); }
 static float[] RingFixture(int size, int code, double rotation)
 {
-    var red = GeometryFixture(size, GeometryCode.Difference(code & 3), rotation);
+    var red = SeparatorFixture(size, RingCode.SeparatorDifference(code), rotation);
     var cells = RingCode.Encode(code);
     var axes = Enumerable.Range(0, RingCode.CellCount).Where(i => cells[i]).Select(i =>
     {
@@ -338,7 +304,7 @@ static float[] RingFixture(int size, int code, double rotation)
     return red;
 }
 // Area sampled analytic separators; tests line extraction independently of WPF/fonts.
-static float[] GeometryFixture(int size, double difference, double rotation)
+static float[] SeparatorFixture(int size, double difference, double rotation)
 {
     var red = new float[size * size];
     double a = rotation * Math.PI / 180, cosine = Math.Cos(a), sine = Math.Sin(a);
