@@ -125,6 +125,34 @@ try
         selection.UseToday();
         Assert(!selection.IsSpecified && selection.Resolve() == today);
     });
+    Check("verification-exact-duplicates-original-and-readonly", dir =>
+    {
+        using var journal = new Journal(dir, key);
+        var service = new CopyService(journal, new FakeClipboard());
+        var first = service.GenerateAndCopy(stamp, [1, 2, 3]);
+        var second = service.GenerateAndCopy(stamp, [1, 2, 3]);
+        var before = journal.Read().ToArray();
+        var verify = new VerificationService(journal);
+        var result = verify.Image([1, 2, 3]);
+        Assert(result.Status == VerificationStatus.Match && result.Matches.Count == 2);
+        Assert(result.Matches.Select(x => x.EventId).ToHashSet().SetEquals([first, second]));
+        Assert(verify.Image([1, 2, 4]).Status == VerificationStatus.NoRecord);
+        var original = JsonSerializer.Serialize(before[0].Signed);
+        Assert(verify.Original(original).Matches.Single().EventId == first);
+        Assert(verify.Original("{}").Status == VerificationStatus.Indeterminate);
+        Assert(verify.Original("not JSON").Status == VerificationStatus.Indeterminate);
+        Assert(verify.Original(JsonSerializer.Serialize(before[1].Signed)).Status == VerificationStatus.Indeterminate);
+        Assert(before.SequenceEqual(journal.Read()));
+        using var other = new Journal(Path.Combine(dir, "other"), key);
+        Assert(new VerificationService(other).Original(original).Status == VerificationStatus.NoRecord);
+        using var wrongKey = new Journal(Path.Combine(dir, "wrong"), RandomNumberGenerator.GetBytes(32));
+        Assert(new VerificationService(wrongKey).Original(original).Status == VerificationStatus.Indeterminate);
+        var damaged = before[0].Signed with { Mac = new string('0', 64) };
+        Assert(verify.Original(JsonSerializer.Serialize(damaged)).Status == VerificationStatus.Indeterminate);
+        File.WriteAllText(Path.Combine(dir, "000000000001.json"), JsonSerializer.Serialize(damaged));
+        Assert(verify.Image([1, 2, 3]).Status == VerificationStatus.Indeterminate);
+        Assert(verify.Original(original).Status == VerificationStatus.Indeterminate);
+    });
     Console.WriteLine($"{passed} checks passed.");
 }
 finally { Directory.Delete(root, true); CryptographicOperations.ZeroMemory(key); }

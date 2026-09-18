@@ -1,0 +1,66 @@
+using System.Security.Cryptography;
+using System.Text.Json;
+
+namespace JTCStamper.Core;
+
+public enum VerificationStatus { Match, NoRecord, Indeterminate }
+public sealed record VerificationResult(VerificationStatus Status, string Explanation, IReadOnlyList<Generation> Matches)
+{
+    public string Label => Status switch
+    {
+        VerificationStatus.Match => "一致する生成履歴あり",
+        VerificationStatus.NoRecord => "一致記録なし",
+        _ => "判定不能"
+    };
+}
+
+// Read-only exact matching. An image match never identifies a unique event by itself.
+public sealed class VerificationService(Journal journal)
+{
+    public VerificationResult Image(byte[] bytes) => Guard(() =>
+    {
+        var history = Generations();
+        var hash = Convert.ToHexString(SHA256.HashData(bytes));
+        var matches = history.Where(x => x.Generation.PngSha256.Equals(hash, StringComparison.OrdinalIgnoreCase))
+            .Select(x => x.Generation).ToArray();
+        return new(matches.Length > 0 ? VerificationStatus.Match : VerificationStatus.NoRecord,
+            matches.Length > 0 ? "保存されたPNGとファイル全体が完全一致しました。同じ印影の履歴が複数ある場合、画像からイベントを特定できません。"
+            : "この保存先にファイル全体が完全一致するPNGの記録はありません。加工・再保存された画像や別の保存先の履歴は、この方法では照合できません。偽造を意味しません。", matches);
+    });
+
+    public VerificationResult Original(string json) => Guard(() =>
+    {
+        if (json.Length > 1024 * 1024) throw new InvalidDataException();
+        var signed = JsonSerializer.Deserialize<SignedEntry>(json) ?? throw new InvalidDataException();
+        var entry = journal.Verify(signed);
+        var generation = Parse(entry);
+        var history = Generations();
+        var sameId = history.Where(x => x.Generation.EventId == generation.EventId).ToArray();
+        if (sameId.Length == 0)
+            return new(VerificationStatus.NoRecord, "原本の認証情報は検証できましたが、この保存先には該当イベントの生成記録がありません。偽造を意味しません。", []);
+        if (sameId.Length != 1 || sameId[0].Signed.EntryJson != signed.EntryJson)
+            return new(VerificationStatus.Indeterminate, "同じイベントIDの記録と原本の内容が矛盾しています。", []);
+        return new(VerificationStatus.Match, "原本の認証情報・イベントID・生成記録の内容が一致しました。貼付完了や画像の利用者を証明するものではありません。", [generation]);
+    });
+
+    List<(Generation Generation, SignedEntry Signed)> Generations() => journal.Read()
+        .Where(x => x.Entry.Kind == "Generated").Select(x => (Parse(x.Entry), x.Signed)).ToList();
+
+    static Generation Parse(Entry entry)
+    {
+        if (entry.Version != 1 || entry.Kind != "Generated" || entry.EventId == Guid.Empty)
+            throw new InvalidDataException();
+        var g = JsonSerializer.Deserialize<Generation>(entry.Payload) ?? throw new InvalidDataException();
+        if (g.EventId != entry.EventId || g.Stamp is null || g.PngSha256 is null ||
+            g.PngSha256.Length != 64 || !g.PngSha256.All(Uri.IsHexDigit)) throw new InvalidDataException();
+        return g;
+    }
+    static VerificationResult Guard(Func<VerificationResult> action)
+    {
+        try { return action(); }
+        catch (Exception ex) when (ex is InvalidDataException or IOException or UnauthorizedAccessException or JsonException or ArgumentException or FormatException or CryptographicException)
+        {
+            return new(VerificationStatus.Indeterminate, "原本または履歴を検証できませんでした。別PC・別の鍵、ファイルの破損、読み取りエラーなどが考えられます。", []);
+        }
+    }
+}

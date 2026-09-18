@@ -10,6 +10,15 @@ using Microsoft.Win32;
 namespace JTCStamper.App;
 public partial class MainWindow : Window
 {
+    void VerifyClick(object sender, RoutedEventArgs e)
+    {
+        if (journal is null) { Status.Text = "照合する履歴の保存先を開いてください。"; return; }
+        var window = new VerificationWindow(journal, storageRoot) { Owner = this };
+        if (window.ShowDialog() == true && window.SelectedEventId is Guid id)
+        {
+            try { RefreshHistory(id); } catch (Exception ex) { Status.Text = ex.Message; }
+        }
+    }
     Journal? journal;
     bool ready;
     readonly StampDateSelection dateSelection = new();
