@@ -1,0 +1,3101 @@
+{
+  "Source": "Independent Pillow synthetic RGB; NOT WPF/Office",
+  "AuthenticationFalseAcceptanceRate": "NOT EVALUATED",
+  "Summary": [
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "white",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 108,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "white",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 108,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "white",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 108,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "white",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 11,
+        "Wrong": 0,
+        "Unreadable": 97,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "yellow",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "yellow",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "yellow",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "yellow",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 8,
+        "Wrong": 0,
+        "Unreadable": 10,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "blue",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "blue",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "blue",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "blue",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 2,
+        "Wrong": 0,
+        "Unreadable": 16,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "gray",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "gray",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "gray",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "gray",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 1,
+        "Wrong": 1,
+        "Unreadable": 16,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "black-text",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "black-text",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "black-text",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "black-text",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 2,
+        "Wrong": 0,
+        "Unreadable": 16,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "red-text",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "red-text",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "red-text",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "red",
+        "Background": "red-text",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "white",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 108,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "white",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 108,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "white",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 108,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "white",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 1,
+        "Wrong": 0,
+        "Unreadable": 107,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "yellow",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "yellow",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "yellow",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "yellow",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 3,
+        "Wrong": 0,
+        "Unreadable": 15,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "blue",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "blue",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "blue",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "blue",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 7,
+        "Wrong": 0,
+        "Unreadable": 11,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "gray",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "gray",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "gray",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "gray",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "black-text",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "black-text",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "black-text",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "black-text",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 1,
+        "Wrong": 0,
+        "Unreadable": 17,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "red-text",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "red-text",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "red-text",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "ring12",
+        "Palette": "vermilion",
+        "Background": "red-text",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "white",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 108,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "white",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 108,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "white",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 108,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "white",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 7,
+        "Wrong": 0,
+        "Unreadable": 101,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "yellow",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "yellow",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "yellow",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "yellow",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 8,
+        "Wrong": 0,
+        "Unreadable": 10,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "blue",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "blue",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "blue",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "blue",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 5,
+        "Wrong": 0,
+        "Unreadable": 13,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "gray",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "gray",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "gray",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "gray",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 1,
+        "Wrong": 0,
+        "Unreadable": 17,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "black-text",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "black-text",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "black-text",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "black-text",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "red-text",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "red-text",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "red-text",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "red",
+        "Background": "red-text",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "white",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 108,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "white",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 108,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "white",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 108,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "white",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 6,
+        "Wrong": 0,
+        "Unreadable": 102,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "yellow",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "yellow",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "yellow",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "yellow",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 4,
+        "Wrong": 0,
+        "Unreadable": 14,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "blue",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "blue",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "blue",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "blue",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 5,
+        "Wrong": 0,
+        "Unreadable": 13,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "gray",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "gray",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "gray",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "gray",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "black-text",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "black-text",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "black-text",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "black-text",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 1,
+        "Wrong": 0,
+        "Unreadable": 17,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "red-text",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "red-text",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "red-text",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split12",
+        "Palette": "vermilion",
+        "Background": "red-text",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "white",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 108,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "white",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 108,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "white",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 108,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "white",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 2,
+        "Wrong": 0,
+        "Unreadable": 106,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "yellow",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "yellow",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "yellow",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "yellow",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 4,
+        "Wrong": 0,
+        "Unreadable": 14,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "blue",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "blue",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "blue",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "blue",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 1,
+        "Wrong": 0,
+        "Unreadable": 17,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "gray",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "gray",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "gray",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "gray",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 1,
+        "Wrong": 0,
+        "Unreadable": 17,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "black-text",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "black-text",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "black-text",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "black-text",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 1,
+        "Wrong": 0,
+        "Unreadable": 17,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "red-text",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "red-text",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "red-text",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "red",
+        "Background": "red-text",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "white",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 108,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "white",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 108,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "white",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 108,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "white",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 4,
+        "Wrong": 0,
+        "Unreadable": 104,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "yellow",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "yellow",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "yellow",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "yellow",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 3,
+        "Wrong": 0,
+        "Unreadable": 15,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "blue",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "blue",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "blue",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "blue",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 2,
+        "Wrong": 0,
+        "Unreadable": 16,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "gray",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "gray",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "gray",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "gray",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 1,
+        "Wrong": 0,
+        "Unreadable": 17,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "black-text",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "black-text",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "black-text",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "black-text",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 1,
+        "Wrong": 0,
+        "Unreadable": 17,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "red-text",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "red-text",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "red-text",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "split16",
+        "Palette": "vermilion",
+        "Background": "red-text",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "white",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 108,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "white",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 23,
+        "Wrong": 0,
+        "Unreadable": 85,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "white",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 108,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "white",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 108,
+        "Correct": 84,
+        "Wrong": 0,
+        "Unreadable": 24,
+        "Controls": 18,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "yellow",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 15,
+        "Wrong": 0,
+        "Unreadable": 3,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "yellow",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 2,
+        "Wrong": 0,
+        "Unreadable": 16,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "yellow",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "yellow",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 13,
+        "Wrong": 0,
+        "Unreadable": 5,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "blue",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "blue",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "blue",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "blue",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 12,
+        "Wrong": 0,
+        "Unreadable": 6,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "gray",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "gray",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "gray",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "gray",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 15,
+        "Wrong": 0,
+        "Unreadable": 3,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "black-text",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "black-text",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "black-text",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 18,
+        "Wrong": 0,
+        "Unreadable": 0,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "black-text",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 15,
+        "Wrong": 0,
+        "Unreadable": 3,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "red-text",
+        "Diameter": 88,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "red-text",
+        "Diameter": 88,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "red-text",
+        "Diameter": 176,
+        "Jpeg": false
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Key": {
+        "Mode": "hybrid16",
+        "Palette": "red",
+        "Background": "red-text",
+        "Diameter": 176,
+        "Jpeg": true
+      },
+      "Counts": {
+        "Encoded": 18,
+        "Correct": 0,
+        "Wrong": 0,
+        "Unreadable": 18,
+        "Controls": 3,
+        "ControlClassified": 0
+      }
+    }
+  ],
+  "TotalsByProfile": [
+    {
+      "Mode": "ring12",
+      "Palette": "red",
+      "Counts": {
+        "Encoded": 792,
+        "Correct": 384,
+        "Wrong": 1,
+        "Unreadable": 407,
+        "Controls": 132,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Mode": "ring12",
+      "Palette": "vermilion",
+      "Counts": {
+        "Encoded": 792,
+        "Correct": 372,
+        "Wrong": 0,
+        "Unreadable": 420,
+        "Controls": 132,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Mode": "split12",
+      "Palette": "red",
+      "Counts": {
+        "Encoded": 792,
+        "Correct": 381,
+        "Wrong": 0,
+        "Unreadable": 411,
+        "Controls": 132,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Mode": "split12",
+      "Palette": "vermilion",
+      "Counts": {
+        "Encoded": 792,
+        "Correct": 376,
+        "Wrong": 0,
+        "Unreadable": 416,
+        "Controls": 132,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Mode": "split16",
+      "Palette": "red",
+      "Counts": {
+        "Encoded": 792,
+        "Correct": 369,
+        "Wrong": 0,
+        "Unreadable": 423,
+        "Controls": 132,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Mode": "split16",
+      "Palette": "vermilion",
+      "Counts": {
+        "Encoded": 792,
+        "Correct": 371,
+        "Wrong": 0,
+        "Unreadable": 421,
+        "Controls": 132,
+        "ControlClassified": 0
+      }
+    },
+    {
+      "Mode": "hybrid16",
+      "Palette": "red",
+      "Counts": {
+        "Encoded": 792,
+        "Correct": 521,
+        "Wrong": 0,
+        "Unreadable": 271,
+        "Controls": 132,
+        "ControlClassified": 0
+      }
+    }
+  ],
+  "CodecChecks": {
+    "Values": 139264,
+    "SingleBitCorruptionsRejected": 4423680
+  },
+  "SourceSha256": {
+    "scripts/Generate-ColorLineFixtures.py": "9243fd02d8c6ca3d5073b185def7e487378532889e30629b183b5b6417c27617",
+    "tests/JTCStamper.ColorLineEvaluation/ColorLineCodec.cs": "fb067b6015e7cc64ed0852829f952213c81c1e230326a1a4676df8049342ad35",
+    "tests/JTCStamper.ColorLineEvaluation/Program.cs": "a1caae1c616db38c76c886f91f18e54cfa21328f333ce631e226bc9aa704609d",
+    "src/JTCStamper.Core/ImageSearch.cs": "8874ea043c74a45a7247585cc63c8402eb9f51b959bf357d005e243915e50371"
+  },
+  "DatasetNotes": "Development: six payloads per mode, correlated transformations. Holdout: 32 seeded payloads not in development set, same raster pipeline, white background only. No WPF/Office/authentication validation. Decoder receives mode, not palette or expected payload.",
+  "Holdout": {
+    "Source": "Independent Pillow synthetic RGB; NOT WPF/Office",
+    "AuthenticationFalseAcceptanceRate": "NOT EVALUATED",
+    "Summary": [
+      {
+        "Key": {
+          "Mode": "split16",
+          "Palette": "red",
+          "Background": "white",
+          "Diameter": 88,
+          "Jpeg": false
+        },
+        "Counts": {
+          "Encoded": 32,
+          "Correct": 32,
+          "Wrong": 0,
+          "Unreadable": 0,
+          "Controls": 0,
+          "ControlClassified": 0
+        }
+      },
+      {
+        "Key": {
+          "Mode": "split16",
+          "Palette": "red",
+          "Background": "white",
+          "Diameter": 88,
+          "Jpeg": true
+        },
+        "Counts": {
+          "Encoded": 32,
+          "Correct": 0,
+          "Wrong": 0,
+          "Unreadable": 32,
+          "Controls": 0,
+          "ControlClassified": 0
+        }
+      },
+      {
+        "Key": {
+          "Mode": "split16",
+          "Palette": "red",
+          "Background": "white",
+          "Diameter": 176,
+          "Jpeg": false
+        },
+        "Counts": {
+          "Encoded": 32,
+          "Correct": 32,
+          "Wrong": 0,
+          "Unreadable": 0,
+          "Controls": 0,
+          "ControlClassified": 0
+        }
+      },
+      {
+        "Key": {
+          "Mode": "split16",
+          "Palette": "red",
+          "Background": "white",
+          "Diameter": 176,
+          "Jpeg": true
+        },
+        "Counts": {
+          "Encoded": 32,
+          "Correct": 1,
+          "Wrong": 0,
+          "Unreadable": 31,
+          "Controls": 0,
+          "ControlClassified": 0
+        }
+      },
+      {
+        "Key": {
+          "Mode": "hybrid16",
+          "Palette": "red",
+          "Background": "white",
+          "Diameter": 88,
+          "Jpeg": false
+        },
+        "Counts": {
+          "Encoded": 32,
+          "Correct": 32,
+          "Wrong": 0,
+          "Unreadable": 0,
+          "Controls": 0,
+          "ControlClassified": 0
+        }
+      },
+      {
+        "Key": {
+          "Mode": "hybrid16",
+          "Palette": "red",
+          "Background": "white",
+          "Diameter": 88,
+          "Jpeg": true
+        },
+        "Counts": {
+          "Encoded": 32,
+          "Correct": 2,
+          "Wrong": 0,
+          "Unreadable": 30,
+          "Controls": 0,
+          "ControlClassified": 0
+        }
+      },
+      {
+        "Key": {
+          "Mode": "hybrid16",
+          "Palette": "red",
+          "Background": "white",
+          "Diameter": 176,
+          "Jpeg": false
+        },
+        "Counts": {
+          "Encoded": 32,
+          "Correct": 32,
+          "Wrong": 0,
+          "Unreadable": 0,
+          "Controls": 0,
+          "ControlClassified": 0
+        }
+      },
+      {
+        "Key": {
+          "Mode": "hybrid16",
+          "Palette": "red",
+          "Background": "white",
+          "Diameter": 176,
+          "Jpeg": true
+        },
+        "Counts": {
+          "Encoded": 32,
+          "Correct": 27,
+          "Wrong": 0,
+          "Unreadable": 5,
+          "Controls": 0,
+          "ControlClassified": 0
+        }
+      }
+    ]
+  }
+}
