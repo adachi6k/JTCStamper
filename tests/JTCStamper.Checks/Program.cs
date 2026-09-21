@@ -153,6 +153,55 @@ try
         Assert(verify.Image([1, 2, 3]).Status == VerificationStatus.Indeterminate);
         Assert(verify.Original(original).Status == VerificationStatus.Indeterminate);
     });
+    Check("verification-message-candidates-are-not-exact-matches", dir =>
+    {
+        var message = VerificationMessages.Image(new(0x22F, 1, 1, 1, 9, true));
+        Assert(message.Kind == VerificationMessageKind.Candidate);
+        Assert(message.Title == "対応する生成履歴候補あり" && !message.Title.Contains("判定不能"));
+        Assert(message.Findings.Contains("1件") && message.Meaning.Contains("確定していません"));
+        Assert(VerificationMessages.ShapeEvidence(0x22F, 0x22F, 1).StartsWith("コード一致"));
+        Assert(VerificationMessages.ShapeEvidence(0x22F, 0, 1).StartsWith("コード不一致"));
+        Assert(VerificationMessages.ShapeEvidence(null, 0, 1).StartsWith("コード未読取"));
+        Assert(VerificationMessages.ScoreHelp.Contains("確率ではありません") && VerificationMessages.ScoreHelp.Contains("完全一致"));
+        Throws(() => VerificationMessages.ShapeEvidence(0, 0, double.NaN));
+    });
+    Check("verification-message-filter-off-and-unread-code", dir =>
+    {
+        var mixed = VerificationMessages.Image(new(1, 3, 1, 1, 9, false));
+        Assert(mixed.Kind == VerificationMessageKind.Candidate && mixed.Findings.Contains("異なる") && mixed.Findings.Contains("2件"));
+        var different = VerificationMessages.Image(new(1, 2, 0, 0, 9, false));
+        Assert(different.Title == "形が似た履歴候補あり" && different.Findings.Contains("一致していません"));
+        var unread = VerificationMessages.Image(new(null, 2, 0, 0, 9, true));
+        Assert(unread.Kind == VerificationMessageKind.Candidate && unread.Findings.Contains("読み取れませんでした"));
+        var noEvidence = VerificationMessages.Image(new(null, 0, 0, 0, 9, true));
+        Assert(noEvidence.Kind == VerificationMessageKind.Unavailable && noEvidence.Title == "照合の手がかりが不足しています");
+        Throws(() => VerificationMessages.Image(new(1, 3, 1, 1, 9, true)));
+        Throws(() => VerificationMessages.Image(new(null, 1, 1, 1, 9, false)));
+    });
+    Check("verification-message-no-history-versus-no-candidate", dir =>
+    {
+        Assert(VerificationMessages.Image(new(1, 0, 0, 1, 0, true)).Kind == VerificationMessageKind.Unavailable);
+        var none = VerificationMessages.Image(new(1, 0, 0, 0, 9, true));
+        Assert(none.Kind == VerificationMessageKind.NoCandidate && none.Findings.Contains("同じコードはありません"));
+        var codeOnly = VerificationMessages.Image(new(1, 0, 0, 3, 9, true));
+        Assert(codeOnly.Kind == VerificationMessageKind.NoCandidate && codeOnly.Findings.Contains("3件") && codeOnly.Findings.Contains("比較対象外"));
+        Assert(codeOnly.Meaning.Contains("偽造とは判断できません"));
+    });
+    Check("verification-message-exact-and-integrity-failure", dir =>
+    {
+        using var journal = new Journal(dir, key);
+        var copy = new CopyService(journal, new FakeClipboard());
+        copy.GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
+        copy.GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
+        var service = new VerificationService(journal);
+        var exact = VerificationMessages.Exact(service.Image([1, 2, 3]), false);
+        Assert(exact.Kind == VerificationMessageKind.Exact && exact.Findings.Contains("2件") && exact.Meaning.Contains("複数"));
+        var original = VerificationMessages.Exact(service.Original(JsonSerializer.Serialize(journal.Read()[0].Signed)), true);
+        Assert(original.Kind == VerificationMessageKind.Exact && original.Findings.Contains("認証情報"));
+        var failed = VerificationMessages.Exact(service.Original("{}"), true);
+        Assert(failed.Kind == VerificationMessageKind.Unavailable && failed.Meaning.Contains("判断していません"));
+        Assert(VerificationMessages.Exact(new(VerificationStatus.Match, "invalid", []), false).Kind == VerificationMessageKind.Unavailable);
+    });
     Check("image-search-document-two-stamps-and-red-rectangle", dir =>
     {
         const int w = 640, h = 480;
