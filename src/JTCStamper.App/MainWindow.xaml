@@ -26,9 +26,10 @@
             <TabItem x:Name="CreateTab" Header="作成">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <Grid Margin="16">
+                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                         <Grid.ColumnDefinitions><ColumnDefinition Width="320"/><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                 <GroupBox Header="印影" VerticalAlignment="Top">
-                    <Border Background="White" Padding="12"><Image x:Name="Preview" Height="280" Stretch="Uniform"/></Border>
+                    <Border Background="White" Padding="12"><Image x:Name="Preview" Height="260" Stretch="Uniform"/></Border>
                 </GroupBox>
             <StackPanel Grid.Column="2" MaxWidth="360" HorizontalAlignment="Stretch">
                 <TextBlock Text="氏名"/><TextBox x:Name="NameInput" Text="JTC" MaxLength="16" TextChanged="InputsChanged"/>
@@ -44,6 +45,32 @@
                 <Button x:Name="CopyButton" Content="生成して PNG コピー" Click="CopyClick"/>
                 <TextBlock Text="円周の短い欠けは生成時に決まります。" TextWrapping="Wrap" Foreground="DimGray"/>
             </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,18,0,0">
+                            <DockPanel LastChildFill="True">
+                                <Button x:Name="AllHistoryButton" DockPanel.Dock="Right" Content="すべての履歴を見る" Click="ShowHistoryClick" Margin="0,0,0,6"/>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock x:Name="RecentHistoryHeading" Text="直近の生成履歴" FontWeight="SemiBold"/>
+                                    <TextBlock Text="新しく生成した順。行を選ぶと詳細・注釈を開きます。" Foreground="DimGray" FontSize="12"/>
+                                </StackPanel>
+                            </DockPanel>
+                            <TextBlock x:Name="RecentHistoryMessage" Text="履歴を読み込んでいます。" Margin="0,8" TextWrapping="Wrap"/>
+                            <ItemsControl x:Name="RecentHistory">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Tag="{Binding Id}" Click="RecentHistoryClick" HorizontalContentAlignment="Stretch"
+                                                Padding="8,6" Margin="0,2,0,0" ToolTip="{Binding Label}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="*"/><ColumnDefinition Width="160"/></Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding GeneratedLabel}" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding StampLabel}" TextTrimming="CharacterEllipsis" Margin="8,0" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding CopyState}" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock Text="生成・コピーの記録です。貼付完了を示すものではありません。" Foreground="DimGray" FontSize="12" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                        </StackPanel>
                     </Grid>
                 </ScrollViewer>
             </TabItem>

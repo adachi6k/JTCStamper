@@ -1,7 +1,7 @@
 {
   "file": "JTCStamper.App.exe",
-  "bytes": 2010201,
-  "sha256": "1abce710e2d85b5b80c3a0b25c0bb7896f668b2f84a43172e62f1a90ca06ba9a",
+  "bytes": 2017543,
+  "sha256": "57d415c15185b0d8b188ad623f6dbfbe4384123bfbab7b6bbcf4c251b3370f79",
   "configuration": "Release",
   "type": "framework-dependent",
   "architecture": "win-x64",
@@ -17,9 +17,9 @@
   ],
   "bundled_entries": [
     "JTCStamper.App.dll",
+    "JTCStamper.App.deps.json",
     "JTCStamper.App.runtimeconfig.json",
-    "JTCStamper.Core.dll",
-    "JTCStamper.App.deps.json"
+    "JTCStamper.Core.dll"
   ],
   "icon_frames_verified": 9,
   "windows_execution": "NOT TESTED"

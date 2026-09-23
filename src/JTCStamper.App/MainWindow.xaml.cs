@@ -35,7 +35,7 @@ public partial class MainWindow : Window
     readonly DispatcherTimer dateTimer = new() { Interval = TimeSpan.FromSeconds(15) };
     string? settingsPath;
     string storageRoot = AppContext.BaseDirectory;
-    public sealed record HistoryRow(Guid Id, string Label);
+    public sealed record HistoryRow(Guid Id, string Label, string GeneratedLabel, string StampLabel, string CopyState);
     public MainWindow() : this(AppContext.BaseDirectory) { }
     internal MainWindow(string dataRoot)
     {
@@ -63,7 +63,12 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            CopyButton.IsEnabled = journal is not null;
+            if (journal is null)
+            {
+                CopyButton.IsEnabled = false;
+                RecentHistoryMessage.Text = "履歴の保存先を開けません。［履歴］メニューから保存先を選択してください。";
+                RecentHistoryMessage.Visibility = Visibility.Visible;
+            }
             Status.Text = "保存先を開けません: " + ex.Message + " ［履歴］から保存先を選択できます。";
         }
     }
@@ -174,17 +179,50 @@ public partial class MainWindow : Window
             try { RefreshHistory(); } catch { CopyButton.IsEnabled = false; }
         }
     }
+    void RecentHistoryClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { Tag: Guid id }) return;
+        try
+        {
+            RefreshHistory(id);
+            MainTabs.SelectedItem = HistoryTab;
+            if (History.SelectedItem is not null) History.ScrollIntoView(History.SelectedItem);
+        }
+        catch (Exception ex) { Status.Text = "履歴を開けません: " + ex.Message; }
+    }
     void RefreshHistory(Guid? select = null)
     {
         if (journal is null) return;
         select ??= (History.SelectedItem as HistoryRow)?.Id;
-        var records = journal.Read();
-        History.ItemsSource = new VerificationService(journal).ReadGenerations().Reverse().Select(g =>
+        try
         {
-            var state = records.Any(r => r.Entry.EventId == g.EventId && r.Entry.Kind == "CopyCompleted") ? "コピー記録あり" : "コピー未完了／不明";
-            return new HistoryRow(g.EventId, $"{g.CreatedUtc.ToLocalTime():yyyy/MM/dd HH:mm:ss}  {g.Stamp.Name}  印面 {g.Stamp.DisplayDate:yyyy/MM/dd}  {state}");
-        }).ToList();
-        if (select.HasValue) History.SelectedItem = History.Items.Cast<HistoryRow>().FirstOrDefault(x => x.Id == select);
+            var records = journal.Read();
+            var completed = records.Where(r => r.Entry.Kind == "CopyCompleted").Select(r => r.Entry.EventId).ToHashSet();
+            // Journal order is the generation order; a user-specified display date must not affect it.
+            var rows = new VerificationService(journal).ReadGenerations().Reverse().Select(g =>
+            {
+                var state = completed.Contains(g.EventId) ? "コピー記録あり" : "コピー未完了／不明";
+                var created = $"{g.CreatedUtc.ToLocalTime():yyyy/MM/dd HH:mm:ss}";
+                var stamp = $"{g.Stamp.Name}  印面 '{g.Stamp.DisplayDate:yy.MM.dd}  {g.Stamp.Bottom}";
+                return new HistoryRow(g.EventId, $"{created}  {g.Stamp.Name}  印面 {g.Stamp.DisplayDate:yyyy/MM/dd}  {g.Stamp.Bottom}  {state}", created, stamp, state);
+            }).ToList();
+            History.ItemsSource = rows;
+            RecentHistory.ItemsSource = rows.Take(3).ToList();
+            RecentHistoryHeading.Text = $"直近の生成履歴（{Math.Min(3, rows.Count)}件／全{rows.Count}件）";
+            RecentHistoryMessage.Text = "この保存先にはまだ生成履歴がありません。生成すると、ここに記録が表示されます。";
+            RecentHistoryMessage.Visibility = rows.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+            if (select.HasValue) History.SelectedItem = rows.FirstOrDefault(x => x.Id == select);
+        }
+        catch
+        {
+            History.ItemsSource = null;
+            RecentHistory.ItemsSource = null;
+            RecentHistoryHeading.Text = "直近の生成履歴";
+            RecentHistoryMessage.Text = "履歴を確認できません。画面下部のエラー内容を確認してください。";
+            RecentHistoryMessage.Visibility = Visibility.Visible;
+            CopyButton.IsEnabled = false;
+            throw;
+        }
     }
     void HistoryChanged(object sender, SelectionChangedEventArgs e)
     {
