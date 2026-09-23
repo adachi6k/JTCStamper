@@ -10,6 +10,12 @@ using Microsoft.Win32;
 namespace JTCStamper.App;
 public partial class MainWindow : Window
 {
+    void WindowMenuClick(object sender, RoutedEventArgs e)
+    {
+        var screen = PointToScreen(new Point(0, TitleBar.ActualHeight));
+        var dpi = VisualTreeHelper.GetDpi(this);
+        SystemCommands.ShowSystemMenu(this, new Point(screen.X / dpi.DpiScaleX, screen.Y / dpi.DpiScaleY));
+    }
     void UpdateThemeChecks()
     {
         SystemThemeItem.IsChecked = Appearance.Current == AppearanceMode.System;

@@ -64,3 +64,5 @@ ring12-<phase>.jsonに、WPFによる72条件（2氏名・6値・2サイズ・PN
 ## 外観・テーマの追加確認
 
 左サイドバー、ライト／ダーク／Windows設定の切り替え、appearance.jsonへの保存・再読込、照合画面の同一インスタンス維持、印影プレビューPNGの不変性をテストします。window-Light-<phase>.png、window-Dark-<phase>.png、window-System-<phase>.pngを出力します。これらはWindows用テストであり、Linuxでのビルド成功は実機試験の成功を意味しません。
+
+統合タイトルバーの追加検査では、通常表示と最大化時のWM_NCHITTESTを実際のウィンドウへ送り、空白領域がHTCAPTION、メニューがHTCLIENTとなることを確認します。スナップのポップアップ・実際のドラッグ・複数DPIモニター間の移動はこの自動検査には含めません。

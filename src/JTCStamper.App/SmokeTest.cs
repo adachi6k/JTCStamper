@@ -1,3 +1,6 @@
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
+using System.Windows.Shell;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text.Json;
@@ -13,6 +16,14 @@ namespace JTCStamper.App;
 // Runs inside the actual published EXE, on WPF's STA thread. Only disposable, marked roots are accepted.
 internal static class SmokeTest
 {
+    [DllImport("user32.dll")]
+    static extern IntPtr SendMessage(IntPtr window, uint message, IntPtr wParam, IntPtr lParam);
+    static int HitTest(MainWindow window, FrameworkElement element)
+    {
+        var point = element.PointToScreen(new Point(element.ActualWidth / 2, element.ActualHeight / 2));
+        int coordinates = (unchecked((ushort)(short)Math.Round(point.X))) | (unchecked((ushort)(short)Math.Round(point.Y)) << 16);
+        return (int)SendMessage(new WindowInteropHelper(window).Handle, 0x0084, IntPtr.Zero, new IntPtr(coordinates));
+    }
     const string Marker = "JTCStamper isolated smoke data v1";
     sealed record CheckResult(string Name, string Status, string? Detail = null);
     static void Require(bool condition, string message)
@@ -91,6 +102,18 @@ internal static class SmokeTest
                 note.Clear(); tabs.SelectedItem = createTab;
                 checks.Add(new("main-tabs-preserve-view-and-inputs", "passed"));
                 Require(tabs.TabStripPlacement == Dock.Left, "Navigation is not in the left sidebar.");
+                var chrome = WindowChrome.GetWindowChrome(window);
+                Require(chrome is not null && chrome.UseAeroCaptionButtons && chrome.CaptionHeight == 48, "Native caption configuration missing.");
+                var dragArea = (FrameworkElement)window.FindName("TitleDragArea");
+                Require(dragArea.ActualWidth >= 80 && HitTest(window, dragArea) == 2, "Blank title region is not draggable HTCAPTION.");
+                var titleMenu = (Menu)window.FindName("TitleMenu");
+                Require(WindowChrome.GetIsHitTestVisibleInChrome(titleMenu) && HitTest(window, titleMenu) == 1, "Title menu is not clickable HTCLIENT.");
+                window.WindowState = WindowState.Maximized;
+                await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+                Require(HitTest(window, dragArea) == 2 && HitTest(window, titleMenu) == 1, "Maximized title/menu hit testing failed.");
+                window.WindowState = WindowState.Normal;
+                await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+                checks.Add(new("integrated-title-menu-native-hit-testing", "passed"));
                 var imageBeforeTheme = StampRenderer.Png((BitmapSource)((Image)window.FindName("Preview")).Source);
                 Color? lightText = null;
                 foreach (var (name, mode) in new[] { ("LightThemeItem", AppearanceMode.Light), ("DarkThemeItem", AppearanceMode.Dark), ("SystemThemeItem", AppearanceMode.System) })
