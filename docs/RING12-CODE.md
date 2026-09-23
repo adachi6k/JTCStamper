@@ -57,3 +57,7 @@ dotnet run --project tests/JTCStamper.ImageEvaluation -c Release -- <作業フ�
 ```
 
 生成器は画像・画素データを作業フォルダーへ書きます。評価ツールは結果をJSONへ書き、誤コードが1件でもあれば終了コード1です。終了コード0でも判定不能が含まれるため、集計を必ず確認します。Windows描画の評価はrun-smoke.cmdで別に実行してください。
+
+## 冗長化の追加検討（2026-09-23）
+
+誤り訂正とCRCを併用する40セル案などを比較した結果は[冗長化の設計・評価](REDUNDANCY-COMPARISON.md)に記録しました。実験専用であり、現在の製品形式は引き続きwpf-v5-gap12です。
