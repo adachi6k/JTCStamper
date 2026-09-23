@@ -22,10 +22,14 @@ Windowsバッチに、サイドバーの配置、テーマ適用と保存・再�
 
 外観だけの変更であり、40セルの冗長化試験は製品に統合していません。印影は引き続きwpf-v5-gap12です。
 
-## タイトルバーとメニューの統合
+## タイトルバーの修正
 
-タイトルバーの高さを48 DIPとし、左のアプリアイコンと「ファイル・履歴・照合・表示・ヘルプ」を同じ段に配置しました。右端160 DIPをWindows標準の最小化・最大化／復元・閉じるボタン用に確保します。メニュー右側の空白はウィンドウ移動に使えます。アプリアイコンからもウィンドウ操作メニューを開けます。
+タイトルバーは32 DIPに縮小し、メニュー文字は13 DIP・TextFillColorSecondaryBrush（本文より控えめ）にしました。トップレベルのメニューだけ独自のコンパクトなテンプレートを使い、Fluent標準テンプレート内の外側4 DIP・内側10 DIPの余白を持ち込まないようにしています。サブメニューは従来のFluent表示です。
 
-[WPF WindowChrome](https://learn.microsoft.com/en-us/dotnet/api/system.windows.shell.windowchrome)でクライアント領域をタイトルバーまで拡張し、UseAeroCaptionButtons=trueでOSのキャプションボタンを維持します。WindowStyle=Noneや独自の最大化ボタンは使用していません。リサイズ境界はシステム既定値、左右・下の非クライアント枠はWindows管理です。メニューとアイコンボタンだけIsHitTestVisibleInChrome=trueにします。ウィンドウ操作メニューの座標は画面の物理座標からDIPへ変換します。
+前版は48 DIPの枠とOS任せのキャプション描画を使っていましたが、ユーザー環境で右上のボタンが見えない不具合がありました。現在はWPFで最小化・最大化／復元・閉じるを明示的に描きます。3つのボタンは各46×32 DIP、アイコンはフォント依存の文字ではなくベクター線です。最大化中は復元アイコンと説明に変わります。各ボタンにはキーボードフォーカス表示と読み上げ名を付けています。
 
-Windowsバッチに通常表示・最大化時のWM_NCHITTEST検査を追加。空白はHTCAPTION、メニューはHTCLIENTになることを確認し、既存のライト／ダーク画像も統合タイトルバーを含む形で保存します。これらのWindowsテストはコンパイルのみで、実機実行は未確認です。ドラッグ、ダブルクリック、右クリック、端からのリサイズ、スナップレイアウト、異なるDPIのモニター間移動は実機での確認が残ります。
+WindowChromeのCaptionHeight=32、GlassFrameThickness=0、UseAeroCaptionButtons=false。ウィンドウ移動・空白のダブルクリック・右クリック・リサイズはWindowChrome、各ボタンの操作はSystemCommandsでOSへ渡します。右上の最大化領域はWM_NCHITTESTでHTMAXBUTTONとして通知し、Windows 11のスナップメニューに対応する構成です。非クライアント領域の押下はマウスをキャプチャし、ボタン内で離した場合にのみ最大化／復元します。ボタン外で離すと実行しません。
+
+Windowsバッチには通常表示・最大化時のHTCAPTION/HTCLIENT/HTMAXBUTTON、ボタンの寸法・形状・描画画素の検査を追加しました。前版の「設定とヒットテストが正しければ見える」という検査不足を補います。新しいWindowsテストはコンパイル済みですが、実機接続が利用できず実行は未確認です。実際の押下、Altキーのメニュー操作、スナップ表示、DPIの違うモニター間の移動も実機確認が残ります。
+
+参照：[Microsoftのカスタムタイトルバーとスナップの仕様](https://learn.microsoft.com/windows/apps/desktop/modernize/apply-snap-layout-menu)、[FluentのMenuItemテンプレート](https://github.com/dotnet/wpf/blob/main/src/Microsoft.DotNet.Wpf/src/Themes/PresentationFramework.Fluent/Styles/MenuItem.xaml)。

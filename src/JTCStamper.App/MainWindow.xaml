@@ -6,8 +6,8 @@
         FontFamily="Yu Gothic UI, Segoe UI" FontSize="14" UseLayoutRounding="True"
         Background="{DynamicResource SolidBackgroundFillColorBaseBrush}" Foreground="{DynamicResource TextFillColorPrimaryBrush}">
     <shell:WindowChrome.WindowChrome>
-        <shell:WindowChrome CaptionHeight="48" GlassFrameThickness="0,48,0,0"
-                            UseAeroCaptionButtons="True" NonClientFrameEdges="Left,Right,Bottom"/>
+        <shell:WindowChrome CaptionHeight="32" GlassFrameThickness="0"
+                            UseAeroCaptionButtons="False" NonClientFrameEdges="Left,Right,Bottom"/>
     </shell:WindowChrome.WindowChrome>
     <Window.Template>
         <ControlTemplate TargetType="Window">
@@ -15,6 +15,8 @@
         </ControlTemplate>
     </Window.Template>
     <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="CaptionControls.xaml"/></ResourceDictionary.MergedDictionaries>
         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Padding" Value="14,8"/><Setter Property="Margin" Value="0,5,8,5"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -22,45 +24,58 @@
         <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
             <Setter Property="Padding" Value="10,8"/><Setter Property="Margin" Value="0,5,0,12"/>
         </Style>
+        </ResourceDictionary>
     </Window.Resources>
     <DockPanel>
-        <Grid x:Name="TitleBar" DockPanel.Dock="Top" Height="48" Background="Transparent">
+        <Grid x:Name="TitleBar" DockPanel.Dock="Top" Height="32" Background="Transparent">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="44"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/>
-                <ColumnDefinition x:Name="CaptionButtonsColumn" Width="160"/>
+                <ColumnDefinition Width="36"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/>
+                <ColumnDefinition x:Name="CaptionButtonsColumn" Width="138"/>
             </Grid.ColumnDefinitions>
             <Button x:Name="WindowMenuButton" shell:WindowChrome.IsHitTestVisibleInChrome="True"
                     Click="WindowMenuClick" ToolTip="ウィンドウの操作" AutomationProperties.Name="ウィンドウの操作"
-                    Background="Transparent" BorderThickness="0" Padding="6" Margin="6,8" HorizontalAlignment="Stretch">
-                <Image Source="{Binding Icon, RelativeSource={RelativeSource AncestorType=Window}}" Width="20" Height="20"/>
+                    Style="{StaticResource CaptionButton}" Width="36">
+                <Image Source="{Binding Icon, RelativeSource={RelativeSource AncestorType=Window}}" Width="16" Height="16"/>
             </Button>
             <Menu x:Name="TitleMenu" Grid.Column="1" VerticalAlignment="Center" Background="Transparent"
+                  Padding="0" Margin="0" FontSize="13"
                   shell:WindowChrome.IsHitTestVisibleInChrome="True">
-            <MenuItem Header="ファイル(_F)">
+            <MenuItem Header="ファイル(_F)" Style="{StaticResource CompactCaptionMenuItem}">
                 <MenuItem Header="印面設定を開く(_O)…" Click="OpenSettingsClick"/>
                 <MenuItem Header="印面設定を保存(_S)" Click="SaveSettingsClick"/>
                 <MenuItem Header="名前を付けて保存(_A)…" Click="SaveSettingsAsClick"/>
                 <Separator/>
                 <MenuItem Header="終了(_X)" Click="ExitClick"/>
             </MenuItem>
-            <MenuItem Header="履歴(_R)">
+            <MenuItem Header="履歴(_R)" Style="{StaticResource CompactCaptionMenuItem}">
                 <MenuItem Header="生成履歴を表示" Click="ShowHistoryClick"/>
                 <Separator/>
                 <MenuItem Header="実行ファイルのフォルダーを使用" Click="DefaultHistoryClick"/>
                 <MenuItem Header="保存先を選択…" Click="ChooseHistoryClick"/>
             </MenuItem>
-            <MenuItem Header="照合(_C)"><MenuItem Header="照合画面を開く" Click="VerifyClick"/></MenuItem>
-            <MenuItem Header="表示(_V)">
+            <MenuItem Header="照合(_C)" Style="{StaticResource CompactCaptionMenuItem}"><MenuItem Header="照合画面を開く" Click="VerifyClick"/></MenuItem>
+            <MenuItem Header="表示(_V)" Style="{StaticResource CompactCaptionMenuItem}">
                 <MenuItem Header="テーマ">
                     <MenuItem x:Name="SystemThemeItem" Header="Windowsの設定に合わせる" Tag="System" IsCheckable="True" Click="ThemeClick"/>
                     <MenuItem x:Name="LightThemeItem" Header="ライト" Tag="Light" IsCheckable="True" Click="ThemeClick"/>
                     <MenuItem x:Name="DarkThemeItem" Header="ダーク" Tag="Dark" IsCheckable="True" Click="ThemeClick"/>
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="ヘルプ(_H)"><MenuItem Header="バージョン情報" Click="AboutClick"/></MenuItem>
+            <MenuItem Header="ヘルプ(_H)" Style="{StaticResource CompactCaptionMenuItem}"><MenuItem Header="バージョン情報" Click="AboutClick"/></MenuItem>
             </Menu>
-            <!-- This empty area is HTCAPTION; native caption buttons occupy the final column. -->
+            <!-- Blank space remains HTCAPTION; caption glyphs are rendered explicitly. -->
             <Border x:Name="TitleDragArea" Grid.Column="2" Background="Transparent"/>
+            <StackPanel Grid.Column="3" Orientation="Horizontal" shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                <Button x:Name="MinimizeButton" Style="{StaticResource CaptionButton}" Click="MinimizeClick" ToolTip="最小化" AutomationProperties.Name="最小化">
+                    <Path Width="10" Height="10" Data="M0,5 L10,5" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1"/>
+                </Button>
+                <Button x:Name="MaximizeButton" Style="{StaticResource CaptionButton}" Click="MaximizeClick" ToolTip="最大化" AutomationProperties.Name="最大化">
+                    <Path x:Name="MaximizeGlyph" Width="10" Height="10" Data="M0,0 H10 V10 H0 Z" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1"/>
+                </Button>
+                <Button x:Name="CloseButton" Style="{StaticResource CloseCaptionButton}" Click="CloseCaptionClick" ToolTip="閉じる" AutomationProperties.Name="閉じる">
+                    <Path Width="10" Height="10" Data="M0,0 L10,10 M10,0 L0,10" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1"/>
+                </Button>
+            </StackPanel>
         </Grid>
         <StatusBar DockPanel.Dock="Bottom" Padding="12,6" Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"><TextBlock x:Name="Status" TextWrapping="Wrap"/></StatusBar>
         <TabControl x:Name="MainTabs" TabStripPlacement="Left" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource NavigationItem}">

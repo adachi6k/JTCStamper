@@ -71,7 +71,7 @@ public partial class MainWindow : Window
         string? appearanceError = null;
         try { Appearance.Apply(Appearance.Load(dataRoot)); }
         catch (Exception ex) { Appearance.Apply(AppearanceMode.System); appearanceError = ex.Message; }
-        InitializeComponent(); UpdateThemeChecks(); DateInput.SelectedDate = DateTime.Today;
+        InitializeComponent(); InitializeCaption(); UpdateThemeChecks(); DateInput.SelectedDate = DateTime.Today;
         ready = true; RefreshDateControls(); UpdatePreview();
         dateTimer.Tick += (_, _) => RefreshToday();
         Activated += (_, _) => RefreshToday();

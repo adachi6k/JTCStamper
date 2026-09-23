@@ -103,14 +103,27 @@ internal static class SmokeTest
                 checks.Add(new("main-tabs-preserve-view-and-inputs", "passed"));
                 Require(tabs.TabStripPlacement == Dock.Left, "Navigation is not in the left sidebar.");
                 var chrome = WindowChrome.GetWindowChrome(window);
-                Require(chrome is not null && chrome.UseAeroCaptionButtons && chrome.CaptionHeight == 48, "Native caption configuration missing.");
+                Require(chrome is not null && !chrome.UseAeroCaptionButtons && chrome.CaptionHeight == 32, "Compact caption configuration missing.");
+                foreach (var buttonName in new[] { "MinimizeButton", "MaximizeButton", "CloseButton" })
+                {
+                    var button = (Button)window.FindName(buttonName);
+                    Require(button.IsVisible && button.ActualWidth >= 40 && button.ActualHeight == 32, $"Missing/incorrect caption button: {buttonName}");
+                    Require(button.Content is System.Windows.Shapes.Path { Data: not null }, $"Caption glyph missing: {buttonName}");
+                    var glyphVisual = new DrawingVisual();
+                    using (var dc = glyphVisual.RenderOpen()) dc.DrawRectangle(new VisualBrush(button), null, new Rect(0, 0, 46, 32));
+                    var glyphCapture = new RenderTargetBitmap(46, 32, 96, 96, PixelFormats.Pbgra32); glyphCapture.Render(glyphVisual);
+                    var glyphPixels = new int[46 * 32]; glyphCapture.CopyPixels(glyphPixels, 46 * 4, 0);
+                    Require(Enumerable.Range(10, 12).SelectMany(y => Enumerable.Range(17, 12).Select(x => glyphPixels[y * 46 + x])).Distinct().Count() > 1,
+                        $"Caption glyph was not painted: {buttonName}");
+                }
+                Require(HitTest(window, (Button)window.FindName("MaximizeButton")) == 9, "Maximize must be HTMAXBUTTON for Snap.");
                 var dragArea = (FrameworkElement)window.FindName("TitleDragArea");
                 Require(dragArea.ActualWidth >= 80 && HitTest(window, dragArea) == 2, "Blank title region is not draggable HTCAPTION.");
                 var titleMenu = (Menu)window.FindName("TitleMenu");
                 Require(WindowChrome.GetIsHitTestVisibleInChrome(titleMenu) && HitTest(window, titleMenu) == 1, "Title menu is not clickable HTCLIENT.");
                 window.WindowState = WindowState.Maximized;
                 await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
-                Require(HitTest(window, dragArea) == 2 && HitTest(window, titleMenu) == 1, "Maximized title/menu hit testing failed.");
+                Require(HitTest(window, dragArea) == 2 && HitTest(window, titleMenu) == 1 && HitTest(window, (Button)window.FindName("MaximizeButton")) == 9, "Maximized title/menu/button hit testing failed.");
                 window.WindowState = WindowState.Normal;
                 await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
                 checks.Add(new("integrated-title-menu-native-hit-testing", "passed"));
