@@ -10,13 +10,16 @@ public sealed record ImageSearchEvidence(int? Code, int CandidateCount, int Code
 // Presentation only: a visual candidate must never be promoted to an exact/authenticated match.
 public static class VerificationMessages
 {
-    public const string ScoreHelp = "形の近さは確率ではありません。1.000でも、元のPNGファイルとの完全一致を意味しません。";
-    public const string MethodHelp = "形の近さは、印影を96×96にそろえ、円の内側の文字と線を少し回転させて比較した参考値です。上下左右・斜めに1画素のずれを許容し、小数点以下3桁に丸めて表示します。文字を読み取って氏名や日付の意味を確認する処理ではありません。\n印影コードは履歴を探すための短い値です。同じコードが別の生成記録に現れることがあり、コード一致だけでは生成元を特定できません。";
-    public static string ShapeEvidence(int? readCode, int candidateCode, double score)
+    public const string ScoreHelp = "履歴との対応スコア（暫定）は確率ではありません。文字の形は最大0.300、コード一致は0.700です。1.000でも原本・PNGの完全一致や真正性を意味しません。";
+    public const string MethodHelp = "氏名・日付・下段文字の領域を別々に比較し、それぞれ最大0.100を加点します。96×96にそろえ、±8度の回転と1画素のずれを許容します。文字の意味を読むOCRではなく、形の比較です。空白や画素不足の領域には加点しません。\nコードは位置マーカー・CRC検査を通過して読み取れた12ビットが履歴と一致した場合に0.700、不一致・未読取は0です。読取信頼度の連続評価や部分一致への加点は行いません。CRCや冗長情報は別の証拠として加点しません。\n配点は暫定で、確率としての校正はしていません。同じ文字・同じ短いコードを持つ別イベントも高得点になります。完全一致の確認は原本の認証情報・PNG全体との照合で別に行います。";
+    public static string ShapeEvidence(int? readCode, int candidateCode, TextSimilarity text)
     {
-        if (!double.IsFinite(score) || score < 0 || score > 1) throw new ArgumentOutOfRangeException(nameof(score));
-        string code = readCode is null ? "コード未読取・形のみの候補" : readCode == candidateCode ? "コード一致" : "コード不一致・形のみの候補";
-        return code + " ／ 形の近さ " + score.ToString("0.000", CultureInfo.InvariantCulture) + "（参考値）";
+        var score = CorrespondenceScore.Calculate(text, readCode, candidateCode);
+        string code = readCode is null ? "コード未読取（未確認）" : readCode == candidateCode ? "コード一致" : "コード不一致";
+        string F(double value) => value.ToString("0.000", CultureInfo.InvariantCulture);
+        return $"{code} ／ 履歴との対応スコア {F(score.Total)}（暫定）\n" +
+            $"文字の形 {F(text.Contribution)} / 0.300［氏名 {F(text.Name / 10)}・日付 {F(text.Date / 10)}・下段 {F(text.Bottom / 10)}］\n" +
+            $"埋め込み情報 {F(score.CodeContribution)} / 0.700：{code}";
     }
     public static VerificationMessage Image(ImageSearchEvidence e)
     {

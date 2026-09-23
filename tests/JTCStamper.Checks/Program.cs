@@ -159,11 +159,11 @@ try
         Assert(message.Kind == VerificationMessageKind.Candidate);
         Assert(message.Title == "対応する生成履歴候補あり" && !message.Title.Contains("判定不能"));
         Assert(message.Findings.Contains("1件") && message.Meaning.Contains("確定していません"));
-        Assert(VerificationMessages.ShapeEvidence(0x22F, 0x22F, 1).StartsWith("コード一致"));
-        Assert(VerificationMessages.ShapeEvidence(0x22F, 0, 1).StartsWith("コード不一致"));
-        Assert(VerificationMessages.ShapeEvidence(null, 0, 1).StartsWith("コード未読取"));
+        Assert(VerificationMessages.ShapeEvidence(0x22F, 0x22F, new(1, 1, 1)).StartsWith("コード一致"));
+        Assert(VerificationMessages.ShapeEvidence(0x22F, 0, new(1, 1, 1)).StartsWith("コード不一致"));
+        Assert(VerificationMessages.ShapeEvidence(null, 0, new(1, 1, 1)).StartsWith("コード未読取"));
         Assert(VerificationMessages.ScoreHelp.Contains("確率ではありません") && VerificationMessages.ScoreHelp.Contains("完全一致"));
-        Throws(() => VerificationMessages.ShapeEvidence(0, 0, double.NaN));
+        Throws(() => VerificationMessages.ShapeEvidence(0, 0, new(double.NaN, 1, 1)));
     });
     Check("verification-message-filter-off-and-unread-code", dir =>
     {
@@ -201,6 +201,28 @@ try
         var failed = VerificationMessages.Exact(service.Original("{}"), true);
         Assert(failed.Kind == VerificationMessageKind.Unavailable && failed.Meaning.Contains("判断していません"));
         Assert(VerificationMessages.Exact(new(VerificationStatus.Match, "invalid", []), false).Kind == VerificationMessageKind.Unavailable);
+    });
+    Check("correspondence-score-components-and-code-collision", dir =>
+    {
+        var text = new TextSimilarity(1, 1, 1);
+        Assert(Math.Abs(CorrespondenceScore.Calculate(text, null, 1).Total - .3) < 1e-10);
+        Assert(Math.Abs(CorrespondenceScore.Calculate(text, 2, 1).Total - .3) < 1e-10);
+        Assert(CorrespondenceScore.Calculate(text, 1, 1).Total == 1);
+        Assert(CorrespondenceScore.Calculate(new(1, 0, 1), 1, 1).Total < .91);
+        Assert(VerificationMessages.ShapeEvidence(null, 1, text).Contains("未確認"));
+        // Identical text with different events cannot become an Exact result, even with a code collision.
+        Assert(VerificationMessages.Image(new(1, 2, 2, 2, 2, true)).Kind == VerificationMessageKind.Candidate);
+        var a = new bool[96 * 96];
+        foreach (int top in new[] { 15, 42, 74 })
+            for (int y = top; y < top + 6; y++) for (int x = 32; x < 48; x++) a[y * 96 + x] = true;
+        var b = (bool[])a.Clone();
+        for (int y = 35; y < 61; y++) for (int x = 0; x < 96; x++) b[y * 96 + x] = false;
+        for (int y = 42; y < 48; y++) for (int x = 55; x < 65; x++) b[y * 96 + x] = true;
+        var differentDate = ImageSearch.CompareText(a, b);
+        Assert(differentDate.Name == 1 && differentDate.Bottom == 1 && differentDate.Date == 0);
+        Assert(ImageSearch.CompareText(new bool[96 * 96], new bool[96 * 96]).Contribution == 0);
+        var first = stamp with { GeometryCode = 1 }; var second = stamp with { GeometryCode = 2 };
+        Assert(ImageSearch.Rank(a, [new(first, a), new(second, a)], 2)[0].Stamp == second);
     });
     Check("image-search-document-two-stamps-and-red-rectangle", dir =>
     {

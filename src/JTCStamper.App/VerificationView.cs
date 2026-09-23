@@ -100,7 +100,7 @@ public sealed class VerificationView : UserControl
         candidates.ItemTemplate = new DataTemplate { VisualTree = factory };
         results.Children.Add(candidates); results.Children.Add(show);
         results.Children.Add(new Expander { Header = "読取・検索の詳細", Content = technical, Margin = new Thickness(0, 8, 0, 0) });
-        results.Children.Add(new Expander { Header = "「形の近さ」と印影コードについて", Margin = new Thickness(0, 8, 0, 0),
+        results.Children.Add(new Expander { Header = "対応スコアの配点と限界", Margin = new Thickness(0, 8, 0, 0),
             Content = new TextBlock { Text = VerificationMessages.MethodHelp, TextWrapping = TextWrapping.Wrap } });
         candidates.SelectionChanged += (_, _) => show.IsEnabled = !busy && candidates.SelectedItem is Candidate;
         show.Click += (_, _) => { if (candidates.SelectedItem is Candidate item) HistoryRequested?.Invoke(item.Generation.EventId); };
@@ -259,11 +259,11 @@ public sealed class VerificationView : UserControl
             if (disposed) return;
             bool filter = codeFilter.IsChecked == true && reading.Code.HasValue;
             var references = templates.Where(t => !filter || t.Stamp.GeometryCode == reading.Code).ToArray();
-            var ranked = await Task.Run(() => ImageSearch.Rank(ink, references));
+            var ranked = await Task.Run(() => ImageSearch.Rank(ink, references, reading.Code));
             if (disposed) return;
             var rows = ranked.SelectMany(x => history.Where(g => g.Stamp == x.Stamp &&
                     referenceHashes.TryGetValue(x.Stamp, out var hash) && g.PngSha256.Equals(hash, StringComparison.OrdinalIgnoreCase))
-                .Select(g => new Candidate(g, VerificationMessages.ShapeEvidence(reading.Code, g.Stamp.GeometryCode!.Value, x.Score)))).ToArray();
+                .Select(g => new Candidate(g, VerificationMessages.ShapeEvidence(reading.Code, g.Stamp.GeometryCode!.Value, x.Text)))).ToArray();
             candidates.ItemsSource = rows;
             int codeMatches = reading.Code.HasValue ? rows.Count(x => x.Generation.Stamp.GeometryCode == reading.Code) : 0;
             int codeHistory = reading.Code.HasValue ? history.Count(x => x.Stamp.GeometryCode == reading.Code) : 0;
@@ -272,7 +272,7 @@ public sealed class VerificationView : UserControl
             var message = VerificationMessages.Image(new(reading.Code, rows.Length, codeMatches, codeHistory, templates.Count, filter));
             Present(message, (reading.Code is int decoded ? $"読取コード：{RingCode.Label(decoded)}（12ビット）\n" : "コード未読取：" + reading.Reason + "\n") +
                 (filter ? "同じコードの履歴に絞っています。" : "コードによる絞り込みは適用していません。") + "\n" + coverage +
-                "\n形の近さが0.72以上の上位8印面に対応する記録を表示します。文字・日付は目視で確認してください。");
+                "\n従来の内側全体の形比較が0.72以上の候補から、対応スコア順で上位8印面の記録を表示します。0.72は候補抽出用で、対応スコアの基準ではありません。文字・日付は目視で確認してください。");
         }
         catch (Exception ex) { Failed("画像を比較できませんでした：" + ex.Message); }
         finally { SetBusy(false); }

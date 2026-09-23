@@ -2,7 +2,11 @@ namespace JTCStamper.Core;
 
 public sealed record ImageRegion(int X, int Y, int Width, int Height);
 public sealed record StampTemplate(Stamp Stamp, bool[] Ink);
-public sealed record VisualCandidate(Stamp Stamp, double Score, int Rotation);
+public sealed record VisualCandidate(Stamp Stamp, double Score, int Rotation, TextSimilarity Text);
+public sealed record TextSimilarity(double Name, double Date, double Bottom)
+{
+    public double Contribution => (Name + Date + Bottom) / 10;
+}
 
 // Candidate retrieval only: no visual score is authentication or an event identifier.
 public static class ImageSearch
@@ -145,7 +149,7 @@ public static class ImageSearch
         }
         return output;
     }
-    public static IReadOnlyList<VisualCandidate> Rank(bool[] ink, IReadOnlyList<StampTemplate> templates)
+    public static IReadOnlyList<VisualCandidate> Rank(bool[] ink, IReadOnlyList<StampTemplate> templates, int? readCode = null)
     {
         if (ink.Length != Side * Side || templates.Any(x => x.Ink.Length != Side * Side)) throw new ArgumentException();
         // Ignore the common outer circle; compare interior text and separators symmetrically.
@@ -153,21 +157,28 @@ public static class ImageSearch
         var ranked = new List<VisualCandidate>();
         foreach (var template in templates)
         {
-            double best = 0; int rotation = 0;
+            double best = 0; int rotation = 0; TextSimilarity text = new(0, 0, 0);
             foreach (var variant in variants)
             {
                 double score = Similarity(variant.Ink, template.Ink);
-                if (score > best) { best = score; rotation = variant.Angle; }
+                if (score > best) { best = score; rotation = variant.Angle; text = CompareText(variant.Ink, template.Ink); }
             }
-            if (best >= 0.72) ranked.Add(new(template.Stamp, best, rotation));
+            if (best >= 0.72) ranked.Add(new(template.Stamp, best, rotation, text));
         }
-        return ranked.OrderByDescending(x => x.Score).Take(8).ToArray();
+        return ranked.OrderByDescending(x => CorrespondenceScore.Calculate(x.Text, readCode, x.Stamp.GeometryCode).Total).ThenByDescending(x => x.Score).Take(8).ToArray();
+    }
+    // Normalized circle bounds: exclude the two separators near y=31 and y=64.
+    // Keep the three text bands independent so a large name cannot dominate the date.
+    public static TextSimilarity CompareText(bool[] a, bool[] b)
+    {
+        if (a.Length != Side * Side || b.Length != Side * Side) throw new ArgumentException();
+        return new(Similarity(a, b, 2, 29), Similarity(a, b, 35, 61), Similarity(a, b, 67, 94));
     }
     static bool Interior(int x, int y) => (x - 47.5) * (x - 47.5) + (y - 47.5) * (y - 47.5) < 40 * 40;
-    static double Similarity(bool[] a, bool[] b)
+    static double Similarity(bool[] a, bool[] b, int fromY = 2, int toY = Side - 2)
     {
         int countA = 0, countB = 0, hitA = 0, hitB = 0;
-        for (int y = 2; y < Side - 2; y++) for (int x = 2; x < Side - 2; x++)
+        for (int y = fromY; y < toY; y++) for (int x = 2; x < Side - 2; x++)
         {
             if (!Interior(x, y)) continue;
             int p = y * Side + x;
