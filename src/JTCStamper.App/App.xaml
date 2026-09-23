@@ -1,1 +1,25 @@
-<Application x:Class="JTCStamper.App.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"><Application.Resources><Style TargetType="Button"><Setter Property="Padding" Value="12,7"/><Setter Property="Margin" Value="0,5,8,5"/></Style><Style TargetType="TextBox"><Setter Property="Padding" Value="7"/><Setter Property="Margin" Value="0,5,0,12"/></Style></Application.Resources></Application>
+<Application x:Class="JTCStamper.App.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" ThemeMode="System">
+    <Application.Resources>
+        <Style x:Key="NavigationItem" TargetType="TabItem">
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Margin" Value="8,3"/>
+            <Setter Property="Template">
+                <Setter.Value><ControlTemplate TargetType="TabItem">
+                    <Border x:Name="Surface" CornerRadius="7" Padding="16,13" Background="Transparent">
+                        <Grid><Border x:Name="Indicator" Width="3" Margin="-10,0,0,0" HorizontalAlignment="Left" CornerRadius="2" Background="{DynamicResource AccentFillColorDefaultBrush}" Visibility="Collapsed"/>
+                            <ContentPresenter ContentSource="Header" RecognizesAccessKey="True"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}"/></Trigger>
+                        <Trigger Property="IsSelected" Value="True"><Setter TargetName="Surface" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}"/><Setter TargetName="Indicator" Property="Visibility" Value="Visible"/><Setter Property="FontWeight" Value="SemiBold"/></Trigger>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource AccentFillColorDefaultBrush}"/><Setter TargetName="Surface" Property="BorderThickness" Value="1"/></Trigger>
+                        <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.45"/></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate></Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="PageHeading" TargetType="TextBlock"><Setter Property="FontSize" Value="24"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Margin" Value="0,0,0,16"/></Style>
+    </Application.Resources>
+</Application>

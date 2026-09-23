@@ -10,6 +10,27 @@ using Microsoft.Win32;
 namespace JTCStamper.App;
 public partial class MainWindow : Window
 {
+    void UpdateThemeChecks()
+    {
+        SystemThemeItem.IsChecked = Appearance.Current == AppearanceMode.System;
+        LightThemeItem.IsChecked = Appearance.Current == AppearanceMode.Light;
+        DarkThemeItem.IsChecked = Appearance.Current == AppearanceMode.Dark;
+    }
+    void ThemeClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is not MenuItem { Tag: string value } || !Enum.TryParse<AppearanceMode>(value, out var mode)) return;
+        try
+        {
+            Appearance.Apply(mode); UpdateThemeChecks();
+            Appearance.Save(appearanceRoot, mode);
+            Status.Text = "テーマを変更しました。次回起動時もこの設定を使います。";
+        }
+        catch (Exception ex)
+        {
+            UpdateThemeChecks();
+            Status.Text = "外観設定の変更または保存に失敗しました: " + ex.Message;
+        }
+    }
     void VerifyClick(object sender, RoutedEventArgs e)
     {
         if (journal is null) { Status.Text = "照合する履歴の保存先を開いてください。"; return; }
@@ -34,17 +55,23 @@ public partial class MainWindow : Window
     readonly StampDateSelection dateSelection = new();
     readonly DispatcherTimer dateTimer = new() { Interval = TimeSpan.FromSeconds(15) };
     string? settingsPath;
+    readonly string appearanceRoot;
     string storageRoot = AppContext.BaseDirectory;
     public sealed record HistoryRow(Guid Id, string Label, string GeneratedLabel, string StampLabel, string CopyState);
     public MainWindow() : this(AppContext.BaseDirectory) { }
     internal MainWindow(string dataRoot)
     {
-        InitializeComponent(); DateInput.SelectedDate = DateTime.Today;
+        appearanceRoot = dataRoot;
+        string? appearanceError = null;
+        try { Appearance.Apply(Appearance.Load(dataRoot)); }
+        catch (Exception ex) { Appearance.Apply(AppearanceMode.System); appearanceError = ex.Message; }
+        InitializeComponent(); UpdateThemeChecks(); DateInput.SelectedDate = DateTime.Today;
         ready = true; RefreshDateControls(); UpdatePreview();
         dateTimer.Tick += (_, _) => RefreshToday();
         Activated += (_, _) => RefreshToday();
         dateTimer.Start();
         SwitchJournal(dataRoot);
+        if (appearanceError is not null) Status.Text += " ／ 外観設定を読めないためWindows設定を使用: " + appearanceError;
         Closed += (_, _) => { dateTimer.Stop(); verification?.CancelPending(); journal?.Dispose(); };
     }
     void SwitchJournal(string root)
@@ -136,7 +163,7 @@ public partial class MainWindow : Window
     {
         var specified = dateSelection.IsSpecified;
         DateModeLabel.Text = specified ? "指定日" : "当日";
-        DateModeLabel.Foreground = specified ? Brushes.DarkOrange : SystemColors.ControlTextBrush;
+        DateModeLabel.SetResourceReference(TextBlock.ForegroundProperty, specified ? "AccentTextFillColorPrimaryBrush" : "TextFillColorPrimaryBrush");
         DateModeButton.Content = specified ? "当日に戻す" : "日付を指定…";
         TodayDisplay.Visibility = specified ? Visibility.Collapsed : Visibility.Visible;
         DateInput.Visibility = specified ? Visibility.Visible : Visibility.Collapsed;

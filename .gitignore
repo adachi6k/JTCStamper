@@ -28,3 +28,7 @@
 
 # Local test artifacts
 /test-results/
+
+# Local appearance preference
+appearance.json
+appearance-*.tmp

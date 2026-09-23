@@ -1,8 +1,18 @@
 <Window x:Class="JTCStamper.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="JTC Stamper" Width="960" Height="690" MinWidth="800" MinHeight="600"
-        Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+        Title="JTC Stamper" Width="1100" Height="800" MinWidth="960" MinHeight="680"
+        FontFamily="Yu Gothic UI, Segoe UI" FontSize="14" UseLayoutRounding="True"
+        Background="{DynamicResource SolidBackgroundFillColorBaseBrush}" Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+    <Window.Resources>
+        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Padding" Value="14,8"/><Setter Property="Margin" Value="0,5,8,5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="Padding" Value="10,8"/><Setter Property="Margin" Value="0,5,0,12"/>
+        </Style>
+    </Window.Resources>
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="ファイル(_F)">
@@ -12,26 +22,49 @@
                 <Separator/>
                 <MenuItem Header="終了(_X)" Click="ExitClick"/>
             </MenuItem>
-            <MenuItem Header="履歴(_H)">
+            <MenuItem Header="履歴(_R)">
                 <MenuItem Header="生成履歴を表示" Click="ShowHistoryClick"/>
                 <Separator/>
                 <MenuItem Header="実行ファイルのフォルダーを使用" Click="DefaultHistoryClick"/>
                 <MenuItem Header="保存先を選択…" Click="ChooseHistoryClick"/>
             </MenuItem>
-            <MenuItem Header="照合(_V)"><MenuItem Header="照合タブを開く" Click="VerifyClick"/></MenuItem>
+            <MenuItem Header="照合(_C)"><MenuItem Header="照合画面を開く" Click="VerifyClick"/></MenuItem>
+            <MenuItem Header="表示(_V)">
+                <MenuItem Header="テーマ">
+                    <MenuItem x:Name="SystemThemeItem" Header="Windowsの設定に合わせる" Tag="System" IsCheckable="True" Click="ThemeClick"/>
+                    <MenuItem x:Name="LightThemeItem" Header="ライト" Tag="Light" IsCheckable="True" Click="ThemeClick"/>
+                    <MenuItem x:Name="DarkThemeItem" Header="ダーク" Tag="Dark" IsCheckable="True" Click="ThemeClick"/>
+                </MenuItem>
+            </MenuItem>
             <MenuItem Header="ヘルプ(_H)"><MenuItem Header="バージョン情報" Click="AboutClick"/></MenuItem>
         </Menu>
-        <StatusBar DockPanel.Dock="Bottom"><TextBlock x:Name="Status" TextWrapping="Wrap"/></StatusBar>
-        <TabControl x:Name="MainTabs" Margin="8">
+        <StatusBar DockPanel.Dock="Bottom" Padding="12,6" Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"><TextBlock x:Name="Status" TextWrapping="Wrap"/></StatusBar>
+        <TabControl x:Name="MainTabs" TabStripPlacement="Left" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource NavigationItem}">
+            <TabControl.Template>
+                <ControlTemplate TargetType="TabControl">
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="156"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <StackPanel Margin="0,18,0,0">
+                            <TextBlock Text="ワークスペース" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontSize="12" Margin="24,0,0,12"/>
+                            <TabPanel IsItemsHost="True" KeyboardNavigation.TabIndex="0"/>
+                        </StackPanel>
+                        <Border Grid.Column="1" Margin="0,12,12,0" CornerRadius="12" BorderThickness="1"
+                                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                            <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" Margin="8"/>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </TabControl.Template>
             <TabItem x:Name="CreateTab" Header="作成">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <Grid Margin="16">
-                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions><ColumnDefinition Width="320"/><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                <GroupBox Header="印影" VerticalAlignment="Top">
+                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="280"/><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <TextBlock Text="印影を作成" Style="{StaticResource PageHeading}" Grid.ColumnSpan="3"/>
+                <GroupBox Grid.Row="1" Header="プレビュー" VerticalAlignment="Top">
                     <Border Background="White" Padding="12"><Image x:Name="Preview" Height="260" Stretch="Uniform"/></Border>
                 </GroupBox>
-            <StackPanel Grid.Column="2" MaxWidth="360" HorizontalAlignment="Stretch">
+            <StackPanel Grid.Row="1" Grid.Column="2" MaxWidth="420" HorizontalAlignment="Stretch">
                 <TextBlock Text="氏名"/><TextBox x:Name="NameInput" Text="JTC" MaxLength="16" TextChanged="InputsChanged"/>
                 <TextBlock Text="表示日付"/>
                 <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
@@ -42,15 +75,15 @@
                 </StackPanel>
                 <Button x:Name="DateModeButton" Content="日付を指定…" Click="DateModeClick" HorizontalAlignment="Left"/>
                 <TextBlock Text="下段文字"/><TextBox x:Name="BottomInput" Text="(印)" MaxLength="16" TextChanged="InputsChanged"/>
-                <Button x:Name="CopyButton" Content="生成して PNG コピー" Click="CopyClick"/>
-                <TextBlock Text="円周の短い欠けは生成時に決まります。" TextWrapping="Wrap" Foreground="DimGray"/>
+                <Button x:Name="CopyButton" Style="{DynamicResource AccentButtonStyle}" HorizontalAlignment="Stretch" Padding="14,10" Margin="0,10,0,8" Content="生成して PNG コピー" Click="CopyClick"/>
+                <TextBlock Text="円周の短い欠けは生成時に決まります。" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
             </StackPanel>
-                        <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,18,0,0">
+                        <StackPanel Grid.Row="2" Grid.ColumnSpan="3" Margin="0,18,0,0">
                             <DockPanel LastChildFill="True">
                                 <Button x:Name="AllHistoryButton" DockPanel.Dock="Right" Content="すべての履歴を見る" Click="ShowHistoryClick" Margin="0,0,0,6"/>
                                 <StackPanel VerticalAlignment="Center">
                                     <TextBlock x:Name="RecentHistoryHeading" Text="直近の生成履歴" FontWeight="SemiBold"/>
-                                    <TextBlock Text="新しく生成した順。行を選ぶと詳細・注釈を開きます。" Foreground="DimGray" FontSize="12"/>
+                                    <TextBlock Text="新しく生成した順。行を選ぶと詳細・注釈を開きます。" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontSize="12"/>
                                 </StackPanel>
                             </DockPanel>
                             <TextBlock x:Name="RecentHistoryMessage" Text="履歴を読み込んでいます。" Margin="0,8" TextWrapping="Wrap"/>
@@ -60,16 +93,16 @@
                                         <Button Tag="{Binding Id}" Click="RecentHistoryClick" HorizontalContentAlignment="Stretch"
                                                 Padding="8,6" Margin="0,2,0,0" ToolTip="{Binding Label}">
                                             <Grid>
-                                                <Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="*"/><ColumnDefinition Width="160"/></Grid.ColumnDefinitions>
-                                                <TextBlock Text="{Binding GeneratedLabel}" VerticalAlignment="Center"/>
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="155"/><ColumnDefinition Width="*"/><ColumnDefinition Width="150"/></Grid.ColumnDefinitions>
+                                                <TextBlock FontSize="12" Text="{Binding GeneratedLabel}" VerticalAlignment="Center"/>
                                                 <TextBlock Grid.Column="1" Text="{Binding StampLabel}" TextTrimming="CharacterEllipsis" Margin="8,0" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="2" Text="{Binding CopyState}" VerticalAlignment="Center"/>
+                                                <TextBlock FontSize="12" Grid.Column="2" Text="{Binding CopyState}" VerticalAlignment="Center"/>
                                             </Grid>
                                         </Button>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                            <TextBlock Text="生成・コピーの記録です。貼付完了を示すものではありません。" Foreground="DimGray" FontSize="12" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                            <TextBlock Text="生成・コピーの記録です。貼付完了を示すものではありません。" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontSize="12" Margin="0,8,0,0" TextWrapping="Wrap"/>
                         </StackPanel>
                     </Grid>
                 </ScrollViewer>
@@ -80,14 +113,14 @@
             <TabItem x:Name="HistoryTab" Header="履歴">
             <Grid Margin="12">
                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="2*"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                <TextBlock Text="生成履歴" Margin="0,0,0,6"/>
+                <TextBlock Text="生成履歴" Style="{StaticResource PageHeading}"/>
                 <ListBox x:Name="History" Grid.Row="1" DisplayMemberPath="Label" SelectionChanged="HistoryChanged"/>
                 <TextBox x:Name="Details" Grid.Row="2" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="0,8,0,0"/>
                 <StackPanel Grid.Row="3">
                     <TextBlock Text="用途・貼付先などの注釈" Margin="0,10,0,0"/>
                     <TextBox x:Name="NoteInput" MaxLength="2000"/>
                     <WrapPanel><Button Content="注釈を追記" Click="NoteClick"/><Button Content="原本を保存" Click="ExportClick"/></WrapPanel>
-                    <TextBlock Text="コピー記録は貼付完了を示しません。" Foreground="DimGray"/>
+                    <TextBlock Text="コピー記録は貼付完了を示しません。" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                 </StackPanel>
             </Grid>
             </TabItem>

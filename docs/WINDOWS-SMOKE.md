@@ -60,3 +60,7 @@ C#のWindows向けビルド、通常版・軽量版のpublish、Coreテストを
 ring12-<phase>.jsonに、WPFによる72条件（2氏名・6値・2サイズ・PNG/JPEG80/JPEG80+4度）と対照を記録し、結果フォルダーへコピーします。Windows評価は未実施です。実施済みの独立Pillow合成画像評価はRING12-CODE.mdを参照してください。
 
 タブ化後のスモークテストには、3タブの存在、照合コントロールの再利用、入力内容の保持、メインウィンドウ内での表示を確認する `main-tabs-preserve-view-and-inputs` を追加しています。この変更後のWindows実行は未確認です。
+
+## 外観・テーマの追加確認
+
+左サイドバー、ライト／ダーク／Windows設定の切り替え、appearance.jsonへの保存・再読込、照合画面の同一インスタンス維持、印影プレビューPNGの不変性をテストします。window-Light-<phase>.png、window-Dark-<phase>.png、window-System-<phase>.pngを出力します。これらはWindows用テストであり、Linuxでのビルド成功は実機試験の成功を意味しません。

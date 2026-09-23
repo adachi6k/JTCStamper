@@ -90,6 +90,24 @@ internal static class SmokeTest
                 Require(Window.GetWindow((VerificationView)view!) == window, "Verification is not hosted in the main window.");
                 note.Clear(); tabs.SelectedItem = createTab;
                 checks.Add(new("main-tabs-preserve-view-and-inputs", "passed"));
+                Require(tabs.TabStripPlacement == Dock.Left, "Navigation is not in the left sidebar.");
+                var imageBeforeTheme = StampRenderer.Png((BitmapSource)((Image)window.FindName("Preview")).Source);
+                Color? lightText = null;
+                foreach (var (name, mode) in new[] { ("LightThemeItem", AppearanceMode.Light), ("DarkThemeItem", AppearanceMode.Dark), ("SystemThemeItem", AppearanceMode.System) })
+                {
+                    ((MenuItem)window.FindName(name)).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                    await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+                    Require(Appearance.Current == mode && Appearance.Load(root) == mode, "Theme did not apply/persist.");
+                    var textBrush = (SolidColorBrush)window.FindResource("TextFillColorPrimaryBrush");
+                    if (mode == AppearanceMode.Light) lightText = textBrush.Color;
+                    if (mode == AppearanceMode.Dark && !SystemParameters.HighContrast) Require(textBrush.Color != lightText, "Dark mode did not change text colors.");
+                    Require(imageBeforeTheme.SequenceEqual(StampRenderer.Png((BitmapSource)((Image)window.FindName("Preview")).Source)), "Theme changed stamp pixels.");
+                    Require(ReferenceEquals(view, host.Content), "Theme change recreated verification view.");
+                    var themeCapture = new RenderTargetBitmap((int)Math.Ceiling(window.ActualWidth), (int)Math.Ceiling(window.ActualHeight), 96, 96, PixelFormats.Pbgra32);
+                    themeCapture.Render(window);
+                    File.WriteAllBytes(Path.Combine(root, $"window-{mode}-{phase}.png"), StampRenderer.Png(themeCapture));
+                }
+                checks.Add(new("sidebar-and-theme-persistence-with-unchanged-stamp", "passed"));
                 var dateInput = (DatePicker)window.FindName("DateInput");
                 var dateButton = (Button)window.FindName("DateModeButton");
                 var dateLabel = (TextBlock)window.FindName("DateModeLabel");

@@ -53,6 +53,7 @@ public sealed class VerificationView : UserControl
         service = new(journal);
         var panel = new DockPanel { Margin = new Thickness(12) }; Content = panel;
         var top = new StackPanel(); DockPanel.SetDock(top, Dock.Top); panel.Children.Add(top);
+        top.Children.Add(new TextBlock { Text = "印影を照合", Style = (Style)FindResource("PageHeading") });
         var buttons = new WrapPanel(); top.Children.Add(buttons);
         file.Click += Open; buttons.Children.Add(file);
         clipboard.Click += FromClipboard; buttons.Children.Add(clipboard);
