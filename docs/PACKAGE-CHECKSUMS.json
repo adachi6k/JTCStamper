@@ -1,14 +1,14 @@
 {
   "Standard": {
     "archive": "JTCStamper-Standard-win-x64.zip",
-    "zip_bytes": 60312488,
-    "exe_bytes": 66283241,
-    "sha256": "ea7043179954835491aab4313e17ba8ae701856c0ff0b7115c2260e827a18fe4"
+    "zip_bytes": 60312437,
+    "exe_bytes": 66283238,
+    "sha256": "b9740ce55ea4362924aee27d3b0f9dd935b6ca8170545d457d4c2a26886bdf0d"
   },
   "Lite": {
     "archive": "JTCStamper-Lite-win-x64.zip",
-    "zip_bytes": 1249019,
+    "zip_bytes": 1249012,
     "exe_bytes": 2038023,
-    "sha256": "ad542e982b13de0c319bca808fa1ab6f0060240db6f829d48dbdc7289b3e0f4f"
+    "sha256": "ad096dd990533adf815dfb96772d065c83d82e5ce38e5b4ea8c67013ad6f08ba"
   }
 }
