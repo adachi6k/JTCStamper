@@ -7,7 +7,10 @@ using JTCStamper.Core;
 namespace JTCStamper.App;
 public static class StampRenderer
 {
-    public static BitmapSource Render(Stamp stamp)
+    public static BitmapSource Render(Stamp stamp) => Render(stamp, new Typeface("Yu Gothic"));
+
+    // Internal fixture seam: reproduce historical font differences without changing the product font.
+    internal static BitmapSource Render(Stamp stamp, Typeface typeface)
     {
         RingCode.Validate(stamp);
         var visual = new DrawingVisual();
@@ -35,9 +38,9 @@ public static class StampRenderer
                 double t0 = -offset * sine - half, t1 = -offset * sine + half;
                 dc.DrawLine(pen, new Point(48 + t0 * cosine, y + t0 * sine), new Point(48 + t1 * cosine, y + t1 * sine));
             }
-            DrawText(dc, stamp.Name, 22, 24, red);
-            DrawText(dc, "\'" + stamp.DisplayDate.ToString("yy.MM.dd", CultureInfo.InvariantCulture), 48, 24, red);
-            DrawText(dc, stamp.Bottom, 74, 24, red);
+            DrawText(dc, stamp.Name, 22, 24, red, typeface);
+            DrawText(dc, "\'" + stamp.DisplayDate.ToString("yy.MM.dd", CultureInfo.InvariantCulture), 48, 24, red, typeface);
+            DrawText(dc, stamp.Bottom, 74, 24, red, typeface);
         }
         var bitmap = new RenderTargetBitmap(384, 384, 384, 384, PixelFormats.Pbgra32);
         bitmap.Render(visual); bitmap.Freeze(); return bitmap;
@@ -55,10 +58,10 @@ public static class StampRenderer
         }
         geometry.Freeze(); dc.DrawGeometry(null, pen, geometry);
     }
-    static void DrawText(DrawingContext dc, string value, double cy, double maxHeight, Brush brush)
+    static void DrawText(DrawingContext dc, string value, double cy, double maxHeight, Brush brush, Typeface typeface)
     {
         var text = new FormattedText(value, CultureInfo.GetCultureInfo("ja-JP"), FlowDirection.LeftToRight,
-            new Typeface("Yu Gothic"), 100, brush, 1);
+            typeface, 100, brush, 1);
         var outline = text.BuildGeometry(new Point(0, 0));
         var bounds = outline.Bounds;
         if (bounds.IsEmpty || bounds.Width <= 0 || bounds.Height <= 0) return;

@@ -268,6 +268,95 @@ internal static class SmokeTest
                 }
             });
 
+            Check("same-stamp-font-change-keeps-old-jpeg-candidates", () =>
+            {
+                var plain = stamp with { Name = "SAMPLE", Bottom = "CHECK", Renderer = RingCode.PlainRenderer, GeometryCode = null };
+                var firstFont = new Typeface("Arial"); var secondFont = new Typeface("Times New Roman");
+                Require(firstFont.TryGetGlyphTypeface(out _) && secondFont.TryGetGlyphTypeface(out _), "Fixture fonts unavailable.");
+                var oldImage = StampRenderer.Render(plain, firstFont);
+                var oldPng = StampRenderer.Png(oldImage);
+                var newPng = StampRenderer.Png(StampRenderer.Render(plain, secondFont));
+                Require(!oldPng.SequenceEqual(newPng), "Font variants must have different PNGs.");
+                var key = RandomNumberGenerator.GetBytes(32);
+                try
+                {
+                    using var historyStore = new Journal(Path.Combine(root, "font-history-" + Guid.NewGuid().ToString("N")), key);
+                    var copy = new CopyService(historyStore, new FakeClipboard());
+                    var first = copy.GenerateCodedAndCopy(plain, _ => oldPng);
+                    var duplicate = copy.GenerateCodedAndCopy(plain, _ => oldPng);
+                    var latest = copy.GenerateCodedAndCopy(plain, _ => newPng);
+                    var service = new VerificationService(historyStore);
+                    var history = service.ReadGenerations();
+                    // This is the pre-fix grouping: only the new font survives.
+                    Require(history.Reverse().DistinctBy(g => g.Stamp).Single().EventId == latest, "Legacy reproduction changed.");
+                    bool[] Normalize(BitmapSource image)
+                    {
+                        var converted = new FormatConvertedBitmap(image, PixelFormats.Bgra32, null, 0);
+                        var pixels = new byte[image.PixelWidth * image.PixelHeight * 4]; converted.CopyPixels(pixels, image.PixelWidth * 4, 0);
+                        var mask = ImageSearch.RedMask(pixels, image.PixelWidth, image.PixelHeight);
+                        var bounds = ImageSearch.Bounds(mask, image.PixelWidth, image.PixelHeight) ?? throw new InvalidDataException("No stamp bounds.");
+                        return ImageSearch.Normalize(mask, image.PixelWidth, image.PixelHeight, bounds);
+                    }
+                    var references = HistoryReferences.LatestImages(history).Select(g =>
+                    {
+                        using var bytes = new MemoryStream(VerificationService.StoredPng(g)!);
+                        var bitmap = BitmapFrame.Create(bytes, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                        return new StampTemplate(g.Stamp, Normalize(bitmap), g.PngSha256);
+                    }).ToArray();
+                    Require(references.Length == 2, "A historical font image was dropped.");
+                    using var jpeg = new MemoryStream();
+                    var encoder = new JpegBitmapEncoder { QualityLevel = 85 }; encoder.Frames.Add(BitmapFrame.Create(oldImage)); encoder.Save(jpeg);
+                    Require(service.Image(jpeg.ToArray()).Status == VerificationStatus.NoRecord, "JPEG unexpectedly used exact-match path.");
+                    jpeg.Position = 0;
+                    var input = BitmapFrame.Create(jpeg, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                    var ranked = ImageSearch.Rank(Normalize(input), references);
+                    var oldCandidate = ranked.Single(x => x.PngSha256 == history[0].PngSha256);
+                    var matched = HistoryReferences.Matching(history, oldCandidate).Select(x => x.EventId).ToHashSet();
+                    Require(matched.SetEquals(new[] { first, duplicate }) && !matched.Contains(latest), "Candidate bound to the wrong image events.");
+                    Require(service.Image(oldPng).Matches.Count == 2, "Exact duplicates changed.");
+                }
+                finally { CryptographicOperations.ZeroMemory(key); }
+            });
+
+            Check("windows-delete-failure-leaves-valid-prefix-and-can-retry", () =>
+            {
+                var key = RandomNumberGenerator.GetBytes(32);
+                try
+                {
+                    var folder = Path.Combine(root, "delete-failure-" + Guid.NewGuid().ToString("N"));
+                    using var journal = new Journal(folder, key);
+                    for (int i = 0; i < 3; i++) journal.Append("Test", Guid.NewGuid(), new { Index = i });
+                    using (var locked = new FileStream(Path.Combine(folder, "000000000002.json"), FileMode.Open, FileAccess.Read, FileShare.Read))
+                    {
+                        bool rejected = false;
+                        try { journal.DeleteAllHistory(); } catch (IOException) { rejected = true; }
+                        Require(rejected && journal.Read().Count == 2, "Partial deletion did not preserve a valid prefix.");
+                    }
+                    journal.DeleteAllHistory(); Require(journal.Read().Count == 0, "Delete retry failed.");
+                    journal.Append("Test", Guid.NewGuid(), new { Restart = true });
+                    Require(journal.Read().Single().Entry.Sequence == 1, "Generation after deletion failed.");
+                }
+                finally { CryptographicOperations.ZeroMemory(key); }
+            });
+
+            Check("missing-and-damaged-key-never-recreated", () =>
+            {
+                var folder = Path.Combine(root, "missing-key-" + Guid.NewGuid().ToString("N"));
+                var key = KeyStore.Load(folder);
+                try
+                {
+                    using (var journal = new Journal(Path.Combine(folder, "journal"), key)) journal.Append("Test", Guid.NewGuid(), new { });
+                    var path = Path.Combine(folder, "key.dpapi"); File.Delete(path);
+                    bool rejected = false;
+                    try { KeyStore.Load(folder); } catch (InvalidDataException) { rejected = true; }
+                    Require(rejected && !File.Exists(path), "Missing key was silently replaced.");
+                    File.WriteAllBytes(path, [1, 2, 3]); rejected = false;
+                    try { KeyStore.Load(folder); } catch (CryptographicException) { rejected = true; }
+                    Require(rejected && File.ReadAllBytes(path).SequenceEqual(new byte[] { 1, 2, 3 }), "Damaged key was replaced.");
+                }
+                finally { CryptographicOperations.ZeroMemory(key); }
+            });
+
             Check("ring12-rendered-decoding-and-controls", () =>
             {
                 var observations = new List<object>(); int correct = 0, wrong = 0, unreadable = 0, flatClassified = 0, mimicClassified = 0;
