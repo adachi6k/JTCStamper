@@ -166,7 +166,7 @@ public partial class MainWindow : Window
     }
     void ExitClick(object sender, RoutedEventArgs e) => Close();
     void AboutClick(object sender, RoutedEventArgs e) => MessageBox.Show(this,
-        "JTC Stamper\nJust To Confirm — 確認した、その記録を。", "バージョン情報", MessageBoxButton.OK, MessageBoxImage.Information);
+        "JTC Stamper\nJust To Confirm — 確認した、その記録を。\n\n" + BuildIdentity.Description, "バージョン情報", MessageBoxButton.OK, MessageBoxImage.Information);
     Stamp Current()
     {
         if (string.IsNullOrWhiteSpace(NameInput.Text) || string.IsNullOrWhiteSpace(BottomInput.Text))

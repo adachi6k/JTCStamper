@@ -24,9 +24,9 @@ jobs:
           New-Item -ItemType Directory -Force test-results/core | Out-Null
           dotnet run --project tests/JTCStamper.Checks -c Release 2>&1 | Tee-Object test-results/core/checks.txt
           if ($LASTEXITCODE -ne 0) { throw 'Core checks failed.' }
-      - name: Publish both variants
-        shell: cmd
-        run: publish-all.cmd
+      - name: Build versioned distribution packages
+        shell: pwsh
+        run: ./scripts/New-ReleasePackages.ps1
       - name: Windows smoke (clipboard explicitly skipped)
         shell: pwsh
         run: ./scripts/Invoke-WindowsSmoke.ps1
@@ -39,4 +39,11 @@ jobs:
             test-results/core/
             test-results/windows-smoke/
           if-no-files-found: warn
+          retention-days: 14
+      - name: Upload private distribution artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: packages-${{ github.sha }}
+          path: dist/packages/
+          if-no-files-found: error
           retention-days: 14
