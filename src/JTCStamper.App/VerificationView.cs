@@ -278,10 +278,10 @@ public sealed class VerificationView : UserControl
         Reset(); SetBusy(true);
         try
         {
-            var data = Clipboard.GetData("PNG");
-            if (data is Stream stream) { if (stream.CanSeek) stream.Position = 0; lastBytes = ReadLimited(stream, 32 * 1024 * 1024); await LoadImage(lastBytes, null); }
-            else if (data is byte[] bytes && bytes.Length <= 32 * 1024 * 1024) { lastBytes = bytes; await LoadImage(bytes, null); }
-            else if (Clipboard.GetImage() is BitmapSource bitmap) { lastBitmap = bitmap; await LoadImage(null, bitmap); }
+            var data = await ClipboardImages.ReadAsync();
+            if (disposed) return;
+            if (data?.Png is byte[] bytes) { lastBytes = bytes; await LoadImage(bytes, null); }
+            else if (data?.Bitmap is BitmapSource bitmap) { lastBitmap = bitmap; await LoadImage(null, bitmap); }
             else Failed("クリップボードに画像がありません。");
         }
         catch (Exception ex) { Failed("クリップボードを読み取れませんでした：" + ex.Message); }

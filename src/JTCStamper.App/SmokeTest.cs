@@ -61,6 +61,11 @@ internal static class SmokeTest
             try { action(); checks.Add(new(name, "passed")); }
             catch (Exception ex) { checks.Add(new(name, "failed", ex.ToString())); }
         }
+        async Task CheckAsync(string name, Func<Task> action)
+        {
+            try { await action(); checks.Add(new(name, "passed", null)); }
+            catch (Exception ex) { checks.Add(new(name, "failed", ex.ToString())); }
+        }
         var started = DateTimeOffset.UtcNow;
         var stamp = new Stamp("JTC", new DateOnly(2100, 1, 1), "(印)", RingCode.Renderer, 0);
         byte[]? png = null;
@@ -494,12 +499,15 @@ internal static class SmokeTest
                 });
                 if (clipboard)
                 {
-                    Check("windows-clipboard-png-roundtrip", () =>
+                    await CheckAsync("windows-clipboard-png-roundtrip", async () =>
                     {
                         Require(Environment.UserInteractive, "Interactive Windows session required.");
                         Require(png is not null, "Rendering prerequisite failed.");
-                        new WindowsClipboard().Copy(png!);
-                        VerifyClipboard(png!);
+                        for (int attempt = 0; attempt < 8; attempt++)
+                        {
+                            new WindowsClipboard().Copy(png!);
+                            await VerifyClipboard(png!);
+                        }
                     });
                 }
                 else checks.Add(new("windows-clipboard-png-roundtrip", "skipped", "Not requested; use -IncludeClipboard."));
@@ -537,10 +545,10 @@ internal static class SmokeTest
                     }
                     finally { CryptographicOperations.ZeroMemory(key); }
                 });
-                if (clipboard) Check("clipboard-survives-process-exit", () =>
+                if (clipboard) await CheckAsync("clipboard-survives-process-exit", async () =>
                 {
                     Require(png is not null, "Rendering prerequisite failed.");
-                    VerifyClipboard(png!);
+                    await VerifyClipboard(png!);
                 });
                 else checks.Add(new("clipboard-survives-process-exit", "skipped", "Not requested; use -IncludeClipboard."));
             }
@@ -555,19 +563,14 @@ internal static class SmokeTest
         return passed ? 0 : 1;
     }
 
-    static void VerifyClipboard(byte[] png)
+    static async Task VerifyClipboard(byte[] png)
     {
-                        Require(Clipboard.ContainsData("PNG") && Clipboard.ContainsImage(), "Clipboard formats missing.");
-                        var payload = Clipboard.GetData("PNG");
-                        var bytes = payload switch
-                        {
-                            MemoryStream stream => stream.ToArray(),
-                            byte[] array => array,
-                            _ => throw new InvalidDataException("Unexpected PNG clipboard payload: " + (payload?.GetType().FullName ?? "null"))
-                        };
-                        Require(bytes.SequenceEqual(png!), "PNG clipboard bytes changed.");
-                        var image = Clipboard.GetImage();
-                        Require(image is not null && image.PixelWidth == 384 && image.PixelHeight == 384, "Bitmap fallback missing: " + (image is null ? "null" : $"{image.PixelWidth}x{image.PixelHeight}"));
+        var data = await ClipboardImages.ReadAsync(requireBitmap: true);
+        Require(data?.Png is not null, "PNG clipboard payload missing.");
+        Require(data!.Png!.SequenceEqual(png), "PNG clipboard bytes changed.");
+        var image = data.Bitmap;
+        Require(image is not null && image.PixelWidth == 384 && image.PixelHeight == 384,
+            "Bitmap fallback missing: " + (image is null ? "null" : $"{image.PixelWidth}x{image.PixelHeight}"));
     }
 
     static RingReading ReadGeometry(Stamp specimen, int diameter, int angle, bool jpeg)

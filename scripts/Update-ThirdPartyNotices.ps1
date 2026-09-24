@@ -18,7 +18,7 @@ The following notices are reproduced from the Microsoft runtime packages used fo
 Installed Windows fonts are referenced for rendering; font files are not redistributed.
 The JTC icon was generated for this project during development; no external icon font is bundled.
 '@
-$sections = @($header.Trim())
+$sections = @($header.Replace("`r`n", "`n").Trim())
 foreach ($item in @(
     @{ Framework = 'Microsoft.NETCore.App'; Package = 'microsoft.netcore.app.runtime.win-x64'; Files = @('LICENSE.TXT', 'THIRD-PARTY-NOTICES.TXT') },
     @{ Framework = 'Microsoft.WindowsDesktop.App'; Package = 'microsoft.windowsdesktop.app.runtime.win-x64'; Files = @('LICENSE') }
