@@ -159,9 +159,9 @@ try
         Assert(message.Kind == VerificationMessageKind.Candidate);
         Assert(message.Title == "対応する生成履歴候補あり" && !message.Title.Contains("判定不能"));
         Assert(message.Findings.Contains("1件") && message.Meaning.Contains("確定していません"));
-        Assert(VerificationMessages.ShapeEvidence(0x22F, 0x22F, new(1, 1, 1)).StartsWith("コード一致"));
-        Assert(VerificationMessages.ShapeEvidence(0x22F, 0, new(1, 1, 1)).StartsWith("コード不一致"));
-        Assert(VerificationMessages.ShapeEvidence(null, 0, new(1, 1, 1)).StartsWith("コード未読取"));
+        Assert(VerificationMessages.ShapeEvidence(0x22F, 0x22F, new(1, 1, 1)).Contains("／ コード一致"));
+        Assert(VerificationMessages.ShapeEvidence(0x22F, 0, new(1, 1, 1)).Contains("／ コード不一致"));
+        Assert(VerificationMessages.ShapeEvidence(null, 0, new(1, 1, 1)).Contains("／ コード未読取"));
         Assert(VerificationMessages.ScoreHelp.Contains("確率ではありません") && VerificationMessages.ScoreHelp.Contains("完全一致"));
         Throws(() => VerificationMessages.ShapeEvidence(0, 0, new(double.NaN, 1, 1)));
     });
@@ -201,6 +201,25 @@ try
         var failed = VerificationMessages.Exact(service.Original("{}"), true);
         Assert(failed.Kind == VerificationMessageKind.Unavailable && failed.Meaning.Contains("判断していません"));
         Assert(VerificationMessages.Exact(new(VerificationStatus.Match, "invalid", []), false).Kind == VerificationMessageKind.Unavailable);
+    });
+    Check("delete-all-history-preserves-key-owner-and-next-generation", dir =>
+    {
+        var key = RandomNumberGenerator.GetBytes(32);
+        using (var journal = new Journal(dir, key))
+        {
+            var id = Guid.NewGuid();
+            journal.Append("Generated", id, new { Name = "test" });
+            journal.Annotate(id, "note");
+            File.WriteAllText(Path.Combine(dir, "unrelated.txt"), "keep");
+            journal.DeleteAllHistory();
+            Assert(journal.Read().Count == 0 && File.Exists(Path.Combine(dir, "unrelated.txt")));
+            Throws(() => { using var other = new Journal(dir, key); });
+            journal.DeleteAllHistory();
+            journal.Append("Generated", Guid.NewGuid(), new { Name = "new" });
+            Assert(journal.Read().Single().Entry.Sequence == 1);
+        }
+        using var reopened = new Journal(dir, key);
+        Assert(reopened.Read().Count == 1);
     });
     Check("correspondence-score-components-and-code-collision", dir =>
     {

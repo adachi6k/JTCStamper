@@ -42,6 +42,27 @@ public partial class MainWindow : Window
         if (journal is null) { Status.Text = "照合する履歴の保存先を開いてください。"; return; }
         MainTabs.SelectedItem = VerificationTab;
     }
+    void DeleteHistoryClick(object sender, RoutedEventArgs e)
+    {
+        if (journal is null) { Status.Text = "履歴の保存先を開いてください。"; return; }
+        if (verification?.IsBusy == true) { Status.Text = "照合が完了してから履歴を削除してください。"; return; }
+        try
+        {
+            var records = journal.Read();
+            if (records.Count == 0) { Status.Text = "削除する履歴はありません。"; return; }
+            int count = records.Count(x => x.Entry.Kind == "Generated");
+            var answer = MessageBox.Show(this,
+                $"現在の保存先の生成履歴{count}件と、コピー記録・注釈をすべて削除します。\n\n保存先：{storageRoot}\n\n元に戻せません。削除した記録は照合に使えなくなります。別途保存した画像・原本、鍵、印面設定は削除しません。\n\n削除しますか？",
+                "生成履歴をすべて削除", MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.Cancel);
+            if (answer != MessageBoxResult.OK) return;
+            string outcome;
+            try { journal.DeleteAllHistory(); outcome = "現在の保存先の生成履歴・コピー記録・注釈をすべて削除しました。"; }
+            catch (Exception ex) { outcome = "削除を完了できませんでした。一部の新しい記録は削除済みの可能性があります：" + ex.Message; }
+            InstallVerification(); NoteInput.Clear(); Details.Text = ""; RefreshHistory();
+            Status.Text = outcome;
+        }
+        catch (Exception ex) { Status.Text = "履歴の削除処理に失敗しました：" + ex.Message; }
+    }
     void ShowHistoryClick(object sender, RoutedEventArgs e) => MainTabs.SelectedItem = HistoryTab;
     VerificationView? verification;
     void InstallVerification()

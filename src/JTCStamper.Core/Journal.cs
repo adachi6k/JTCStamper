@@ -66,6 +66,14 @@ public sealed class Journal : IDisposable
         finally { if (File.Exists(temp)) File.Delete(temp); }
         return signed;
     }
+    // Delete newest first: an interrupted deletion leaves a valid prefix, never a broken chain.
+    // Keep the owner lock and key; unrelated files are never removed.
+    public void DeleteAllHistory()
+    {
+        var records = Read();
+        foreach (var record in records.Reverse())
+            File.Delete(Path.Combine(directory, $"{record.Entry.Sequence:D12}.json"));
+    }
     public void Annotate(Guid eventId, string text)
     {
         if (string.IsNullOrWhiteSpace(text) || text.Length > 2000) throw new ArgumentException("注釈は1〜2000文字です。");

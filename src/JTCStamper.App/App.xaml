@@ -3,6 +3,7 @@
         <Style x:Key="NavigationItem" TargetType="TabItem">
             <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="Margin" Value="8,3"/>
             <Setter Property="Template">
                 <Setter.Value><ControlTemplate TargetType="TabItem">
@@ -14,7 +15,6 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}"/></Trigger>
                         <Trigger Property="IsSelected" Value="True"><Setter TargetName="Surface" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}"/><Setter TargetName="Indicator" Property="Visibility" Value="Visible"/><Setter Property="FontWeight" Value="SemiBold"/></Trigger>
-                        <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource AccentFillColorDefaultBrush}"/><Setter TargetName="Surface" Property="BorderThickness" Value="1"/></Trigger>
                         <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.45"/></Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate></Setter.Value>

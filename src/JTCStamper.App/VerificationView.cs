@@ -79,15 +79,11 @@ public sealed class VerificationView : UserControl
             Content = new TextBlock { Text = storageRoot, TextWrapping = TextWrapping.Wrap } });
         Grid.SetColumn(resultScroll, 2); body.Children.Add(resultScroll);
         var results = new StackPanel(); resultScroll.Content = results;
-        results.Children.Add(title);
         void Section(string label, TextBlock text)
         {
             results.Children.Add(new TextBlock { Text = label, FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 10, 0, 3) });
             results.Children.Add(text);
         }
-        Section("確認できたこと", result);
-        Section("この結果の意味", meaning);
-        Section("次に確認すること", nextStep);
         result.Text = "このPCに保存した生成履歴と照合します。";
         nextStep.Text = "［ファイルを選択…］または［クリップボードの画像を照合］を押してください。";
         results.Children.Add(candidateHeading); results.Children.Add(scoreHelp);
@@ -99,6 +95,10 @@ public sealed class VerificationView : UserControl
         factory.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap);
         candidates.ItemTemplate = new DataTemplate { VisualTree = factory };
         results.Children.Add(candidates); results.Children.Add(show);
+        results.Children.Add(title);
+        Section("確認できたこと", result);
+        Section("この結果の意味", meaning);
+        Section("次に確認すること", nextStep);
         results.Children.Add(new Expander { Header = "読取・検索の詳細", Content = technical, Margin = new Thickness(0, 8, 0, 0) });
         results.Children.Add(new Expander { Header = "対応スコアの配点と限界", Margin = new Thickness(0, 8, 0, 0),
             Content = new TextBlock { Text = VerificationMessages.MethodHelp, TextWrapping = TextWrapping.Wrap } });

@@ -17,7 +17,7 @@ public static class VerificationMessages
         var score = CorrespondenceScore.Calculate(text, readCode, candidateCode);
         string code = readCode is null ? "コード未読取（未確認）" : readCode == candidateCode ? "コード一致" : "コード不一致";
         string F(double value) => value.ToString("0.000", CultureInfo.InvariantCulture);
-        return $"{code} ／ 履歴との対応スコア {F(score.Total)}（暫定）\n" +
+        return $"履歴との対応スコア {F(score.Total)}（暫定） ／ {code}\n" +
             $"文字の形 {F(text.Contribution)} / 0.300［氏名 {F(text.Name / 10)}・日付 {F(text.Date / 10)}・下段 {F(text.Bottom / 10)}］\n" +
             $"埋め込み情報 {F(score.CodeContribution)} / 0.700：{code}";
     }

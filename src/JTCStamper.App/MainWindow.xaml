@@ -52,6 +52,8 @@
                 <Separator/>
                 <MenuItem Header="実行ファイルのフォルダーを使用" Click="DefaultHistoryClick"/>
                 <MenuItem Header="保存先を選択…" Click="ChooseHistoryClick"/>
+                <Separator/>
+                <MenuItem Header="現在の保存先の生成履歴をすべて削除…" Click="DeleteHistoryClick"/>
             </MenuItem>
             <MenuItem Header="照合(_C)" Style="{StaticResource CompactCaptionMenuItem}"><MenuItem Header="照合画面を開く" Click="VerifyClick"/></MenuItem>
             <MenuItem Header="表示(_V)" Style="{StaticResource CompactCaptionMenuItem}">
@@ -94,7 +96,7 @@
                     </Grid>
                 </ControlTemplate>
             </TabControl.Template>
-            <TabItem x:Name="CreateTab" Header="作成">
+            <TabItem x:Name="CreateTab" Header="印影を作成">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <Grid Margin="16">
                         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
@@ -146,10 +148,10 @@
                     </Grid>
                 </ScrollViewer>
             </TabItem>
-            <TabItem x:Name="VerificationTab" Header="照合" IsEnabled="False">
+            <TabItem x:Name="VerificationTab" Header="印影を照合" IsEnabled="False">
                 <ContentControl x:Name="VerificationHost" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
             </TabItem>
-            <TabItem x:Name="HistoryTab" Header="履歴">
+            <TabItem x:Name="HistoryTab" Header="生成履歴">
             <Grid Margin="12">
                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="2*"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                 <TextBlock Text="生成履歴" Style="{StaticResource PageHeading}"/>
