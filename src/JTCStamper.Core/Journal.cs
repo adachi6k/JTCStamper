@@ -23,21 +23,22 @@ public sealed class Journal : IDisposable
         this.directory = directory; this.key = key.ToArray();
         Directory.CreateDirectory(directory);
         owner = new FileStream(Path.Combine(directory, ".lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
-        try { Read(); } catch { owner.Dispose(); CryptographicOperations.ZeroMemory(this.key); throw; }
+        try { foreach (var _ in ReadVerified()) { } } catch { owner.Dispose(); CryptographicOperations.ZeroMemory(this.key); throw; }
     }
-    public IReadOnlyList<VerifiedEntry> Read()
+    public IReadOnlyList<VerifiedEntry> Read() => ReadVerified().ToArray();
+    IEnumerable<VerifiedEntry> ReadVerified()
     {
-        var result = new List<VerifiedEntry>();
+        long sequence = 0;
         string previous = "GENESIS";
         foreach (var path in Directory.GetFiles(directory, "*.json").Order(StringComparer.Ordinal))
         {
             var signed = JsonSerializer.Deserialize<SignedEntry>(File.ReadAllText(path)) ?? throw new InvalidDataException("Empty record");
             var entry = Verify(signed);
-            if (entry.Version != 1 || entry.Sequence != result.Count + 1 || entry.PreviousMac != previous ||
+            if (entry.Version != 1 || entry.Sequence != ++sequence || entry.PreviousMac != previous ||
                 Path.GetFileName(path) != $"{entry.Sequence:D12}.json") throw new InvalidDataException("履歴の順序または連鎖が不正です。");
-            result.Add(new(entry, signed)); previous = signed.Mac;
+            previous = signed.Mac;
+            yield return new(entry, signed);
         }
-        return result;
     }
     public Entry Verify(SignedEntry signed)
     {
@@ -48,8 +49,9 @@ public sealed class Journal : IDisposable
     }
     public SignedEntry Append(string kind, Guid eventId, object payload)
     {
-        var history = Read();
-        var entry = new Entry(1, history.Count + 1, history.LastOrDefault()?.Signed.Mac ?? "GENESIS",
+        // Verify every record, but retain only the chain tail when appending.
+        var last = ReadVerified().LastOrDefault();
+        var entry = new Entry(1, (last?.Entry.Sequence ?? 0) + 1, last?.Signed.Mac ?? "GENESIS",
             kind, eventId, DateTimeOffset.UtcNow, JsonSerializer.Serialize(payload));
         var json = JsonSerializer.Serialize(entry);
         var signed = new SignedEntry(json, Convert.ToHexString(HMACSHA256.HashData(key, Encoding.UTF8.GetBytes(json))));

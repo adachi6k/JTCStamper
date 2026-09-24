@@ -14,6 +14,8 @@ public sealed record VerificationResult(VerificationStatus Status, string Explan
     };
 }
 
+public sealed record VerifiedHistory(IReadOnlyList<VerifiedEntry> Entries, IReadOnlyList<Generation> Generations);
+
 // Read-only exact matching. An image match never identifies a unique event by itself.
 public sealed class VerificationService(Journal journal)
 {
@@ -45,7 +47,15 @@ public sealed class VerificationService(Journal journal)
 
     public IReadOnlyList<Generation> ReadGenerations() => Generations().Select(x => x.Generation).ToArray();
 
-    List<(Generation Generation, SignedEntry Signed)> Generations() => journal.Read()
+    // A fresh authenticated snapshot per operation; never cache it across user actions.
+    public VerifiedHistory ReadHistory()
+    {
+        var entries = journal.Read();
+        return new(entries, Generations(entries).Select(x => x.Generation).ToArray());
+    }
+
+    List<(Generation Generation, SignedEntry Signed)> Generations() => Generations(journal.Read());
+    static List<(Generation Generation, SignedEntry Signed)> Generations(IReadOnlyList<VerifiedEntry> entries) => entries
         .Where(x => x.Entry.Kind == "Generated" && IsCurrent(x.Entry)).Select(x => (Parse(x.Entry), x.Signed)).ToList();
 
     static bool IsCurrent(Entry entry)

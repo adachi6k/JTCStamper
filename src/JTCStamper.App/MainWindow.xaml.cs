@@ -266,10 +266,11 @@ public partial class MainWindow : Window
         select ??= (History.SelectedItem as HistoryRow)?.Id;
         try
         {
-            var records = journal.Read();
+            var snapshot = new VerificationService(journal).ReadHistory();
+            var records = snapshot.Entries;
             var completed = records.Where(r => r.Entry.Kind == "CopyCompleted").Select(r => r.Entry.EventId).ToHashSet();
             // Journal order is the generation order; a user-specified display date must not affect it.
-            var rows = new VerificationService(journal).ReadGenerations().Reverse().Select((g, index) =>
+            var rows = snapshot.Generations.Reverse().Select((g, index) =>
             {
                 var state = completed.Contains(g.EventId) ? "コピー記録あり" : "コピー未完了／不明";
                 var created = $"{g.CreatedUtc.ToLocalTime():yyyy/MM/dd HH:mm:ss}";
@@ -306,14 +307,16 @@ public partial class MainWindow : Window
         HistoryPreview.Source = null; HistoryImageDescription.Text = "";
         try
         {
-            if (History.SelectedItem is HistoryRow selected && journal is not null)
+            var snapshot = journal is not null && History.SelectedItem is HistoryRow
+                ? new VerificationService(journal).ReadHistory() : null;
+            if (History.SelectedItem is HistoryRow selected && snapshot is not null)
             {
-                var generation = new VerificationService(journal).ReadGenerations().Single(x => x.EventId == selected.Id);
+                var generation = snapshot.Generations.Single(x => x.EventId == selected.Id);
                 var image = HistoryImage.Load(generation);
                 HistoryPreview.Source = image.Image; HistoryImageDescription.Text = image.Description;
             }
-            Details.Text = History.SelectedItem is HistoryRow row && journal is not null
-                ? string.Join(Environment.NewLine + Environment.NewLine, journal.Read().Where(x => x.Entry.EventId == row.Id)
+            Details.Text = History.SelectedItem is HistoryRow row && snapshot is not null
+                ? string.Join(Environment.NewLine + Environment.NewLine, snapshot.Entries.Where(x => x.Entry.EventId == row.Id)
                     .Select(x => $"{x.Entry.Kind}  {x.Entry.RecordedUtc:O}\nID: {row.Id}\n{HistoryPayload(x.Entry)}")) : "";
         }
         catch (Exception ex) { Status.Text = "履歴検証に失敗: " + ex.Message; CopyButton.IsEnabled = false; }

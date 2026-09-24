@@ -16,6 +16,20 @@ void Throws(Action action) { try { action(); } catch { return; } throw new Excep
 var stamp = new Stamp("山田", new DateOnly(1900, 1, 1), "確認");
 try
 {
+    Check("history-snapshot-is-fresh-and-detects-later-tampering", dir =>
+    {
+        using var journal = new Journal(dir, key);
+        var id = new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
+        journal.Annotate(id, "first");
+        var service = new VerificationService(journal);
+        var snapshot = service.ReadHistory();
+        Assert(snapshot.Entries.Count == 4 && snapshot.Generations.Single().EventId == id);
+        journal.Annotate(id, "second");
+        Assert(service.ReadHistory().Entries.Count == 5 && snapshot.Entries.Count == 4);
+        var path = Path.Combine(dir, "000000000004.json");
+        File.WriteAllText(path, File.ReadAllText(path).Replace("first", "altered"));
+        Throws(() => service.ReadHistory());
+    });
     Check("restore-retains-authenticated-images-notes-and-original", dir =>
     {
         using var source = new Journal(Path.Combine(dir, "source"), key);
