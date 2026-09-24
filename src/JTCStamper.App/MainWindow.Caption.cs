@@ -18,11 +18,24 @@ public partial class MainWindow
         {
             captionSource = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
             captionSource?.AddHook(CaptionMessages);
+            ApplyWindowCorners();
         };
-        StateChanged += (_, _) => UpdateCaptionState();
+        StateChanged += (_, _) => { UpdateCaptionState(); ApplyWindowCorners(); };
+        Loaded += (_, _) => ApplyWindowCorners();
         Closed += (_, _) => { captionSource?.RemoveHook(CaptionMessages); captionSource = null; };
         UpdateCaptionState();
     }
+    // Keep rounding with DWM so maximized/snapped windows follow Windows policy.
+    void ApplyWindowCorners()
+    {
+        if (!OperatingSystem.IsWindowsVersionAtLeast(10, 0, 22000) || captionSource is null) return;
+        const int windowCornerPreference = 33, round = 2;
+        int preference = round;
+        int result = DwmSetWindowAttribute(captionSource.Handle, windowCornerPreference, ref preference, sizeof(int));
+        if (result < 0) System.Diagnostics.Trace.WriteLine($"Window rounding unavailable: 0x{result:X8}");
+    }
+    [DllImport("dwmapi.dll")]
+    static extern int DwmSetWindowAttribute(IntPtr window, int attribute, ref int value, int size);
     void UpdateCaptionState()
     {
         bool restored = WindowState == WindowState.Maximized;

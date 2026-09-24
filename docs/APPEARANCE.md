@@ -41,3 +41,8 @@ Copilotの提供画像を参考に、本文15 DIP・ナビゲーション16 DIP�
 ## コンパクトなウィンドウ
 
 初期サイズは960×700 DIP、最小860×620 DIP。本文・ナビゲーション・スコアの文字サイズは維持し、余白、入力欄、ボタン、サイドバー幅、印影プレビューを縮小しました。直近履歴は印面情報と生成日時・コピー状態の2行表示にし、3件を保ちます。ステータスバーは1行で省略表示し、マウスを合わせると全文を確認できます。小さいサイズでは各画面のスクロールで全項目に到達できます。実機での最小サイズ・高DPI確認は未実施です。
+
+## ウィンドウ外枠の角丸
+
+Windows 11ではDWMのDWMWA_WINDOW_CORNER_PREFERENCEにROUNDを指定します。WindowChromeのGlassFrameThicknessは1 DIPとし、外枠をOS側の描画に任せます。通常表示への復帰時にも設定します。非対応OSでは呼び出しを省略し、設定失敗で起動を止めません。最大化・スナップ時の角の形はWindows標準の動作に従います。実機での見え方は未確認です。
+参考：https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/ui/apply-rounded-corners

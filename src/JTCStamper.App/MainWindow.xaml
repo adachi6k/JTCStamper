@@ -6,7 +6,7 @@
         FontFamily="Yu Gothic UI, Segoe UI" FontSize="15" UseLayoutRounding="True"
         Background="{DynamicResource SolidBackgroundFillColorBaseBrush}" Foreground="{DynamicResource TextFillColorPrimaryBrush}">
     <shell:WindowChrome.WindowChrome>
-        <shell:WindowChrome CaptionHeight="32" GlassFrameThickness="0"
+        <shell:WindowChrome CaptionHeight="32" GlassFrameThickness="1"
                             UseAeroCaptionButtons="False" NonClientFrameEdges="Left,Right,Bottom"/>
     </shell:WindowChrome.WindowChrome>
     <Window.Template>
