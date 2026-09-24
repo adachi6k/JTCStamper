@@ -21,16 +21,19 @@ public static class KeyStore
 }
 public sealed class WindowsClipboard : IClipboard
 {
-    public void Copy(byte[] png)
+    public void Copy(byte[] png) => Clipboard.SetDataObject(CreateData(png), true);
+
+    internal static DataObject CreateData(byte[] png)
     {
         using var stream = new MemoryStream(png);
         var bitmap = new BitmapImage(); bitmap.BeginInit(); bitmap.CacheOption = BitmapCacheOption.OnLoad;
         bitmap.StreamSource = stream; bitmap.EndInit(); bitmap.Freeze();
         var data = new DataObject();
-        using var pngStream = new MemoryStream(png);
-        data.SetData("PNG", pngStream);
+        // The data object may still serve managed/OLE readers after this call returns.
+        // It owns this managed stream; disposing it here makes later PNG reads unreliable.
+        data.SetData("PNG", new MemoryStream(png, writable: false), autoConvert: false);
         data.SetImage(bitmap);
-        Clipboard.SetDataObject(data, true);
+        return data;
     }
 }
 
@@ -38,7 +41,6 @@ public sealed record ClipboardImage(byte[]? Png, BitmapSource? Bitmap);
 
 public static class ClipboardImages
 {
-    const int MaxBytes = 32 * 1024 * 1024;
     // OLE can advertise a format before its payload is readable. Retry reads only;
     // never replace the user's clipboard or treat a missing payload as a valid image.
     public static async Task<ClipboardImage?> ReadAsync(bool requireBitmap = false)
@@ -47,32 +49,16 @@ public static class ClipboardImages
         {
             try
             {
+                // Read PNG bytes while the Windows clipboard and its memory are locked.
+                // WPF/OLE returned corrupted payloads intermittently in real-machine testing,
+                // while the native PNG remained byte-identical in the same clipboard sequence.
+                var native = NativeClipboard.ReadPng();
+                bool hasPng = native.Available;
+                byte[]? png = native.Bytes;
+                if (png is not null && !requireBitmap) return new(png, null);
                 var data = Clipboard.GetDataObject();
-                bool hasPng = data?.GetDataPresent("PNG") == true;
                 bool hasBitmap = data?.GetDataPresent(DataFormats.Bitmap) == true;
                 if (data is not null && !hasPng && !hasBitmap) return null;
-                byte[]? png = null;
-                if (hasPng)
-                {
-                    var payload = data!.GetData("PNG");
-                    if (payload is byte[] array)
-                    {
-                        if (array.Length > MaxBytes) throw new InvalidDataException("画像は32MiB以内にしてください。");
-                        png = array;
-                    }
-                    else if (payload is Stream source)
-                    {
-                        if (source.CanSeek) source.Position = 0;
-                        using var copy = new MemoryStream();
-                        var buffer = new byte[81920]; int read;
-                        while ((read = source.Read(buffer, 0, buffer.Length)) > 0)
-                        {
-                            if (copy.Length + read > MaxBytes) throw new InvalidDataException("画像は32MiB以内にしてください。");
-                            copy.Write(buffer, 0, read);
-                        }
-                        if (copy.Length > 0) png = copy.ToArray();
-                    }
-                }
                 var bitmap = hasBitmap ? data!.GetData(DataFormats.Bitmap) as BitmapSource : null;
                 if (bitmap is not null) bitmap.Freeze();
                 if ((!hasPng || png is not null) && (!requireBitmap || bitmap is not null) && (png is not null || bitmap is not null))

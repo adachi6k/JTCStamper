@@ -16,9 +16,14 @@ internal static class Program
     [STAThread]
     static int Main(string[] args)
     {
-        if (args.Length != 1) return 2;
+        if (args.Length is not (1 or 2) || (args.Length == 2 && args[1] != "--skip-office")) return 2;
+        bool skipOffice = args.Length == 2;
         root = Path.GetFullPath(args[0]);
         if (!File.Exists(Path.Combine(root, ".acceptance-root"))) return 2;
+        foreach (var edition in new[] { "standard", "lite" })
+            foreach (var phase in new[] { "seed", "restart", "replacement" })
+                File.Delete(Path.Combine(root, edition + "-" + phase + ".json"));
+        File.Delete(Path.Combine(root, "acceptance.json"));
         var temp = Path.Combine(root, "temp"); Directory.CreateDirectory(temp);
         Environment.SetEnvironmentVariable("TEMP", temp); Environment.SetEnvironmentVariable("TMP", temp);
         var standard = Path.Combine(root, "Standard", "JTCStamper.App.exe");
@@ -52,12 +57,11 @@ internal static class Program
                     if (!passed) break;
                 }
             }
-            if (clipboardReady)
+            if (skipOffice) Result("office-paste-save-reopen", "skipped", "Explicit diagnostic option --skip-office.");
+            if (clipboardReady && !skipOffice)
             {
-                var stream = Clipboard.GetData("PNG") as Stream;
-                if (stream is null) throw new InvalidDataException("PNG clipboard missing after smoke.");
-                using var bytes = new MemoryStream(); stream.Position = 0; stream.CopyTo(bytes);
-                var png = bytes.ToArray();
+                var png = JTCStamper.App.NativeClipboard.ReadPng().Bytes
+                    ?? throw new InvalidDataException("PNG clipboard missing after smoke.");
                 foreach (var office in new[] { "Word", "Excel", "PowerPoint" })
                 {
                     try { OfficePaste(office, png); }
@@ -76,6 +80,9 @@ internal static class Program
             File.WriteAllText(Path.Combine(root, "acceptance.json"), JsonSerializer.Serialize(new
             {
                 Os = Environment.OSVersion.VersionString, Utc = DateTimeOffset.UtcNow,
+                IsElevated = new System.Security.Principal.WindowsPrincipal(System.Security.Principal.WindowsIdentity.GetCurrent())
+                    .IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator),
+                OfficeBuild = Microsoft.Win32.Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Office\ClickToRun\Configuration", "VersionToReport", null),
                 StandardSha256 = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(standard))),
                 LiteSha256 = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(lite))), Results
             }, new JsonSerializerOptions { WriteIndented = true }));
@@ -102,11 +109,14 @@ internal static class Program
     }
     static DataObject? CloneClipboard()
     {
+        uint sequence = JTCStamper.App.NativeClipboard.SequenceNumber;
         var original = Clipboard.GetDataObject(); if (original is null) return null;
         var clone = new DataObject();
         foreach (var format in original.GetFormats(false))
         {
-            var value = original.GetData(format, false);
+            var value = format == "PNG"
+                ? new MemoryStream(JTCStamper.App.NativeClipboard.ReadPng().Bytes ?? throw new InvalidDataException("PNG clipboard unavailable."))
+                : original.GetData(format, false);
             value = value switch
             {
                 MemoryStream stream when stream.Length <= 32 * 1024 * 1024 => new MemoryStream(stream.ToArray()),
@@ -117,6 +127,7 @@ internal static class Program
             };
             clone.SetData(format, value, false);
         }
+        if (sequence != JTCStamper.App.NativeClipboard.SequenceNumber) throw new InvalidDataException("Clipboard changed during preservation.");
         return clone;
     }
     static void OfficePaste(string product, byte[] png)
@@ -155,18 +166,31 @@ internal static class Program
                 if ((int)document.Slides[1].Shapes.Count != count) throw new InvalidDataException("PowerPoint image lost after reopen.");
             }
             if (count < 1 || width <= 0 || height <= 0) throw new InvalidDataException("Missing pasted picture.");
-            double best = 0;
+            double best = 0; bool pixelsPreserved = false, pngBytesPreserved = false;
+            var original = Raster(png);
+            int transparentPixels = Enumerable.Range(0, original.Width * original.Height).Count(i => original.Pixels[i * 4 + 3] == 0);
             var reference = Normalize(png);
             using var zip = ZipFile.OpenRead(path);
             foreach (var entry in zip.Entries.Where(e => e.FullName.Contains("/media/") && e.FullName.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
             {
                 using var bytes = new MemoryStream(); using (var source = entry.Open()) source.CopyTo(bytes);
-                var image = Normalize(bytes.ToArray());
+                var extracted = bytes.ToArray();
+                var raster = Raster(extracted);
+                pixelsPreserved |= raster.Width == original.Width && raster.Height == original.Height && raster.Pixels.SequenceEqual(original.Pixels);
+                pngBytesPreserved |= extracted.SequenceEqual(png);
+                var image = Normalize(extracted);
                 var stamp = new Stamp("TEST", new DateOnly(2100, 1, 1), "TEST", RingCode.PlainRenderer);
                 var candidates = ImageSearch.Rank(image, [new(stamp, reference)]);
                 if (candidates.Count > 0) best = Math.Max(best, candidates[0].Score);
             }
-            Result(product + "-paste-save-reopen", best >= 0.98 ? "passed" : "failed", new { Version = version, Pictures = count, WidthPoints = width, HeightPoints = height, ExtractedImageShapeScore = best });
+            bool dimensionsPreserved = Math.Abs(width - original.Width / original.DpiX * 72) < 0.1 && Math.Abs(height - original.Height / original.DpiY * 72) < 0.1;
+            Result(product + "-paste-save-reopen", best >= 0.98 && pixelsPreserved && dimensionsPreserved && transparentPixels > 0 ? "passed" : "failed", new
+            {
+                Version = version, Pictures = count, WidthPoints = width, HeightPoints = height,
+                ExtractedImageShapeScore = best, PixelsIncludingAlphaPreserved = pixelsPreserved,
+                PngBytesPreserved = pngBytesPreserved, DimensionsPreserved = dimensionsPreserved,
+                OriginalTransparentPixels = transparentPixels
+            });
         }
         finally
         {
@@ -176,6 +200,14 @@ internal static class Program
             }
             finally { if (!existed) app.Quit(); }
         }
+    }
+    static (int Width, int Height, double DpiX, double DpiY, byte[] Pixels) Raster(byte[] bytes)
+    {
+        using var stream = new MemoryStream(bytes);
+        var image = BitmapFrame.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+        var converted = new FormatConvertedBitmap(image, PixelFormats.Bgra32, null, 0);
+        var pixels = new byte[image.PixelWidth * image.PixelHeight * 4]; converted.CopyPixels(pixels, image.PixelWidth * 4, 0);
+        return (image.PixelWidth, image.PixelHeight, image.DpiX, image.DpiY, pixels);
     }
     static bool[] Normalize(byte[] bytes)
     {

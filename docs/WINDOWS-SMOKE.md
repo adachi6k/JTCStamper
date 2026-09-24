@@ -47,7 +47,7 @@ PowerShell 7の`pwsh -File`でも同じスクリプトを使えます。会社�
 
 GitHub ActionsでCoreとWindowsスモークを実行済み。実機では通常版のランタイム非依存起動、軽量版のランタイム不足診断と隔離ランタイム使用、実クリップボード、Office COM経由の貼付・保存・再読込も確認中です。成功・失敗・未実施の詳細はIssue #5に記録します。
 
-初回の実クリップボード読戻しは失敗し、再試験では通りました。再現条件の切分けが済むまで解決済みと扱いません。CIではクリップボードを明示的に省略します。
+実クリップボードの連続読戻しで、WPF/OLE経由だけが先頭から壊れたPNGを返す現象を再現しました。同じクリップボード更新番号のまま、Windows API経由では元のPNGとバイト単位で一致することを確認しています。PNGの読取はOpenClipboardとGlobalLockで保護したメモリをコピーしてから解放する経路へ変更しました。HMACやPNG完全一致の条件は緩めていません。CIでは実クリップボードを明示的に省略し、実機結果はIssue #5に記録します。
 
 ## 12-bitの追加評価
 
@@ -87,3 +87,14 @@ seedで同じユーザー用バックアップを作成・復元し、DPAPI鍵�
 acceptance.jsonと各seed/restart/replacement.jsonに結果・OS・EXEハッシュを記録します。Office保存ファイルも合成画像のみですが、TEMP以下の鍵・履歴・バックアップを成果物へ含めないでください。失敗時は終了コード1、マーカー不備は2です。skippedを成功として扱わないでください。
 
 このランナーはOfficeのUIによる通常操作、ペイント、DPI/Narrator、スリープ復帰、SmartScreenの検証を代替しません。
+
+## PNG読取の回帰検証
+
+通常の配布EXEで、seedごとに8回の実コピーとPNG全体の一致を検証し、別プロセスと配布版交換後にも保持を確認します。データオブジェクトが返された後もPNGストリームを読めることは、グローバルなクリップボードを使わないCI検査にも含めます。
+
+NativeClipboardは最大32MiBを確認してから、クリップボードを開いた状態でGlobalLock→Marshal.Copy→GlobalUnlockを行い、最後にCloseClipboardします。Windowsが所有するハンドルは解放しません。
+
+- [GetClipboardDataの所有権と使用条件](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getclipboarddata)
+- [GlobalLockとGlobalUnlock](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-globallock)
+
+Office受入ランナーもPNGの退避と検査には同じ読取コードを利用し、退避中にクリップボードが変わった場合はテストを省略します。--skip-officeは原因調査時だけOfficeを明示的に省略するオプションです。結果ファイルは試験開始時に既知の6レポート名だけを消去し、過去の結果が混ざらないようにします。

@@ -1,0 +1,56 @@
+{
+  "Os": "Microsoft Windows NT 10.0.26200.0",
+  "Utc": "2026-09-24T23:19:49.9413835+00:00",
+  "Product": "0.1.0-preview.3+81559510c16ba0c6eb8ce317df8192126b2008ec",
+  "WarmFileCache": true,
+  "SamplesPerCase": 1,
+  "Clipboard": "Fake sink; never modifies the user's clipboard",
+  "Results": [
+    {
+      "Generations": 100,
+      "JournalBytes": 4341646,
+      "StartupToRenderMs": 888.4657,
+      "ConstructorBlockedUiMs": 655.8218,
+      "HistorySelectionBlockedUiMs": 103.3589,
+      "RenderAndThreeAppendsFakeClipboardMs": 169.4996,
+      "ExactImageMs": 83.907,
+      "ExactMatches": 2,
+      "WorkingSetBytes": 203325440,
+      "CumulativePeakWorkingSetBytes": 205365248
+    },
+    {
+      "Generations": 1000,
+      "JournalBytes": 42850450,
+      "StartupToRenderMs": 2019.7819,
+      "ConstructorBlockedUiMs": 1895.5362,
+      "HistorySelectionBlockedUiMs": 1013.7641,
+      "RenderAndThreeAppendsFakeClipboardMs": 2844.1963,
+      "ExactImageMs": 848.8324,
+      "ExactMatches": 5,
+      "WorkingSetBytes": 505085952,
+      "CumulativePeakWorkingSetBytes": 518746112
+    },
+    {
+      "Generations": 10000,
+      "JournalBytes": 427965455,
+      "StartupToRenderMs": 12023.5648,
+      "ConstructorBlockedUiMs": 11948.5911,
+      "HistorySelectionBlockedUiMs": 6740.6684,
+      "RenderAndThreeAppendsFakeClipboardMs": 12286.1082,
+      "ExactImageMs": 6918.2482,
+      "ExactMatches": 35,
+      "WorkingSetBytes": 2801029120,
+      "CumulativePeakWorkingSetBytes": 4223229952
+    },
+    {
+      "Case": "Rank300Images",
+      "Milliseconds": 285.8016,
+      "Candidates": 8
+    },
+    {
+      "Case": "DenseRed12Megapixels",
+      "Milliseconds": 510.938,
+      "Regions": 0
+    }
+  ]
+}

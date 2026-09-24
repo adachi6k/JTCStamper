@@ -497,6 +497,16 @@ internal static class SmokeTest
                     }
                     finally { CryptographicOperations.ZeroMemory(key); }
                 });
+                Check("clipboard-data-object-keeps-png-stream-readable", () =>
+                {
+                    Require(png is not null, "Rendering prerequisite failed.");
+                    var data = WindowsClipboard.CreateData(png!);
+                    var stream = data.GetData("PNG") as Stream;
+                    Require(stream is not null && stream.CanRead, "PNG stream was closed before its data object was consumed.");
+                    using var copy = new MemoryStream(); stream!.CopyTo(copy);
+                    Require(copy.ToArray().SequenceEqual(png!), "Data object changed PNG bytes.");
+                    Require(data.GetData(DataFormats.Bitmap) is BitmapSource, "Bitmap fallback missing from data object.");
+                });
                 if (clipboard)
                 {
                     await CheckAsync("windows-clipboard-png-roundtrip", async () =>
@@ -506,7 +516,7 @@ internal static class SmokeTest
                         for (int attempt = 0; attempt < 8; attempt++)
                         {
                             new WindowsClipboard().Copy(png!);
-                            await VerifyClipboard(png!);
+                            await VerifyClipboard(png!, NativeClipboard.SequenceNumber);
                         }
                     });
                 }
@@ -563,11 +573,12 @@ internal static class SmokeTest
         return passed ? 0 : 1;
     }
 
-    static async Task VerifyClipboard(byte[] png)
+    static async Task VerifyClipboard(byte[] png, uint? sequence = null)
     {
         var data = await ClipboardImages.ReadAsync(requireBitmap: true);
         Require(data?.Png is not null, "PNG clipboard payload missing.");
-        Require(data!.Png!.SequenceEqual(png), "PNG clipboard bytes changed.");
+        var bytes = data!.Png!;
+        Require(bytes.SequenceEqual(png), $"PNG clipboard bytes changed: expected {png.Length}, actual {bytes.Length}, clipboard sequence changed {sequence.HasValue && sequence != NativeClipboard.SequenceNumber}.");
         var image = data.Bitmap;
         Require(image is not null && image.PixelWidth == 384 && image.PixelHeight == 384,
             "Bitmap fallback missing: " + (image is null ? "null" : $"{image.PixelWidth}x{image.PixelHeight}"));
