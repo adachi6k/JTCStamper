@@ -66,3 +66,10 @@ ring12-<phase>.jsonに、WPFによる72条件（2氏名・6値・2サイズ・PN
 左サイドバー、ライト／ダーク／Windows設定の切り替え、appearance.jsonへの保存・再読込、照合画面の同一インスタンス維持、印影プレビューPNGの不変性をテストします。window-Light-<phase>.png、window-Dark-<phase>.png、window-System-<phase>.pngを出力します。これらはWindows用テストであり、Linuxでのビルド成功は実機試験の成功を意味しません。
 
 統合タイトルバーの追加検査では、通常表示と最大化時のWM_NCHITTESTを実際のウィンドウへ送り、空白領域がHTCAPTION、メニューがHTCLIENT、最大化ボタンがHTMAXBUTTONとなることを確認します。3つの操作ボタンは寸法とベクター形状に加え、描画画素も検査します。スナップのポップアップ・実際のドラッグ・複数DPIモニター間の移動はこの自動検査には含めません。
+
+## GitHub Actions
+
+`.github/workflows/windows-smoke.yml`をmainへのpush、Pull Request、手動起動で実行します。
+SDKはglobal.json、ActionsはコミットSHAで固定します。Coreチェック、両版のpublish、6プロセスのWindowsスモークを行い、失敗時も許可リスト内のレポートとテーマ別画像を保存します。
+
+ホストランナーの試験は実ユーザーの受入試験を代替しません。Office、実クリップボード、ランタイム未導入PC、DPI・Narratorの対話操作は未実施として実機試験Issueで追跡します。初回ActionsでGUIの実行条件を満たさない場合も、成功扱いにせず結果を記録します。

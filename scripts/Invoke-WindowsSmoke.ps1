@@ -54,7 +54,7 @@ function Invoke-Phase([string]$Exe, [string]$DataRoot, [string]$Phase, [string]$
         $artifact = Join-Path $results $Label
         New-Item -ItemType Directory -Path $artifact -Force | Out-Null
         # Allowlist artifacts. Never publish a key, journal, baseline, or arbitrary test directory.
-        foreach ($file in @(('report-' + $Phase + '.json'), ('window-' + $Phase + '.png'), ('stamp-' + $Phase + '.png'), ('ring12-' + $Phase + '.json'))) {
+        foreach ($file in @(('report-' + $Phase + '.json'), ('window-' + $Phase + '.png'), ('stamp-' + $Phase + '.png'), ('ring12-' + $Phase + '.json'), ('window-Light-' + $Phase + '.png'), ('window-Dark-' + $Phase + '.png'), ('window-System-' + $Phase + '.png'))) {
             $source = Join-Path $DataRoot $file
             if (Test-Path -LiteralPath $source) { Copy-Item -LiteralPath $source -Destination $artifact }
         }

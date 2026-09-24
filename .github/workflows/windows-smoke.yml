@@ -1,0 +1,42 @@
+name: Windows build and smoke
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: windows-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  smoke:
+    runs-on: windows-2025
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          global-json-file: global.json
+      - name: Core regression checks
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force test-results/core | Out-Null
+          dotnet run --project tests/JTCStamper.Checks -c Release 2>&1 | Tee-Object test-results/core/checks.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Core checks failed.' }
+      - name: Publish both variants
+        shell: cmd
+        run: publish-all.cmd
+      - name: Windows smoke (clipboard explicitly skipped)
+        shell: pwsh
+        run: ./scripts/Invoke-WindowsSmoke.ps1
+      - name: Upload allowlisted reports and synthetic previews
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: windows-smoke-${{ github.sha }}
+          path: |
+            test-results/core/
+            test-results/windows-smoke/
+          if-no-files-found: warn
+          retention-days: 14
