@@ -14,8 +14,8 @@ public static class KeyStore
         if (Directory.Exists(Path.Combine(root, "journal")) && Directory.EnumerateFiles(Path.Combine(root, "journal"), "*.json").Any())
             throw new InvalidDataException("秘密鍵がありません。鍵を再作成せず、バックアップから復旧してください。");
         var key = RandomNumberGenerator.GetBytes(32);
-        using var output = new FileStream(path, FileMode.CreateNew, FileAccess.Write, FileShare.None);
-        output.Write(ProtectedData.Protect(key, null, DataProtectionScope.CurrentUser)); output.Flush(true);
+        var protectedKey = ProtectedData.Protect(key, null, DataProtectionScope.CurrentUser);
+        AtomicFile.Write(path, stream => stream.Write(protectedKey), overwrite: false);
         return key;
     }
 }

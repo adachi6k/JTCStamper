@@ -16,6 +16,46 @@ void Throws(Action action) { try { action(); } catch { return; } throw new Excep
 var stamp = new Stamp("山田", new DateOnly(1900, 1, 1), "確認");
 try
 {
+    Check("atomic-save-preserves-existing-on-partial-write", dir =>
+    {
+        var path = Path.Combine(dir, "original.jtc");
+        File.WriteAllText(path, "original");
+        Throws(() => AtomicFile.Write(path, output => { output.WriteByte(1); throw new IOException("disk full"); }));
+        Assert(File.ReadAllText(path) == "original" && Directory.GetFiles(dir).Length == 1);
+        AtomicFile.Write(path, output => output.Write([2, 3]));
+        Assert(File.ReadAllBytes(path).SequenceEqual(new byte[] { 2, 3 }));
+    });
+    Check("atomic-create-failure-and-collision", dir =>
+    {
+        var path = Path.Combine(dir, "key.dpapi");
+        Throws(() => AtomicFile.Write(path, output => { output.WriteByte(1); throw new IOException("interrupted"); }, false));
+        Assert(!File.Exists(path) && Directory.GetFiles(dir).Length == 0);
+        AtomicFile.Write(path, output => output.WriteByte(2), false);
+        Throws(() => AtomicFile.Write(path, output => output.WriteByte(3), false));
+        Assert(File.ReadAllBytes(path).SequenceEqual(new byte[] { 2 }) && Directory.GetFiles(dir).Length == 1);
+        Directory.CreateDirectory(Path.Combine(dir, "blocked"));
+        Throws(() => AtomicFile.Write(Path.Combine(dir, "blocked"), output => output.WriteByte(4)));
+        Assert(Directory.GetFiles(dir).Length == 1);
+    });
+    Check("same-stamp-distinct-images-retain-event-associations", dir =>
+    {
+        using var journal = new Journal(dir, key);
+        var plain = stamp with { Renderer = RingCode.PlainRenderer, GeometryCode = null };
+        var service = new CopyService(journal, new FakeClipboard());
+        service.GenerateCodedAndCopy(plain, _ => [1]);
+        service.GenerateCodedAndCopy(plain, _ => [2]);
+        service.GenerateCodedAndCopy(plain, _ => [1]);
+        var history = new VerificationService(journal).ReadGenerations();
+        var references = HistoryReferences.LatestImages(history);
+        Assert(references.Length == 2 && references[0].EventId == history[2].EventId);
+        var a = new bool[96 * 96]; PaintStamp(a, 96, 96, 48, 48, 88, false);
+        var b = new bool[96 * 96]; PaintStamp(b, 96, 96, 48, 48, 88, true);
+        var ranked = ImageSearch.Rank(a, [new(plain, b, history[1].PngSha256), new(plain, a, history[0].PngSha256)]);
+        Assert(ranked[0].PngSha256 == history[0].PngSha256);
+        var matches = HistoryReferences.Matching(history, ranked[0]).ToArray();
+        Assert(matches.Length == 2 && matches.All(g => g.PngSha256 == history[0].PngSha256));
+        Assert(HistoryReferences.LatestImages(history, 1).Length == 1);
+    });
     Check("generated-copy-annotation-and-reopen", dir =>
     {
         Guid first;

@@ -54,7 +54,6 @@ public sealed class VerificationView : UserControl
     readonly CheckBox codeFilter = new() { Content = "読めた印影コードで候補を絞る", IsChecked = true, IsEnabled = false };
     IReadOnlyList<Generation> history = [];
     readonly List<StampTemplate> templates = [];
-    readonly Dictionary<Stamp, string> referenceHashes = [];
     string coverage = "";
     bool busy;
     Point? dragStart;
@@ -253,7 +252,7 @@ public sealed class VerificationView : UserControl
     void Reset()
     {
         source = null; mask = null; selectedRegion = null; preview.Source = null; regions.ItemsSource = null; SetCandidates([]);
-        templates.Clear(); referenceHashes.Clear(); history = []; coverage = ""; show.IsEnabled = false;
+        templates.Clear(); history = []; coverage = ""; show.IsEnabled = false;
     }
     async void Open(object sender, RoutedEventArgs e)
     {
@@ -327,20 +326,20 @@ public sealed class VerificationView : UserControl
         if (disposed) return;
         Progress("生成履歴の印面を準備しています…");
         history = service.ReadGenerations(); // Revalidates all HMACs before creating reference images.
-        var groups = history.Reverse().Select(x => x.Stamp).Distinct().ToArray();
+        var groups = HistoryReferences.LatestImages(history, 301);
         int skipped = 0;
-        foreach (var stamp in groups.Take(300))
+        foreach (var generation in groups.Take(300))
         {
-            var generation = history.Last(x => x.Stamp == stamp);
+            var stamp = generation.Stamp;
             var historical = HistoryImage.Load(generation);
             if (historical.Image is not BitmapSource rendered) { skipped++; continue; }
             string hash = generation.PngSha256;
             var reference = ToMask(rendered);
             if (ImageSearch.Bounds(reference, rendered.PixelWidth, rendered.PixelHeight) is ImageRegion bounds)
-                { templates.Add(new(stamp, ImageSearch.Normalize(reference, rendered.PixelWidth, rendered.PixelHeight, bounds))); referenceHashes[stamp] = hash; }
+                { templates.Add(new(stamp, ImageSearch.Normalize(reference, rendered.PixelWidth, rendered.PixelHeight, bounds), hash)); }
             if (templates.Count % 8 == 0) { await Dispatcher.Yield(DispatcherPriority.Background); if (disposed) return; }
         }
-        coverage = $"比較対象：印面{templates.Count}種類。" + (groups.Length > 300 ? "直近300種類に限定しています。" : "") +
+        coverage = $"比較対象：保存画像{templates.Count}種類。" + (groups.Length > 300 ? "直近300種類に限定しています。" : "") +
             (skipped > 0 ? $"過去画像を再現できない{skipped}種類は比較対象外です。" : "");
         regions.ItemsSource = found.Take(30).Select((x, i) => new RegionItem(x, $"検出した印影 {i + 1}：({x.X}, {x.Y}) {x.Width}×{x.Height}")).ToArray();
         if (found.Count > 30) coverage += "検出領域は先頭30件を表示しています。";
@@ -366,8 +365,7 @@ public sealed class VerificationView : UserControl
             var references = templates.Where(t => !filter || t.Stamp.GeometryCode == reading.Code).ToArray();
             var ranked = await Task.Run(() => ImageSearch.Rank(ink, references, reading.Code));
             if (disposed) return;
-            var rows = ranked.SelectMany(x => history.Reverse().Where(g => g.Stamp == x.Stamp &&
-                    referenceHashes.TryGetValue(x.Stamp, out var hash) && g.PngSha256.Equals(hash, StringComparison.OrdinalIgnoreCase))
+            var rows = ranked.SelectMany(x => HistoryReferences.Matching(history, x)
                 .Select(g => new Candidate(g, VerificationMessages.ShapeEvidence(reading.Code, g.Stamp.GeometryCode, x.Text), CorrespondenceScore.Calculate(x.Text, reading.Code, g.Stamp.GeometryCode).Total))).ToArray();
             SetCandidates(rows);
             int codeMatches = reading.Code.HasValue ? rows.Count(x => x.Generation.Stamp.GeometryCode == reading.Code) : 0;
@@ -381,7 +379,7 @@ public sealed class VerificationView : UserControl
                 : VerificationMessages.Image(new(reading.Code, rows.Length, codeMatches, codeHistory, templates.Count, filter));
             Present(message, (reading.Code is int decoded ? $"読取コード：{RingCode.Label(decoded)}（12ビット）\n" : "コード未読取：" + reading.Reason + "\n") +
                 (filter ? "同じコードの履歴に絞っています。" : "コードによる絞り込みは適用していません。") + "\n" + coverage +
-                "\n従来の内側全体の形比較が0.72以上の候補から、対応スコア順で上位8印面の記録を表示します。0.72は候補抽出用で、対応スコアの基準ではありません。文字・日付は目視で確認してください。");
+                "\n従来の内側全体の形比較が0.72以上の候補から、対応スコア順で上位8画像の記録を表示します。0.72は候補抽出用で、対応スコアの基準ではありません。文字・日付は目視で確認してください。");
         }
         catch (Exception ex) { Failed("画像を比較できませんでした：" + ex.Message); }
         finally { SetBusy(false); }

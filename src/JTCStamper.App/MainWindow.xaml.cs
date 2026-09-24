@@ -338,7 +338,7 @@ public partial class MainWindow : Window
             if (journal is null || History.SelectedItem is not HistoryRow row) throw new InvalidOperationException("履歴を選択してください。");
             var original = journal.Read().Single(x => x.Entry.EventId == row.Id && x.Entry.Kind == "Generated").Signed;
             var dialog = new SaveFileDialog { Filter = "JTC原本|*.jtc", FileName = row.Id + ".jtc" };
-            if (dialog.ShowDialog() == true) { File.WriteAllText(dialog.FileName, JsonSerializer.Serialize(original)); Status.Text = "認証情報付き原本を保存しました。秘密鍵は含みません。"; }
+            if (dialog.ShowDialog() == true) { AtomicFile.Write(dialog.FileName, stream => stream.Write(JsonSerializer.SerializeToUtf8Bytes(original))); Status.Text = "認証情報付き原本を保存しました。秘密鍵は含みません。"; }
         }
         catch (Exception ex) { Status.Text = "原本を保存できません: " + ex.Message; }
     }

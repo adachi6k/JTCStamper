@@ -23,17 +23,7 @@ public sealed record StampSettings(int Version, string Name, DateOnly DisplayDat
     public void Save(string path)
     {
         Validate();
-        var target = Path.GetFullPath(path);
-        var temp = Path.Combine(Path.GetDirectoryName(target)!, Guid.NewGuid() + ".tmp");
-        try
-        {
-            using (var stream = new FileStream(temp, FileMode.CreateNew, FileAccess.Write, FileShare.None))
-            {
-                stream.Write(JsonSerializer.SerializeToUtf8Bytes(this, new JsonSerializerOptions { WriteIndented = true }));
-                stream.Flush(true);
-            }
-            File.Move(temp, target, true);
-        }
-        finally { if (File.Exists(temp)) File.Delete(temp); }
+        AtomicFile.Write(path, stream => stream.Write(JsonSerializer.SerializeToUtf8Bytes(this,
+            new JsonSerializerOptions { WriteIndented = true })));
     }
 }

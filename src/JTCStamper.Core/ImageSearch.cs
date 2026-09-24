@@ -1,8 +1,8 @@
 namespace JTCStamper.Core;
 
 public sealed record ImageRegion(int X, int Y, int Width, int Height);
-public sealed record StampTemplate(Stamp Stamp, bool[] Ink);
-public sealed record VisualCandidate(Stamp Stamp, double Score, int Rotation, TextSimilarity Text);
+public sealed record StampTemplate(Stamp Stamp, bool[] Ink, string? PngSha256 = null);
+public sealed record VisualCandidate(Stamp Stamp, double Score, int Rotation, TextSimilarity Text, string? PngSha256 = null);
 public sealed record TextSimilarity(double Name, double Date, double Bottom)
 {
     public double Contribution => (Name + Date + Bottom) / 10;
@@ -163,7 +163,7 @@ public static class ImageSearch
                 double score = Similarity(variant.Ink, template.Ink);
                 if (score > best) { best = score; rotation = variant.Angle; text = CompareText(variant.Ink, template.Ink); }
             }
-            if (best >= 0.72) ranked.Add(new(template.Stamp, best, rotation, text));
+            if (best >= 0.72) ranked.Add(new(template.Stamp, best, rotation, text, template.PngSha256));
         }
         return ranked.OrderByDescending(x => CorrespondenceScore.Calculate(x.Text, readCode, x.Stamp.GeometryCode).Total).ThenByDescending(x => x.Score).Take(8).ToArray();
     }
