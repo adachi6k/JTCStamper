@@ -3,16 +3,22 @@
         <Style x:Key="NavigationItem" TargetType="TabItem">
             <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="ToolTip" Value="{Binding Header, RelativeSource={RelativeSource Self}}"/>
+            <Setter Property="AutomationProperties.Name" Value="{Binding Header, RelativeSource={RelativeSource Self}}"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="Margin" Value="8,3"/>
             <Setter Property="Template">
                 <Setter.Value><ControlTemplate TargetType="TabItem">
                     <Border x:Name="Surface" CornerRadius="7" Padding="16,13" Background="Transparent">
                         <Grid><Border x:Name="Indicator" Width="3" Margin="-10,0,0,0" HorizontalAlignment="Left" CornerRadius="2" Background="{DynamicResource AccentFillColorDefaultBrush}" Visibility="Collapsed"/>
-                            <ContentPresenter ContentSource="Header" RecognizesAccessKey="True"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" Width="18" Height="18" Stretch="Uniform" Stroke="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}" StrokeThickness="1.5" VerticalAlignment="Center"/>
+                                <ContentPresenter x:Name="NavigationLabel" ContentSource="Header" RecognizesAccessKey="True" Margin="12,0,0,0"/>
+                            </StackPanel>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource AncestorType=TabControl}}" Value="True"><Setter TargetName="NavigationLabel" Property="Visibility" Value="Collapsed"/></DataTrigger>
                         <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}"/></Trigger>
                         <Trigger Property="IsSelected" Value="True"><Setter TargetName="Surface" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}"/><Setter TargetName="Indicator" Property="Visibility" Value="Visible"/><Setter Property="FontWeight" Value="SemiBold"/></Trigger>
                         <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.45"/></Trigger>

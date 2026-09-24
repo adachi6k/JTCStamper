@@ -24,6 +24,9 @@ public sealed class VerificationView : UserControl
     readonly TextBlock scoreHelp = new() { Text = VerificationMessages.ScoreHelp, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 4, 0, 6), Visibility = Visibility.Collapsed };
     readonly ScrollViewer resultScroll = new() { VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
     readonly ListBox candidates = new();
+    readonly Button previousRegion = new() { Content = "←", Width = 38, ToolTip = "前の印影", IsEnabled = false };
+    readonly Button nextRegion = new() { Content = "→", Width = 38, ToolTip = "次の印影", IsEnabled = false };
+    readonly TextBlock regionPosition = new() { Text = "検出した印影なし", VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 8, 0) };
     readonly ListBox regions = new() { MaxHeight = 85 };
     readonly Image preview = new() { Height = 250, Stretch = Stretch.Uniform, Cursor = Cursors.Cross };
     readonly Button show = new() { Content = "選択した生成履歴を開く", IsEnabled = false };
@@ -73,10 +76,15 @@ public sealed class VerificationView : UserControl
         body.Children.Add(new ScrollViewer { Content = imagePanel, VerticalScrollBarVisibility = ScrollBarVisibility.Auto });
         imagePanel.Children.Add(new TextBlock { Text = "照合する印影", FontWeight = FontWeights.SemiBold });
         imagePanel.Children.Add(preview);
+        var navigation = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 6, 0, 0) };
+        navigation.Children.Add(previousRegion); navigation.Children.Add(regionPosition); navigation.Children.Add(nextRegion);
+        imagePanel.Children.Add(navigation);
+        System.Windows.Automation.AutomationProperties.SetName(previousRegion, "前の印影");
+        System.Windows.Automation.AutomationProperties.SetName(nextRegion, "次の印影");
+        previousRegion.Click += (_, _) => MoveRegion(-1);
+        nextRegion.Click += (_, _) => MoveRegion(1);
         imagePanel.Children.Add(new TextBlock { Text = "印影が複数ある場合は一覧から選択してください。見つからない場合は、画像上で円全体をドラッグして囲めます。", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 8) });
         imagePanel.Children.Add(regions);
-        imagePanel.Children.Add(new Expander { Header = "履歴の保存先", Margin = new Thickness(0, 12, 0, 0),
-            Content = new TextBlock { Text = storageRoot, TextWrapping = TextWrapping.Wrap } });
         Grid.SetColumn(resultScroll, 2); body.Children.Add(resultScroll);
         var results = new StackPanel(); resultScroll.Content = results;
         void Section(string label, TextBlock text)
@@ -99,12 +107,14 @@ public sealed class VerificationView : UserControl
         Section("確認できたこと", result);
         Section("この結果の意味", meaning);
         Section("次に確認すること", nextStep);
-        results.Children.Add(new Expander { Header = "読取・検索の詳細", Content = technical, Margin = new Thickness(0, 8, 0, 0) });
+        var detailPanel = new StackPanel(); detailPanel.Children.Add(technical);
+        detailPanel.Children.Add(new TextBlock { Text = "照合に使う生成履歴の保存先：" + storageRoot, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 0) });
+        results.Children.Add(new Expander { Header = "読取・検索の詳細", Content = detailPanel, Margin = new Thickness(0, 8, 0, 0) });
         results.Children.Add(new Expander { Header = "対応スコアの配点と限界", Margin = new Thickness(0, 8, 0, 0),
             Content = new TextBlock { Text = VerificationMessages.MethodHelp, TextWrapping = TextWrapping.Wrap } });
         candidates.SelectionChanged += (_, _) => show.IsEnabled = !busy && candidates.SelectedItem is Candidate;
         show.Click += (_, _) => { if (candidates.SelectedItem is Candidate item) HistoryRequested?.Invoke(item.Generation.EventId); };
-        regions.SelectionChanged += async (_, _) => { if (!busy && regions.SelectedItem is RegionItem item) await Compare(item.Region); };
+        regions.SelectionChanged += async (_, _) => { UpdateRegionNavigation(); if (!busy && regions.SelectedItem is RegionItem item) await Compare(item.Region); };
         preview.MouseLeftButtonDown += (_, e) => { if (!busy) { dragStart = ImagePoint(e.GetPosition(preview)); if (dragStart is not null) preview.CaptureMouse(); } };
         preview.MouseLeftButtonUp += ManualRegion;
     }
@@ -114,9 +124,24 @@ public sealed class VerificationView : UserControl
         public override string ToString() => $"{Evidence}\n氏名：{Generation.Stamp.Name} ／ 表示日付：{Generation.Stamp.DisplayDate:yyyy/MM/dd} ／ 下段：{Generation.Stamp.Bottom}\n生成日時：{Generation.CreatedUtc.ToLocalTime():yyyy/MM/dd HH:mm:ss}\n記録ID：{Generation.EventId}";
     }
     sealed record RegionItem(ImageRegion Region, string Label) { public override string ToString() => Label; }
+    void MoveRegion(int direction)
+    {
+        if (busy || regions.Items.Count == 0) return;
+        int target = regions.SelectedIndex < 0 ? (direction > 0 ? 0 : regions.Items.Count - 1) : regions.SelectedIndex + direction;
+        if (target < 0 || target >= regions.Items.Count) return;
+        regions.SelectedIndex = target;
+        regions.ScrollIntoView(regions.SelectedItem);
+    }
+    void UpdateRegionNavigation()
+    {
+        int index = regions.SelectedIndex, count = regions.Items.Count;
+        regionPosition.Text = count == 0 ? "検出した印影なし" : index < 0 ? $"手動選択（検出 {count}件）" : $"印影 {index + 1} / {count}";
+        previousRegion.IsEnabled = !busy && count > 0 && index != 0;
+        nextRegion.IsEnabled = !busy && count > 0 && (index < count - 1);
+    }
     void SetBusy(bool value)
     {
-        busy = value; codeFilter.IsEnabled = !value && source is not null; file.IsEnabled = clipboard.IsEnabled = regions.IsEnabled = !value;
+        busy = value; UpdateRegionNavigation(); codeFilter.IsEnabled = !value && source is not null; file.IsEnabled = clipboard.IsEnabled = regions.IsEnabled = !value;
         refresh.IsEnabled = !value && (lastBytes is not null || lastBitmap is not null);
         show.IsEnabled = !value && candidates.SelectedItem is Candidate;
     }
