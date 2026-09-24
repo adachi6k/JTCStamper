@@ -70,3 +70,7 @@
 
 ZIPを展開し、Pythonと Pillow / NumPy / SciPy を用意して `python angle_experiment.py` を実行。
 結果は `angle_results` に出力される。入力原本もZIP内の `upload/01-image.png` に含む。
+
+## 公開資料の範囲
+
+個人の実物印影を含む元のPoC ZIP・画像は公開リポジトリに含めません。本文は観測結果のみを残したもので、現行アプリの精度を保証するものではありません。

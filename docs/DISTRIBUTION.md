@@ -1,6 +1,6 @@
 # 配布版・更新・既知の制限
 
-現在は未リリースのプレビュー準備段階です。初版の正式な提供範囲はIssue #10、配布可否はIssue #1で管理します。
+現在は未リリースのプレビュー準備段階です。初版はWindows 11 x64・PNGのプレビューとし、照合は試験機能です。提供範囲はdocs/RELEASE-SCOPE.md、配布可否はIssue #1で管理します。
 
 | 版 | .NETの同梱 | 必要な環境 |
 |---|---|---|
@@ -39,10 +39,10 @@ PNGコピーに対応し、EMFは未対応です。通常印影は12-bitコー�
 
 ## ビルド・成果物・試験
 
-コミット済みのソースで scripts/New-ReleasePackages.ps1 を実行すると、通常版・軽量版のReleaseビルドと版番号付きZIPを生成します。ZIPはEXE・README.txt・build.jsonだけを収録し、鍵や履歴は収録しません。dist/packages/checksums.jsonにZIPとEXEのハッシュ、版番号、ソースコミットを記録します。バイト単位の再現ビルドを保証するものではありません。
+コミット済みのソースで scripts/New-ReleasePackages.ps1 を実行すると、通常版・軽量版のReleaseビルドと版番号付きZIPを生成します。ZIPはEXE・README.txt・build.json・LICENSE・NOTICE・THIRD-PARTY-NOTICES.txtを収録し、鍵や履歴は収録しません。dist/packages/checksums.jsonにZIPとEXEのハッシュ、版番号、ソースコミットを記録します。バイト単位の再現ビルドを保証するものではありません。
 
 GitHub ActionsはCoreチェックとWindowsスモークを実行します。実Office貼付、実クリップボード、DPI・Narrator操作、.NET未導入環境は別の受入試験です。CI成功だけで実機確認済みとは扱いません。
 
-コード署名・利用条件・第三者通知・公開画像の確認はIssue #9で追跡中です。現行EXEは未署名です。公開前に実際のダウンロード経路で警告やポリシーの挙動を確認します。
+ソースはApache-2.0、依存物はそれぞれのライセンスに従います。配布ZIPにはLICENSE・NOTICE・THIRD-PARTY-NOTICES.txtを同梱します。コード署名・公開画像の最終確認はIssue #9で追跡中です。現行EXEは未署名です。公開前に実際のダウンロード経路で警告やポリシーの挙動を確認します。
 
 不具合報告には［ヘルプ → バージョン情報］の内容、OS、再現手順を添えてください。秘密鍵や個人履歴一式の提出は不要です。

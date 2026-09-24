@@ -43,23 +43,17 @@ PowerShell 7の`pwsh -File`でも同じスクリプトを使えます。会社�
 
 テスト用鍵・履歴はTEMPに残し、結果フォルダーにはJSONレポートと合成PNGだけをコピーします。GitHub Actionsへアップロードする対象もこの結果フォルダーだけです。プロセスがタイムアウトした場合はバッチが起動したプロセスのみ終了します。
 
-## GitHub Actionsへの移行
-
-`docs/ci/windows-smoke.yml`に手動実行用の雛形を用意しています。まだ`.github/workflows`へ配置していないため、自動実行やGitHubへの送信はありません。
-
-移行時は雛形を`.github/workflows/windows-smoke.yml`へコピーします。Windows runnerに.NET 10 SDKを導入し、Core検査→2版publish→同じPowerShellバッチ→結果アップロードの順に実行します。`contents: read`のみを許可し、失敗時もレポートを保存します。
-
-既定のCIではクリップボード試験を明示的に省略します。実際に利用するrunnerの対話セッションで動作を確認してから、必要なら専用Windows runnerで`-IncludeClipboard`を有効にしてください。対話デスクトップがない環境でWPF表示自体に失敗した場合も、成功や未実施へ読み替えず失敗として残します。導入時にActionのバージョン・固定SHA・組織ポリシーを確認してください。
-
 ## この環境での検証状況
 
-C#のWindows向けビルド、通常版・軽量版のpublish、Coreテストを実施。Windows実機テストとPowerShellスクリプトの実行は未実施です。WSLからWindowsプロセスを起動する接続が`UtilBindVsockAnyPort: socket failed`で失敗するためです。生成済みレポートを装った成功結果は用意していません。
+GitHub ActionsでCoreとWindowsスモークを実行済み。実機では通常版のランタイム非依存起動、軽量版のランタイム不足診断と隔離ランタイム使用、実クリップボード、Office COM経由の貼付・保存・再読込も確認中です。成功・失敗・未実施の詳細はIssue #5に記録します。
+
+初回の実クリップボード読戻しは失敗し、再試験では通りました。再現条件の切分けが済むまで解決済みと扱いません。CIではクリップボードを明示的に省略します。
 
 ## 12-bitの追加評価
 
-ring12-<phase>.jsonに、WPFによる72条件（2氏名・6値・2サイズ・PNG/JPEG80/JPEG80+4度）と対照を記録し、結果フォルダーへコピーします。Windows評価は未実施です。実施済みの独立Pillow合成画像評価はRING12-CODE.mdを参照してください。
+ring12-<phase>.jsonに、WPFによる72条件（2氏名・6値・2サイズ・PNG/JPEG80/JPEG80+4度）と対照を記録し、結果フォルダーへコピーします。Windows評価はCIのring12レポートを参照してください。実施済みの独立Pillow合成画像評価はRING12-CODE.mdを参照してください。
 
-タブ化後のスモークテストには、3タブの存在、照合コントロールの再利用、入力内容の保持、メインウィンドウ内での表示を確認する `main-tabs-preserve-view-and-inputs` を追加しています。この変更後のWindows実行は未確認です。
+タブ化後のスモークテストには、3タブの存在、照合コントロールの再利用、入力内容の保持、メインウィンドウ内での表示を確認する `main-tabs-preserve-view-and-inputs` を追加しています。CIとローカル実機で実行します。
 
 ## 外観・テーマの追加確認
 
@@ -79,3 +73,17 @@ SDKはglobal.json、ActionsはコミットSHAで固定します。Coreチェッ�
 seedで同じユーザー用バックアップを作成・復元し、DPAPI鍵、署名付き記録、画像、注釈、原本認証を比較します。既存復元先と破損バックアップを拒否することも検証します。restart/replacementでは復元済み履歴も再読込します。バックアップや復元データはTEMP内だけに置き、CI成果物の許可リストへ追加しません。
 
 別イベント間の注釈下書きの保持、編集した印面設定と元に戻した設定の状態も実ウィンドウオブジェクトで検査します。確認ダイアログの操作性やユーザーによるファイル選択は自動試験の対象外です。
+
+## Officeを含むローカル受入ランナー
+
+`tests/JTCStamper.WindowsAcceptance`は独立したWindows用コンソールEXEです。PowerShellの実行ポリシーを変更せず、アプリ内のスモークとOfficeの文書APIを呼び出します。管理者権限は不要です。
+
+ビルドは `dotnet publish tests/JTCStamper.WindowsAcceptance -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true`。
+
+専用ルートに`.acceptance-root`マーカー、`Standard/JTCStamper.App.exe`、`Lite/JTCStamper.App.exe`、`runtime/`（テストする.NET 10 Desktop Runtimeの隔離配置）を用意し、EXEへそのルートを1引数で渡します。既存データのフォルダーを渡さないでください。runtime配置はOSへのインストールではなく、テストプロセスだけにDOTNET_ROOTを指定します。
+
+最初にクリップボードを安全に複製できるか確認し、未対応形式ならクリップボードとOfficeテストを省略します。複製できた場合だけ合成画像をコピーし、最後に元へ戻します。Officeでは新規の合成文書だけを作り、保存名は毎回異なるものを使います。起動済みのWord／Excelがあればその製品は省略し、既存PowerPointを終了しません。認証・セキュリティ画面の操作は行いません。
+
+acceptance.jsonと各seed/restart/replacement.jsonに結果・OS・EXEハッシュを記録します。Office保存ファイルも合成画像のみですが、TEMP以下の鍵・履歴・バックアップを成果物へ含めないでください。失敗時は終了コード1、マーカー不備は2です。skippedを成功として扱わないでください。
+
+このランナーはOfficeのUIによる通常操作、ペイント、DPI/Narrator、スリープ復帰、SmartScreenの検証を代替しません。

@@ -563,11 +563,11 @@ internal static class SmokeTest
                         {
                             MemoryStream stream => stream.ToArray(),
                             byte[] array => array,
-                            _ => throw new InvalidDataException("Unexpected PNG clipboard payload.")
+                            _ => throw new InvalidDataException("Unexpected PNG clipboard payload: " + (payload?.GetType().FullName ?? "null"))
                         };
                         Require(bytes.SequenceEqual(png!), "PNG clipboard bytes changed.");
                         var image = Clipboard.GetImage();
-                        Require(image is not null && image.PixelWidth == 384 && image.PixelHeight == 384, "Bitmap fallback missing.");
+                        Require(image is not null && image.PixelWidth == 384 && image.PixelHeight == 384, "Bitmap fallback missing: " + (image is null ? "null" : $"{image.PixelWidth}x{image.PixelHeight}"));
     }
 
     static RingReading ReadGeometry(Stamp specimen, int diameter, int angle, bool jpeg)

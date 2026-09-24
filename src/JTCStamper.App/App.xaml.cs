@@ -12,6 +12,13 @@ public partial class App : Application
         {
             // Never fall back to a normal launch when test arguments are malformed.
             ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            if (e.Args[0] != "--smoke-test")
+            {
+                MessageBox.Show("この起動方法には対応していません。\n\nEXEを引数なしで起動し、アプリ内の［ファイル］メニューや［印影を照合］からファイルを開いてください。",
+                    "JTC Stamper — 起動方法", MessageBoxButton.OK, MessageBoxImage.Information);
+                Shutdown(2);
+                return;
+            }
             int code = await SmokeTest.RunAsync(e.Args);
             Shutdown(code);
             return;
