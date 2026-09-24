@@ -53,6 +53,9 @@
                 <MenuItem Header="実行ファイルのフォルダーを使用" Click="DefaultHistoryClick"/>
                 <MenuItem Header="保存先を選択…" Click="ChooseHistoryClick"/>
                 <Separator/>
+                <MenuItem Header="履歴をバックアップ（同じWindowsユーザー用）…" Click="BackupHistoryClick"/>
+                <MenuItem Header="バックアップから新しいフォルダーへ復元…" Click="RestoreHistoryClick"/>
+                <Separator/>
                 <MenuItem Header="現在の保存先の生成履歴をすべて削除…" Click="DeleteHistoryClick"/>
             </MenuItem>
             <MenuItem Header="照合(_C)" Style="{StaticResource CompactCaptionMenuItem}"><MenuItem Header="照合画面を開く" Click="VerifyClick"/></MenuItem>

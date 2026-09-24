@@ -165,6 +165,38 @@ internal static class SmokeTest
             catch (Exception ex) { checks.Add(new("real-window-startup-preview-and-icon", "failed", ex.ToString())); }
             finally { window?.Close(); }
 
+            Check("unsaved-settings-and-per-event-note-drafts", () =>
+            {
+                var folder = Path.Combine(root, "draft-ui-" + Guid.NewGuid().ToString("N"));
+                var key = KeyStore.Load(folder);
+                try
+                {
+                    using var data = new Journal(Path.Combine(folder, "journal"), key);
+                    var copy = new CopyService(data, new FakeClipboard());
+                    copy.GenerateCodedAndCopy(stamp, coded => StampRenderer.Png(StampRenderer.Render(coded)));
+                    copy.GenerateCodedAndCopy(stamp, coded => StampRenderer.Png(StampRenderer.Render(coded)));
+                }
+                finally { CryptographicOperations.ZeroMemory(key); }
+                var draftWindow = new MainWindow(folder);
+                var name = (TextBox)draftWindow.FindName("NameInput");
+                string originalName = name.Text;
+                try
+                {
+                    Require(!draftWindow.HasUnsavedSettings && !draftWindow.HasUnsavedNotes, "Initial state incorrectly dirty.");
+                    name.Text = "changed"; Require(draftWindow.HasUnsavedSettings, "Edited setting was not detected.");
+                    name.Text = originalName; Require(!draftWindow.HasUnsavedSettings, "Reverted setting remains dirty.");
+                    var list = (ListBox)draftWindow.FindName("History");
+                    var note = (TextBox)draftWindow.FindName("NoteInput");
+                    list.SelectedIndex = 0; note.Text = "note for first event";
+                    list.SelectedIndex = 1; Require(note.Text == "", "Draft leaked to a different event.");
+                    note.Text = "note for second event";
+                    list.SelectedIndex = 0; Require(note.Text == "note for first event", "First draft was lost.");
+                    note.Clear(); list.SelectedIndex = 1;
+                    Require(note.Text == "note for second event" && draftWindow.HasUnsavedNotes, "Second draft was lost.");
+                }
+                finally { name.Text = originalName; draftWindow.ClearNoteDrafts(); draftWindow.Close(); }
+            });
+
             Check("render-png-date-and-transparent-margin", () =>
             {
                 var bitmap = StampRenderer.Render(stamp);
@@ -305,6 +337,41 @@ internal static class SmokeTest
                     }
                     finally { CryptographicOperations.ZeroMemory(key); }
                 });
+                Check("same-user-backup-restores-images-notes-and-original", () =>
+                {
+                    var key = KeyStore.Load(root);
+                    try
+                    {
+                        using var sourceJournal = new Journal(Path.Combine(root, "journal"), key);
+                        var records = sourceJournal.Read().Select(x => x.Signed).ToArray();
+                        var backup = Path.Combine(root, "test.jtcbackup");
+                        HistoryBackup.Save(backup, root, sourceJournal);
+                        var target = Path.Combine(root, "restored-backup");
+                        HistoryBackup.Restore(backup, target);
+                        var restoredKey = KeyStore.Load(target);
+                        try
+                        {
+                            Require(key.SequenceEqual(restoredKey), "Restored DPAPI key differs.");
+                            using var restored = new Journal(Path.Combine(target, "journal"), restoredKey);
+                            Require(restored.Read().Select(x => x.Signed).SequenceEqual(records), "Restored history differs.");
+                            var service = new VerificationService(restored);
+                            Require(service.Original(JsonSerializer.Serialize(records[0])).Status == VerificationStatus.Match, "Restored original authentication failed.");
+                            var generation = service.ReadGenerations().Single();
+                            Require(service.Image(VerificationService.StoredPng(generation)!).Status == VerificationStatus.Match, "Stored image was not restored.");
+                        }
+                        finally { CryptographicOperations.ZeroMemory(restoredKey); }
+                        bool refused = false;
+                        try { HistoryBackup.Restore(backup, target); } catch (IOException) { refused = true; }
+                        Require(refused, "Restore overwrote an existing destination.");
+                        var bytes = File.ReadAllBytes(backup); bytes[^1] ^= 1;
+                        var damaged = Path.Combine(root, "damaged.jtcbackup"); File.WriteAllBytes(damaged, bytes);
+                        var failedTarget = Path.Combine(root, "must-not-exist");
+                        refused = false;
+                        try { HistoryBackup.Restore(damaged, failedTarget); } catch (InvalidDataException) { refused = true; }
+                        Require(refused && !Directory.Exists(failedTarget), "Damaged backup produced a restored directory.");
+                    }
+                    finally { CryptographicOperations.ZeroMemory(key); }
+                });
                 Check("persistence-failure-prevents-clipboard", () =>
                 {
                     var key = RandomNumberGenerator.GetBytes(32);
@@ -364,6 +431,20 @@ internal static class SmokeTest
                     {
                         using var journal = new Journal(Path.Combine(root, "journal"), key);
                         Require(journal.Read().Count == 4, "History or annotation lost.");
+                    }
+                    finally { CryptographicOperations.ZeroMemory(key); }
+                });
+                Check("restored-backup-survives-process-and-edition-change", () =>
+                {
+                    var target = Path.Combine(root, "restored-backup");
+                    var key = KeyStore.Load(target);
+                    try
+                    {
+                        using var restored = new Journal(Path.Combine(target, "journal"), key);
+                        Require(restored.Read().Count == 4, "Restored annotation or history missing.");
+                        var service = new VerificationService(restored);
+                        var generation = service.ReadGenerations().Single();
+                        Require(service.Image(VerificationService.StoredPng(generation)!).Status == VerificationStatus.Match, "Restored image authentication failed after restart.");
                     }
                     finally { CryptographicOperations.ZeroMemory(key); }
                 });

@@ -16,6 +16,51 @@ void Throws(Action action) { try { action(); } catch { return; } throw new Excep
 var stamp = new Stamp("山田", new DateOnly(1900, 1, 1), "確認");
 try
 {
+    Check("restore-retains-authenticated-images-notes-and-original", dir =>
+    {
+        using var source = new Journal(Path.Combine(dir, "source"), key);
+        var id = new CopyService(source, new FakeClipboard()).GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
+        source.Annotate(id, "restore note");
+        var entries = source.Read().Select(x => x.Signed).ToArray();
+        var target = Path.Combine(dir, "restored");
+        HistoryRestore.ToNewDirectory(target, key, entries, path => File.WriteAllBytes(path, [5]));
+        using var restored = new Journal(Path.Combine(target, "journal"), key);
+        Assert(restored.Read().Select(x => x.Signed).SequenceEqual(entries));
+        var service = new VerificationService(restored);
+        Assert(service.Original(JsonSerializer.Serialize(entries[0])).Status == VerificationStatus.Match);
+        Assert(service.Image([1, 2, 3]).Status == VerificationStatus.Match);
+        Assert(service.ReadGenerations().Single().EventId == id);
+        Assert(!Directory.EnumerateDirectories(dir, ".jtc-restore-*").Any());
+    });
+    Check("restore-rejects-corruption-wrong-key-and-preserves-destination", dir =>
+    {
+        using var source = new Journal(Path.Combine(dir, "source"), key);
+        new CopyService(source, new FakeClipboard()).GenerateCodedAndCopy(stamp, _ => [1]);
+        var entries = source.Read().Select(x => x.Signed).ToArray();
+        var target = Path.Combine(dir, "restored");
+        Throws(() => HistoryRestore.ToNewDirectory(target, RandomNumberGenerator.GetBytes(32), entries, _ => throw new Exception()));
+        Assert(!Directory.Exists(target));
+        var broken = entries.ToArray(); broken[0] = broken[0] with { Mac = new string('0', 64) };
+        Throws(() => HistoryRestore.ToNewDirectory(target, key, broken, _ => throw new Exception()));
+        Throws(() => HistoryRestore.ToNewDirectory(target, key, entries.Skip(1).ToArray(), _ => throw new Exception()));
+        Assert(!Directory.Exists(target) && !Directory.EnumerateDirectories(dir, ".jtc-restore-*").Any());
+        Directory.CreateDirectory(target); File.WriteAllText(Path.Combine(target, "keep"), "original");
+        Throws(() => HistoryRestore.ToNewDirectory(target, key, entries, _ => throw new Exception()));
+        Assert(File.ReadAllText(Path.Combine(target, "keep")) == "original");
+    });
+    Check("restore-key-write-failure-and-destination-race", dir =>
+    {
+        var target = Path.Combine(dir, "restored");
+        Throws(() => HistoryRestore.ToNewDirectory(target, key, [], _ => throw new IOException("disk full")));
+        Assert(!Directory.Exists(target));
+        Throws(() => HistoryRestore.ToNewDirectory(target, key, [], path =>
+        {
+            File.WriteAllBytes(path, [1]); Directory.CreateDirectory(target);
+            File.WriteAllText(Path.Combine(target, "keep"), "concurrent");
+        }));
+        Assert(File.ReadAllText(Path.Combine(target, "keep")) == "concurrent");
+        Assert(!Directory.EnumerateDirectories(dir, ".jtc-restore-*").Any());
+    });
     Check("atomic-save-preserves-existing-on-partial-write", dir =>
     {
         var path = Path.Combine(dir, "original.jtc");

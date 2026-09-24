@@ -58,7 +58,7 @@ public partial class MainWindow : Window
             string outcome;
             try { journal.DeleteAllHistory(); outcome = "現在の保存先の生成履歴・コピー記録・注釈をすべて削除しました。"; }
             catch (Exception ex) { outcome = "削除を完了できませんでした。一部の新しい記録は削除済みの可能性があります：" + ex.Message; }
-            InstallVerification(); NoteInput.Clear(); Details.Text = ""; RefreshHistory();
+            InstallVerification(); ClearNoteDrafts(); Details.Text = ""; RefreshHistory();
             Status.Text = outcome;
         }
         catch (Exception ex) { Status.Text = "履歴の削除処理に失敗しました：" + ex.Message; }
@@ -94,6 +94,8 @@ public partial class MainWindow : Window
         catch (Exception ex) { Appearance.Apply(AppearanceMode.System); appearanceError = ex.Message; }
         InitializeComponent(); InitializeCaption(); UpdateThemeChecks(); DateInput.SelectedDate = DateTime.Today;
         ready = true; RefreshDateControls(); UpdatePreview();
+        savedSettings = EditableSettings;
+        Closing += (_, e) => { if (!ConfirmDiscard(true, true, "終了")) e.Cancel = true; };
         dateTimer.Tick += (_, _) => RefreshToday();
         Activated += (_, _) => RefreshToday();
         dateTimer.Start();
@@ -107,11 +109,12 @@ public partial class MainWindow : Window
         {
             if (journal is not null && Path.GetFullPath(root) == Path.GetFullPath(storageRoot)) return;
             if (verification?.IsBusy == true) { Status.Text = "照合が完了してから履歴の保存先を変更してください。"; return; }
+            if (journal is not null && !ConfirmDiscard(false, true, "保存先を変更")) return;
             var key = KeyStore.Load(root);
             Journal next;
             try { next = new Journal(Path.Combine(root, "journal"), key); }
             finally { CryptographicOperations.ZeroMemory(key); }
-            journal?.Dispose(); journal = next; storageRoot = root;
+            journal?.Dispose(); journal = next; storageRoot = root; ClearNoteDrafts();
             InstallVerification();
             CopyButton.IsEnabled = true; RefreshHistory(); Status.Text = "履歴保存先: " + root;
         }
@@ -133,9 +136,10 @@ public partial class MainWindow : Window
         try
         {
             var settings = StampSettings.Load(dialog.FileName);
+            if (!ConfirmDiscard(true, false, "設定を読込")) return;
             NameInput.Text = settings.Name; BottomInput.Text = settings.Bottom; PlainMode.IsChecked = settings.Plain;
             dateSelection.UseToday(); RefreshDateControls();
-            settingsPath = dialog.FileName; UpdatePreview(); Status.Text = "設定を読み込みました。日付は当日に戻しました: " + settingsPath;
+            settingsPath = dialog.FileName; savedSettings = EditableSettings; UpdatePreview(); Status.Text = "設定を読み込みました。日付は当日に戻しました: " + settingsPath;
         }
         catch (Exception ex) { Status.Text = "設定を読み込めません: " + ex.Message; }
     }
@@ -154,7 +158,7 @@ public partial class MainWindow : Window
                 path = dialog.FileName;
             }
             new StampSettings(1, stamp.Name, stamp.DisplayDate, stamp.Bottom, stamp.Renderer == RingCode.PlainRenderer).Save(path);
-            settingsPath = path; Status.Text = "設定を保存しました: " + path;
+            settingsPath = path; savedSettings = EditableSettings; Status.Text = "設定を保存しました: " + path;
         }
         catch (Exception ex) { Status.Text = "設定を保存できません: " + ex.Message; }
     }
@@ -298,6 +302,7 @@ public partial class MainWindow : Window
     }
     void HistoryChanged(object sender, SelectionChangedEventArgs e)
     {
+        SelectNoteDraft((History.SelectedItem as HistoryRow)?.Id);
         HistoryPreview.Source = null; HistoryImageDescription.Text = "";
         try
         {
@@ -327,7 +332,7 @@ public partial class MainWindow : Window
         try
         {
             if (journal is null || History.SelectedItem is not HistoryRow row) throw new InvalidOperationException("履歴を選択してください。");
-            journal.Annotate(row.Id, NoteInput.Text); NoteInput.Clear(); RefreshHistory(row.Id); Status.Text = "注釈を追記しました。";
+            journal.Annotate(row.Id, NoteInput.Text); noteDrafts.Remove(row.Id); NoteInput.Clear(); RefreshHistory(row.Id); Status.Text = "注釈を追記しました。";
         }
         catch (Exception ex) { Status.Text = "追記できません: " + ex.Message; }
     }

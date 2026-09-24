@@ -32,3 +32,8 @@
 # Local appearance preference
 appearance.json
 appearance-*.tmp
+
+# Encrypted personal history backups
+*.jtcbackup
+.jtc-restore-*/
+.jtc-write-*.tmp
