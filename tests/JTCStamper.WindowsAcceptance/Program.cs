@@ -37,10 +37,11 @@ internal static class Program
             Result("lite-runtime-missing-diagnostic", absent.ExitCode != 0 && absent.Error.Contains(".NET") ? "passed" : "failed", new { absent.ExitCode });
             foreach (var (name, initial, replacement) in new[] { ("standard", standard, lite), ("lite", lite, standard) })
             {
-                var folder = Path.Combine(temp, name + "-" + Guid.NewGuid().ToString("N"));
+                var folder = Path.Combine(temp, "日本語 空白-" + name + "-" + Guid.NewGuid().ToString("N"));
                 var data = Path.Combine(folder, "data"); Directory.CreateDirectory(data);
                 File.WriteAllText(Path.Combine(data, ".jtc-smoke-root"), "JTCStamper isolated smoke data v1");
                 var exe = Path.Combine(folder, "JTCStamper.App.exe"); File.Copy(initial, exe);
+                bool groupPassed = true;
                 foreach (var phase in new[] { "seed", "restart", "replacement" })
                 {
                     if (phase == "replacement") File.Copy(replacement, exe, true);
@@ -54,20 +55,12 @@ internal static class Program
                     var passed = run.ExitCode == 0 && File.Exists(report) && JsonDocument.Parse(File.ReadAllText(report)).RootElement.GetProperty("Passed").GetBoolean();
                     Result(name + "-" + phase, passed ? "passed" : "failed", new { run.ExitCode, Clipboard = clipboardReady, PrivateRuntime = runtime });
                     if (File.Exists(report)) File.Copy(report, Path.Combine(root, name + "-" + phase + ".json"), true);
-                    if (!passed) break;
+                    if (!passed) { groupPassed = false; break; }
                 }
+                if (clipboardReady && !skipOffice && groupPassed)
+                    RunOfficeSuite(data, name + "-");
             }
             if (skipOffice) Result("office-paste-save-reopen", "skipped", "Explicit diagnostic option --skip-office.");
-            if (clipboardReady && !skipOffice)
-            {
-                var png = JTCStamper.App.NativeClipboard.ReadPng().Bytes
-                    ?? throw new InvalidDataException("PNG clipboard missing after smoke.");
-                foreach (var office in new[] { "Word", "Excel", "PowerPoint" })
-                {
-                    try { OfficePaste(office, png); }
-                    catch (Exception ex) { Result(office + "-paste-save-reopen", "failed", ex.GetBaseException().Message); }
-                }
-            }
         }
         catch (Exception ex) { Result("runner", "failed", ex.ToString()); }
         finally
@@ -130,12 +123,31 @@ internal static class Program
         if (sequence != JTCStamper.App.NativeClipboard.SequenceNumber) throw new InvalidDataException("Clipboard changed during preservation.");
         return clone;
     }
-    static void OfficePaste(string product, byte[] png)
+    static void RunOfficeSuite(string dataRoot, string prefix)
+    {
+        var png = JTCStamper.App.NativeClipboard.ReadPng().Bytes
+            ?? throw new InvalidDataException("PNG clipboard missing after smoke.");
+        var key = ProtectedData.Unprotect(File.ReadAllBytes(Path.Combine(dataRoot, "key.dpapi")), null, DataProtectionScope.CurrentUser);
+        try
+        {
+            using var journal = new Journal(Path.Combine(dataRoot, "journal"), key);
+            if (new VerificationService(journal).Image(png).Status != VerificationStatus.Match)
+                throw new InvalidDataException("Office source has no matching generation.");
+            Result(prefix + "office-source-matches-history", "passed");
+        }
+        finally { CryptographicOperations.ZeroMemory(key); }
+        foreach (var product in new[] { "Word", "Excel", "PowerPoint" })
+        {
+            try { OfficePaste(product, png, prefix); }
+            catch (Exception ex) { Result(prefix + product + "-paste-save-reopen", "failed", ex.GetBaseException().Message); }
+        }
+    }
+    static void OfficePaste(string product, byte[] png, string prefix)
     {
         // Only create and close synthetic documents. Never quit a pre-existing Office process.
         var processName = product == "Word" ? "WINWORD" : product == "Excel" ? "EXCEL" : "POWERPNT";
         bool existed = Process.GetProcessesByName(processName).Length != 0;
-        if (existed && product != "PowerPoint") { Result(product + "-paste-save-reopen", "skipped", "Existing user application; left untouched."); return; }
+        if (existed && product != "PowerPoint") { Result(prefix + product + "-paste-save-reopen", "skipped", "Existing user application; left untouched."); return; }
         var type = Type.GetTypeFromProgID(product + ".Application") ?? throw new NotSupportedException(product + " is not installed.");
         dynamic app = Activator.CreateInstance(type)!;
         dynamic? document = null; string version = app.Version;
@@ -184,7 +196,7 @@ internal static class Program
                 if (candidates.Count > 0) best = Math.Max(best, candidates[0].Score);
             }
             bool dimensionsPreserved = Math.Abs(width - original.Width / original.DpiX * 72) < 0.1 && Math.Abs(height - original.Height / original.DpiY * 72) < 0.1;
-            Result(product + "-paste-save-reopen", best >= 0.98 && pixelsPreserved && dimensionsPreserved && transparentPixels > 0 ? "passed" : "failed", new
+            Result(prefix + product + "-paste-save-reopen", best >= 0.98 && pixelsPreserved && dimensionsPreserved && transparentPixels > 0 ? "passed" : "failed", new
             {
                 Version = version, Pictures = count, WidthPoints = width, HeightPoints = height,
                 ExtractedImageShapeScore = best, PixelsIncludingAlphaPreserved = pixelsPreserved,
@@ -198,7 +210,14 @@ internal static class Program
             {
                 if (document is not null) { if (product == "Word") document.Close(0); else if (product == "Excel") document.Close(false); else document.Close(); }
             }
-            finally { if (!existed) app.Quit(); }
+            finally
+            {
+                if (!existed)
+                {
+                    int remaining = product == "Word" ? (int)app.Documents.Count : product == "Excel" ? (int)app.Workbooks.Count : (int)app.Presentations.Count;
+                    if (remaining == 0) app.Quit(); // Leave any document opened by the user during testing alone.
+                }
+            }
         }
     }
     static (int Width, int Height, double DpiX, double DpiY, byte[] Pixels) Raster(byte[] bytes)

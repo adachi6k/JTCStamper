@@ -69,6 +69,7 @@ internal static class SmokeTest
         var started = DateTimeOffset.UtcNow;
         var stamp = new Stamp("JTC", new DateOnly(2100, 1, 1), "(印)", RingCode.Renderer, 0);
         byte[]? png = null;
+        byte[]? clipboardPng = null;
         try
         {
             MainWindow? window = null;
@@ -415,13 +416,14 @@ internal static class SmokeTest
                         using (var journal = new Journal(Path.Combine(root, "journal"), key))
                         {
                             Require(png is not null, "Rendering prerequisite failed.");
-                            id = new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, coded => StampRenderer.Png(StampRenderer.Render(coded)));
+                            id = new CopyService(journal, clipboard ? new WindowsClipboard() : new FakeClipboard()).GenerateCodedAndCopy(stamp, coded => StampRenderer.Png(StampRenderer.Render(coded)));
                             var original = journal.Read()[0].Signed;
                             journal.Annotate(id, "Isolated smoke test; no paste observed");
                             Require(journal.Read()[0].Signed == original, "Annotation modified generation.");
                         }
                         using var reopened = new Journal(Path.Combine(root, "journal"), key);
                         var records = reopened.Read();
+                        clipboardPng = VerificationService.StoredPng(new VerificationService(reopened).ReadGenerations().Single());
                         Require(records.Count == 4 && records.All(x => x.Entry.EventId == id), "Reopen mismatch.");
                         var generation = JsonSerializer.Deserialize<Generation>(records[0].Entry.Payload)!;
                         Require(generation.Stamp.GeometryCode == RingCode.ForEvent(id), "Geometry code was not preserved in journal.");
@@ -512,11 +514,11 @@ internal static class SmokeTest
                     await CheckAsync("windows-clipboard-png-roundtrip", async () =>
                     {
                         Require(Environment.UserInteractive, "Interactive Windows session required.");
-                        Require(png is not null, "Rendering prerequisite failed.");
+                        Require(clipboardPng is not null, "Saved generation prerequisite failed.");
                         for (int attempt = 0; attempt < 8; attempt++)
                         {
-                            new WindowsClipboard().Copy(png!);
-                            await VerifyClipboard(png!, NativeClipboard.SequenceNumber);
+                            new WindowsClipboard().Copy(clipboardPng!);
+                            await VerifyClipboard(clipboardPng!, NativeClipboard.SequenceNumber);
                         }
                     });
                 }
@@ -538,6 +540,7 @@ internal static class SmokeTest
                     {
                         using var journal = new Journal(Path.Combine(root, "journal"), key);
                         Require(journal.Read().Count == 4, "History or annotation lost.");
+                        clipboardPng = VerificationService.StoredPng(new VerificationService(journal).ReadGenerations().Single());
                     }
                     finally { CryptographicOperations.ZeroMemory(key); }
                 });
@@ -557,8 +560,8 @@ internal static class SmokeTest
                 });
                 if (clipboard) await CheckAsync("clipboard-survives-process-exit", async () =>
                 {
-                    Require(png is not null, "Rendering prerequisite failed.");
-                    await VerifyClipboard(png!);
+                    Require(clipboardPng is not null, "Saved generation prerequisite failed.");
+                    await VerifyClipboard(clipboardPng!);
                 });
                 else checks.Add(new("clipboard-survives-process-exit", "skipped", "Not requested; use -IncludeClipboard."));
             }
