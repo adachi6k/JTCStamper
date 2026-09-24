@@ -1,7 +1,7 @@
 {
   "file": "JTCStamper.App.exe",
-  "bytes": 66295531,
-  "sha256": "29d734ce9cf6cbcc2bdc7a3f7a66a072cdc7727b33dedfd95e54719380fe861a",
+  "bytes": 66295738,
+  "sha256": "15b6409e517c7f22e3dc9e8c8968ffb4fd1813370cd99dc85960fc74125c64dd",
   "architecture": "Windows x64 GUI",
   "bundle_version": "6.0",
   "bundled_entries": 384,

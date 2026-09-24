@@ -33,3 +33,7 @@ WindowChromeのCaptionHeight=32、GlassFrameThickness=0、UseAeroCaptionButtons=
 Windowsバッチには通常表示・最大化時のHTCAPTION/HTCLIENT/HTMAXBUTTON、ボタンの寸法・形状・描画画素の検査を追加しました。前版の「設定とヒットテストが正しければ見える」という検査不足を補います。新しいWindowsテストはコンパイル済みですが、実機接続が利用できず実行は未確認です。実際の押下、Altキーのメニュー操作、スナップ表示、DPIの違うモニター間の移動も実機確認が残ります。
 
 参照：[Microsoftのカスタムタイトルバーとスナップの仕様](https://learn.microsoft.com/windows/apps/desktop/modernize/apply-snap-layout-menu)、[FluentのMenuItemテンプレート](https://github.com/dotnet/wpf/blob/main/src/Microsoft.DotNet.Wpf/src/Themes/PresentationFramework.Fluent/Styles/MenuItem.xaml)。
+
+## 参考画像に合わせた文字とサイドバー
+
+Copilotの提供画像を参考に、本文15 DIP・ナビゲーション16 DIP・補助文字14 DIP・ページ見出し26 DIPに整理。文字色はFluentのテーマ対応Primary/Secondaryブラシを使い、ライト・ダークで可読性を保ちます。選択項目の青い縦線と太字をやめ、淡い角丸背景で示します。折りたたみ操作はサイドバー右上の左ペインを表す線画アイコンに変更し、通常時のボタン枠・塗りをなくしました。閉じた状態では同じアイコンから展開できます。スクリーンショットのDPIが不明なため、画像ピクセル値をそのままフォントサイズにはしていません。
