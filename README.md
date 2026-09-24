@@ -56,7 +56,7 @@ Windows 11 x64を主な検証対象としています。Windows 10・ARM64の対
 ## 検証と文書
 
 - [Windowsスモーク](docs/WINDOWS-SMOKE.md)：CI・ローカル実行と未検証範囲。
-- [配布・更新手順](docs/DISTRIBUTION.md)、[変更履歴](CHANGELOG.md)。
+- [配布・更新手順](docs/DISTRIBUTION.md)、[ビルド・版番号方針](docs/BUILD-RELEASE.md)、[変更履歴](CHANGELOG.md)。
 - [設計](docs/DESIGN.md)、[照合](docs/VERIFICATION.md)、[評価計画](docs/VALIDATION.md)。
 - [PoCレポート](reference/REPORT.md)：初期実験。現在の実画像性能を保証するものではありません。
 
