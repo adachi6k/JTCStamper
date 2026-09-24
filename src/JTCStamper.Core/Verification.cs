@@ -52,20 +52,29 @@ public sealed class VerificationService(Journal journal)
     {
         using var document = JsonDocument.Parse(entry.Payload);
         return document.RootElement.TryGetProperty("Stamp", out var stamp) &&
-            stamp.TryGetProperty("Renderer", out var renderer) && renderer.GetString() == RingCode.Renderer;
+            stamp.TryGetProperty("Renderer", out var renderer) && renderer.GetString() is RingCode.Renderer or RingCode.PlainRenderer;
     }
 
     static Generation Parse(Entry entry)
     {
         if (entry.Version != 1 || entry.Kind != "Generated" || entry.EventId == Guid.Empty)
             throw new InvalidDataException();
-        if (!IsCurrent(entry)) throw new NotSupportedException("対応していない印影形式です。現在の12ビット形式のみ照合できます。");
+        if (!IsCurrent(entry)) throw new NotSupportedException("対応していない印影形式です。現在の12ビット形式とプレーン形式を照合できます。");
         var g = JsonSerializer.Deserialize<Generation>(entry.Payload) ?? throw new InvalidDataException();
         if (g.EventId != entry.EventId || g.Stamp is null || g.PngSha256 is null ||
             g.PngSha256.Length != 64 || !g.PngSha256.All(Uri.IsHexDigit)) throw new InvalidDataException();
         RingCode.Validate(g.Stamp);
         if (g.Stamp.GeometryCode is int code && RingCode.ForEvent(g.EventId) != code) throw new InvalidDataException("イベントと幾何コードが矛盾しています。");
+        StoredPng(g);
         return g;
+    }
+    public static byte[]? StoredPng(Generation generation)
+    {
+        if (generation.PngBase64 is null) return null;
+        var bytes = Convert.FromBase64String(generation.PngBase64);
+        if (!Convert.ToHexString(SHA256.HashData(bytes)).Equals(generation.PngSha256, StringComparison.OrdinalIgnoreCase))
+            throw new InvalidDataException("保存した印影画像が生成記録と一致しません。");
+        return bytes;
     }
     static VerificationResult Guard(Func<VerificationResult> action)
     {

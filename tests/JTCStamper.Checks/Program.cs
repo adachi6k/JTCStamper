@@ -202,6 +202,47 @@ try
         Assert(failed.Kind == VerificationMessageKind.Unavailable && failed.Meaning.Contains("判断していません"));
         Assert(VerificationMessages.Exact(new(VerificationStatus.Match, "invalid", []), false).Kind == VerificationMessageKind.Unavailable);
     });
+    Check("plain-and-coded-snapshots-are-authenticated", dir =>
+    {
+        using var journal = new Journal(dir, key);
+        var clipboard = new FakeClipboard();
+        var copy = new CopyService(journal, clipboard);
+        var plain = stamp with { Renderer = RingCode.PlainRenderer };
+        Stamp? rendered = null;
+        var id = copy.GenerateCodedAndCopy(plain, x => { rendered = x; return [1, 2, 3, 4]; });
+        Assert(rendered!.GeometryCode is null && rendered.Renderer == RingCode.PlainRenderer);
+        RingCode.Validate(rendered);
+        Throws(() => RingCode.Validate(plain with { GeometryCode = 0 }));
+        var service = new VerificationService(journal);
+        var record = service.ReadGenerations().Single();
+        Assert(VerificationService.StoredPng(record)!.SequenceEqual(new byte[] { 1, 2, 3, 4 }));
+        Assert(service.Image([1, 2, 3, 4]).Matches.Single().EventId == id);
+        Assert(service.Original(JsonSerializer.Serialize(journal.Read()[0].Signed)).Status == VerificationStatus.Match);
+        Assert(VerificationService.StoredPng(record with { PngBase64 = null }) is null);
+        Throws(() => VerificationService.StoredPng(record with { PngBase64 = Convert.ToBase64String([9]) }));
+        var sameImageId = copy.GenerateCodedAndCopy(plain, _ => [1, 2, 3, 4]);
+        Assert(sameImageId != id && service.Image([1, 2, 3, 4]).Matches.Count == 2);
+        Assert(CorrespondenceScore.Calculate(new(1, 1, 1), null, null).Total == .3);
+        Assert(VerificationMessages.ShapeEvidence(null, null, new(1, 1, 1)).Contains("プレーン"));
+        var path = Path.Combine(dir, "plain.jtcstamp");
+        new StampSettings(1, "上段", DateOnly.FromDateTime(DateTime.Today), "下段", true).Save(path);
+        Assert(StampSettings.Load(path).Plain);
+        File.Delete(path);
+        var badId = Guid.NewGuid();
+        journal.Append("Generated", badId, record with { EventId = badId, PngBase64 = Convert.ToBase64String([0]) });
+        Assert(service.Image([1, 2, 3, 4]).Status == VerificationStatus.Indeterminate);
+    });
+    Check("result-indicator-does-not-promote-rounded-scores", dir =>
+    {
+        Assert(ResultIndicator.Candidate(1).Tone == IndicatorTone.Success);
+        Assert(ResultIndicator.Candidate(.3).Tone == IndicatorTone.Caution);
+        Assert(ResultIndicator.Candidate(.9999).Tone == IndicatorTone.Caution);
+        Assert(ResultIndicator.Candidate(.9999).Value == "< 1.000");
+        Assert(ResultIndicator.Empty(true).Tone == IndicatorTone.NoCandidate);
+        Assert(ResultIndicator.Empty(false).Tone == IndicatorTone.Caution);
+        Assert(ResultIndicator.Exact().Value == "一致");
+        Throws(() => ResultIndicator.Candidate(double.NaN));
+    });
     Check("delete-all-history-preserves-key-owner-and-next-generation", dir =>
     {
         var key = RandomNumberGenerator.GetBytes(32);

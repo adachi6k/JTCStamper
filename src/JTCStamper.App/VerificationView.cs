@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -23,7 +24,22 @@ public sealed class VerificationView : UserControl
     readonly TextBlock candidateHeading = new() { FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 12, 0, 4), Text = "生成履歴" };
     readonly TextBlock scoreHelp = new() { Text = VerificationMessages.ScoreHelp, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 4, 0, 6), Visibility = Visibility.Collapsed };
     readonly ScrollViewer resultScroll = new() { VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
-    readonly ListBox candidates = new();
+    Candidate[] candidateRows = [];
+    int candidateIndex = -1;
+    Candidate? SelectedCandidate => candidateIndex >= 0 && candidateIndex < candidateRows.Length ? candidateRows[candidateIndex] : null;
+    readonly TextBlock scoreValue = new() { FontSize = 44, FontWeight = FontWeights.SemiBold, Text = "—" };
+    readonly TextBlock scoreVerdict = new() { FontSize = 19, FontWeight = FontWeights.SemiBold, TextWrapping = TextWrapping.Wrap, Text = "画像を選択してください" };
+    readonly Border scoreCard = new() { CornerRadius = new CornerRadius(10), Padding = new Thickness(16), Margin = new Thickness(0, 8, 0, 12) };
+    readonly TextBlock candidateText = new() { FontSize = 18, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 8) };
+    readonly TextBlock candidateDetails = new() { FontSize = 15, TextWrapping = TextWrapping.Wrap };
+    readonly TextBlock candidatePosition = new() { FontSize = 16, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 8, 0) };
+    readonly Button previousCandidate = new() { Content = "← 前の候補", IsEnabled = false };
+    readonly Button nextCandidate = new() { Content = "次の候補 →", IsEnabled = false };
+    readonly Image candidateImage = new() { Height = 112, Stretch = Stretch.Uniform };
+    readonly Border candidateImagePanel = new() { Background = Brushes.White, Padding = new Thickness(8), Visibility = Visibility.Collapsed };
+    readonly TextBlock candidateImageDescription = new() { TextWrapping = TextWrapping.Wrap, FontSize = 14 };
+    readonly TextBlock candidateCaution = new() { FontSize = 15, TextWrapping = TextWrapping.Wrap };
+    readonly StackPanel candidateNavigation = new() { Orientation = Orientation.Horizontal };
     readonly Button previousRegion = new() { Content = "←", Width = 38, ToolTip = "前の印影", IsEnabled = false };
     readonly Button nextRegion = new() { Content = "→", Width = 38, ToolTip = "次の印影", IsEnabled = false };
     readonly TextBlock regionPosition = new() { Text = "検出した印影なし", VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 8, 0) };
@@ -86,7 +102,8 @@ public sealed class VerificationView : UserControl
         imagePanel.Children.Add(new TextBlock { Text = "印影が複数ある場合は一覧から選択してください。見つからない場合は、画像上で円全体をドラッグして囲めます。", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 8) });
         imagePanel.Children.Add(regions);
         Grid.SetColumn(resultScroll, 2); body.Children.Add(resultScroll);
-        var results = new StackPanel(); resultScroll.Content = results;
+        candidateNavigation.Visibility = Visibility.Collapsed;
+        var results = new StackPanel(); results.SetValue(TextElement.FontSizeProperty, 16.0); resultScroll.Content = results;
         void Section(string label, TextBlock text)
         {
             results.Children.Add(new TextBlock { Text = label, FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 10, 0, 3) });
@@ -94,34 +111,91 @@ public sealed class VerificationView : UserControl
         }
         result.Text = "このPCに保存した生成履歴と照合します。";
         nextStep.Text = "［ファイルを選択…］または［クリップボードの画像を照合］を押してください。";
-        results.Children.Add(candidateHeading); results.Children.Add(scoreHelp);
-        candidates.MinHeight = 70; candidates.MaxHeight = 240;
-        ScrollViewer.SetHorizontalScrollBarVisibility(candidates, ScrollBarVisibility.Disabled);
-        candidates.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-        var factory = new FrameworkElementFactory(typeof(TextBlock));
-        factory.SetBinding(TextBlock.TextProperty, new System.Windows.Data.Binding());
-        factory.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap);
-        candidates.ItemTemplate = new DataTemplate { VisualTree = factory };
-        results.Children.Add(candidates); results.Children.Add(show);
+        results.Children.Add(candidateHeading);
+        var scoreContent = new StackPanel();
+        scoreContent.Children.Add(new TextBlock { Text = "履歴との対応", FontSize = 16 });
+        scoreContent.Children.Add(scoreValue); scoreContent.Children.Add(scoreVerdict);
+        scoreCard.Child = scoreContent; scoreCard.Background = Brushes.LightGray; scoreValue.Foreground = scoreVerdict.Foreground = Brushes.Black;
+        results.Children.Add(scoreCard);
+        results.Children.Add(candidateCaution);
+        var candidateInfo = new Grid { Margin = new Thickness(0, 12, 0, 8) };
+        candidateInfo.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(132) });
+        candidateInfo.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        var imageInfo = new StackPanel { Margin = new Thickness(0, 0, 12, 0) };
+        candidateImagePanel.Child = candidateImage;
+        imageInfo.Children.Add(candidateImagePanel); imageInfo.Children.Add(candidateImageDescription);
+        candidateInfo.Children.Add(imageInfo); Grid.SetColumn(candidateText, 1); candidateInfo.Children.Add(candidateText);
+        results.Children.Add(candidateInfo);
+        candidateNavigation.Children.Add(previousCandidate); candidateNavigation.Children.Add(candidatePosition); candidateNavigation.Children.Add(nextCandidate);
+        results.Children.Add(candidateNavigation); results.Children.Add(show);
+        previousCandidate.Click += (_, _) => SelectCandidate(candidateIndex - 1);
+        nextCandidate.Click += (_, _) => SelectCandidate(candidateIndex + 1);
         results.Children.Add(title);
         Section("確認できたこと", result);
-        Section("この結果の意味", meaning);
         Section("次に確認すること", nextStep);
-        var detailPanel = new StackPanel(); detailPanel.Children.Add(technical);
+        var detailPanel = new StackPanel();
+        detailPanel.Children.Add(candidateDetails); detailPanel.Children.Add(scoreHelp);
+        detailPanel.Children.Add(meaning); detailPanel.Children.Add(technical);
         detailPanel.Children.Add(new TextBlock { Text = "照合に使う生成履歴の保存先：" + storageRoot, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 0) });
-        results.Children.Add(new Expander { Header = "読取・検索の詳細", Content = detailPanel, Margin = new Thickness(0, 8, 0, 0) });
+        results.Children.Add(new Expander { Header = "内訳・読取・検索の詳細", Content = detailPanel, Margin = new Thickness(0, 8, 0, 0) });
         results.Children.Add(new Expander { Header = "対応スコアの配点と限界", Margin = new Thickness(0, 8, 0, 0),
             Content = new TextBlock { Text = VerificationMessages.MethodHelp, TextWrapping = TextWrapping.Wrap } });
-        candidates.SelectionChanged += (_, _) => show.IsEnabled = !busy && candidates.SelectedItem is Candidate;
-        show.Click += (_, _) => { if (candidates.SelectedItem is Candidate item) HistoryRequested?.Invoke(item.Generation.EventId); };
+        show.Click += (_, _) => { if (SelectedCandidate is Candidate item) HistoryRequested?.Invoke(item.Generation.EventId); };
         regions.SelectionChanged += async (_, _) => { UpdateRegionNavigation(); if (!busy && regions.SelectedItem is RegionItem item) await Compare(item.Region); };
         preview.MouseLeftButtonDown += (_, e) => { if (!busy) { dragStart = ImagePoint(e.GetPosition(preview)); if (dragStart is not null) preview.CaptureMouse(); } };
         preview.MouseLeftButtonUp += ManualRegion;
     }
 
-    sealed record Candidate(Generation Generation, string Evidence)
+    sealed record Candidate(Generation Generation, string Evidence, double? Score = null);
+    void SetCandidates(Candidate[] rows)
     {
-        public override string ToString() => $"{Evidence}\n氏名：{Generation.Stamp.Name} ／ 表示日付：{Generation.Stamp.DisplayDate:yyyy/MM/dd} ／ 下段：{Generation.Stamp.Bottom}\n生成日時：{Generation.CreatedUtc.ToLocalTime():yyyy/MM/dd HH:mm:ss}\n記録ID：{Generation.EventId}";
+        candidateRows = rows; candidateIndex = rows.Length > 0 ? 0 : -1;
+        RenderCandidate();
+    }
+    void SelectCandidate(int index)
+    {
+        if (busy || index < 0 || index >= candidateRows.Length) return;
+        candidateIndex = index; RenderCandidate();
+    }
+    void PaintIndicator(ResultIndicator indicator)
+    {
+        scoreValue.Text = indicator.Value; scoreVerdict.Text = indicator.Label;
+        scoreCard.Background = indicator.Tone switch
+        {
+            IndicatorTone.Success => new SolidColorBrush(Color.FromRgb(16, 100, 55)),
+            IndicatorTone.NoCandidate => new SolidColorBrush(Color.FromRgb(165, 32, 35)),
+            _ => new SolidColorBrush(Color.FromRgb(255, 221, 112))
+        };
+        var foreground = indicator.Tone == IndicatorTone.Caution ? Brushes.Black : Brushes.White;
+        ((StackPanel)scoreCard.Child).SetValue(TextElement.ForegroundProperty, foreground);
+        foreach (TextBlock text in ((StackPanel)scoreCard.Child).Children) text.Foreground = foreground;
+    }
+    void UpdateCandidateNavigation()
+    {
+        show.IsEnabled = !busy && SelectedCandidate is not null;
+        previousCandidate.IsEnabled = !busy && candidateIndex > 0;
+        nextCandidate.IsEnabled = !busy && candidateIndex >= 0 && candidateIndex + 1 < candidateRows.Length;
+        candidateNavigation.Visibility = candidateRows.Length > 1 ? Visibility.Visible : Visibility.Collapsed;
+    }
+    void RenderCandidate()
+    {
+        UpdateCandidateNavigation();
+        candidateImage.Source = null; candidateImagePanel.Visibility = Visibility.Collapsed;
+        candidateImageDescription.Text = candidateText.Text = candidateDetails.Text = candidateCaution.Text = "";
+        if (SelectedCandidate is not Candidate item) return;
+        candidatePosition.Text = $"{candidateIndex + 1} / {candidateRows.Length}";
+        PaintIndicator(item.Score is double score ? ResultIndicator.Candidate(score) : ResultIndicator.Exact());
+        candidateCaution.Text = item.Score.HasValue ? "暫定スコアです。1.000でも真正性の証明ではありません。" : "保存された生成記録と一致しました。貼付完了の証明ではありません。";
+        var g = item.Generation;
+        candidateText.Text = $"表示日付：{g.Stamp.DisplayDate:yyyy/MM/dd}\n上段文字：{g.Stamp.Name}\n下段文字：{g.Stamp.Bottom}\n生成：{g.CreatedUtc.ToLocalTime():yyyy/MM/dd HH:mm:ss}";
+        candidateDetails.Text = item.Evidence + $"\n記録ID：{g.EventId}\n";
+        try
+        {
+            var image = HistoryImage.Load(g);
+            candidateImage.Source = image.Image; candidateImageDescription.Text = image.Description;
+            candidateImagePanel.Visibility = image.Image is null ? Visibility.Collapsed : Visibility.Visible;
+        }
+        catch { candidateImageDescription.Text = "履歴の画像を表示できません。"; }
     }
     sealed record RegionItem(ImageRegion Region, string Label) { public override string ToString() => Label; }
     void MoveRegion(int direction)
@@ -143,36 +217,42 @@ public sealed class VerificationView : UserControl
     {
         busy = value; UpdateRegionNavigation(); codeFilter.IsEnabled = !value && source is not null; file.IsEnabled = clipboard.IsEnabled = regions.IsEnabled = !value;
         refresh.IsEnabled = !value && (lastBytes is not null || lastBitmap is not null);
-        show.IsEnabled = !value && candidates.SelectedItem is Candidate;
+        UpdateCandidateNavigation();
     }
     void Present(VerificationMessage message, string details = "")
     {
         title.Text = message.Title; result.Text = message.Findings;
         meaning.Text = message.Meaning; nextStep.Text = message.NextStep;
         technical.Text = details; resultScroll.ScrollToTop();
+        if (SelectedCandidate is null)
+        {
+            PaintIndicator(ResultIndicator.Empty(message.Kind == VerificationMessageKind.NoCandidate));
+            candidateCaution.Text = message.Kind == VerificationMessageKind.NoCandidate ? "今回の検索範囲での結果です。偽造を意味しません。" : "未読取や比較不能を、履歴なしとは判断しません。";
+        }
     }
     void Progress(string text)
     {
+        scoreValue.Text = "…"; scoreVerdict.Text = "照合中"; scoreCard.Background = Brushes.LightGray; ((StackPanel)scoreCard.Child).SetValue(TextElement.ForegroundProperty, Brushes.Black); foreach (TextBlock block in ((StackPanel)scoreCard.Child).Children) block.Foreground = Brushes.Black;
         title.Text = "照合中…"; result.Text = text; meaning.Text = nextStep.Text = technical.Text = "";
         scoreHelp.Visibility = Visibility.Collapsed; candidateHeading.Text = "生成履歴";
     }
     void Display(VerificationResult value)
     {
-        candidates.ItemsSource = value.Matches.Select(x => new Candidate(x, lastOriginal ? "原本の認証情報・内容が一致" : "PNGファイル全体が一致")).ToArray();
+        SetCandidates(value.Matches.Select(x => new Candidate(x, lastOriginal ? "原本の認証情報・内容が一致" : "PNGファイル全体が一致")).ToArray());
         show.IsEnabled = false; scoreHelp.Visibility = Visibility.Collapsed;
         candidateHeading.Text = value.Status == VerificationStatus.Match ? $"一致した生成履歴：{value.Matches.Count}件" : "生成履歴";
         Present(VerificationMessages.Exact(value, lastOriginal), value.Explanation);
     }
     void Failed(string reason)
     {
-        candidates.ItemsSource = null; show.IsEnabled = false; scoreHelp.Visibility = Visibility.Collapsed;
+        SetCandidates([]); show.IsEnabled = false; scoreHelp.Visibility = Visibility.Collapsed;
         candidateHeading.Text = "生成履歴";
         Present(VerificationMessages.Unavailable(reason,
             "印影の範囲、元の画像、履歴の保存先を確認してください。下の詳細に理由が表示されている場合は、その内容も確認してください。"), reason);
     }
     void Reset()
     {
-        source = null; mask = null; selectedRegion = null; preview.Source = null; regions.ItemsSource = null; candidates.ItemsSource = null;
+        source = null; mask = null; selectedRegion = null; preview.Source = null; regions.ItemsSource = null; SetCandidates([]);
         templates.Clear(); referenceHashes.Clear(); history = []; coverage = ""; show.IsEnabled = false;
     }
     async void Open(object sender, RoutedEventArgs e)
@@ -251,10 +331,10 @@ public sealed class VerificationView : UserControl
         int skipped = 0;
         foreach (var stamp in groups.Take(300))
         {
-            var rendered = StampRenderer.Render(stamp);
-            string hash = Convert.ToHexString(SHA256.HashData(StampRenderer.Png(rendered)));
-            // Font/renderer changes must not silently become historical image evidence.
-            if (!history.Any(x => x.Stamp == stamp && x.PngSha256.Equals(hash, StringComparison.OrdinalIgnoreCase))) { skipped++; continue; }
+            var generation = history.Last(x => x.Stamp == stamp);
+            var historical = HistoryImage.Load(generation);
+            if (historical.Image is not BitmapSource rendered) { skipped++; continue; }
+            string hash = generation.PngSha256;
             var reference = ToMask(rendered);
             if (ImageSearch.Bounds(reference, rendered.PixelWidth, rendered.PixelHeight) is ImageRegion bounds)
                 { templates.Add(new(stamp, ImageSearch.Normalize(reference, rendered.PixelWidth, rendered.PixelHeight, bounds))); referenceHashes[stamp] = hash; }
@@ -272,7 +352,7 @@ public sealed class VerificationView : UserControl
     {
         if (source is null || mask is null) return;
         selectedRegion = region;
-        SetBusy(true); candidates.ItemsSource = null; Draw(region); Progress("選択した印影を履歴と比較しています…");
+        SetBusy(true); SetCandidates([]); Draw(region); Progress("選択した印影を履歴と比較しています…");
         try
         {
             history = service.ReadGenerations(); // Recheck integrity when selecting another region or changing the filter.
@@ -286,15 +366,19 @@ public sealed class VerificationView : UserControl
             var references = templates.Where(t => !filter || t.Stamp.GeometryCode == reading.Code).ToArray();
             var ranked = await Task.Run(() => ImageSearch.Rank(ink, references, reading.Code));
             if (disposed) return;
-            var rows = ranked.SelectMany(x => history.Where(g => g.Stamp == x.Stamp &&
+            var rows = ranked.SelectMany(x => history.Reverse().Where(g => g.Stamp == x.Stamp &&
                     referenceHashes.TryGetValue(x.Stamp, out var hash) && g.PngSha256.Equals(hash, StringComparison.OrdinalIgnoreCase))
-                .Select(g => new Candidate(g, VerificationMessages.ShapeEvidence(reading.Code, g.Stamp.GeometryCode!.Value, x.Text)))).ToArray();
-            candidates.ItemsSource = rows;
+                .Select(g => new Candidate(g, VerificationMessages.ShapeEvidence(reading.Code, g.Stamp.GeometryCode, x.Text), CorrespondenceScore.Calculate(x.Text, reading.Code, g.Stamp.GeometryCode).Total))).ToArray();
+            SetCandidates(rows);
             int codeMatches = reading.Code.HasValue ? rows.Count(x => x.Generation.Stamp.GeometryCode == reading.Code) : 0;
             int codeHistory = reading.Code.HasValue ? history.Count(x => x.Stamp.GeometryCode == reading.Code) : 0;
-            candidateHeading.Text = $"生成履歴候補：{rows.Length}件";
+            candidateHeading.Text = $"生成履歴候補（スコア順）：{rows.Length}件";
             scoreHelp.Visibility = rows.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
-            var message = VerificationMessages.Image(new(reading.Code, rows.Length, codeMatches, codeHistory, templates.Count, filter));
+            var message = history.Count == 0
+                ? new VerificationMessage(VerificationMessageKind.NoCandidate, "照合対象の生成履歴がありません",
+                    "この保存先には、対応する形式の生成記録がありません。", "この保存先についての結果です。偽造という意味ではありません。",
+                    "生成したときの履歴の保存先を確認してください。")
+                : VerificationMessages.Image(new(reading.Code, rows.Length, codeMatches, codeHistory, templates.Count, filter));
             Present(message, (reading.Code is int decoded ? $"読取コード：{RingCode.Label(decoded)}（12ビット）\n" : "コード未読取：" + reading.Reason + "\n") +
                 (filter ? "同じコードの履歴に絞っています。" : "コードによる絞り込みは適用していません。") + "\n" + coverage +
                 "\n従来の内側全体の形比較が0.72以上の候補から、対応スコア順で上位8印面の記録を表示します。0.72は候補抽出用で、対応スコアの基準ではありません。文字・日付は目視で確認してください。");

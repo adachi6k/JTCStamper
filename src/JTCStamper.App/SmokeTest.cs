@@ -179,6 +179,29 @@ internal static class SmokeTest
                 File.WriteAllBytes(Path.Combine(root, $"stamp-{phase}.png"), png);
             });
 
+            Check("plain-rendering-and-stored-history-image", () =>
+            {
+                var plain = stamp with { Renderer = RingCode.PlainRenderer, GeometryCode = null };
+                var image = StampRenderer.Render(plain);
+                var first = StampRenderer.Png(image);
+                Require(first.SequenceEqual(StampRenderer.Png(StampRenderer.Render(plain))), "Plain image must be deterministic.");
+                Require(!first.SequenceEqual(StampRenderer.Png(StampRenderer.Render(stamp))), "Plain rendering still looks coded.");
+                var pixels = new byte[384 * 384 * 4]; image.CopyPixels(pixels, 384 * 4, 0);
+                // Every circle cell must retain opaque red stroke; no hidden gaps.
+                foreach (int cell in Enumerable.Range(0, RingCode.CellCount))
+                {
+                    double angle = RingCode.CellAngle(cell) * Math.PI / 180;
+                    int x = (int)Math.Round((48 + 43 * Math.Cos(angle)) * 4);
+                    int y = (int)Math.Round((48 + 43 * Math.Sin(angle)) * 4);
+                    Require(pixels[(y * 384 + x) * 4 + 3] > 150, "Plain ring contains a code gap.");
+                }
+                var g = new Generation(Guid.NewGuid(), DateTimeOffset.UtcNow, plain,
+                    Convert.ToHexString(SHA256.HashData(first)), Convert.ToBase64String(first));
+                Require(HistoryImage.Load(g).Image is not null, "Stored history image cannot be displayed.");
+                Require(HistoryImage.Load(g with { PngBase64 = null }).Image is not null, "Legacy hash-verified reconstruction failed.");
+                Require(HistoryImage.Load(g with { PngBase64 = null, PngSha256 = new string('0', 64) }).Image is null, "Mismatched reconstruction was shown.");
+            });
+
             Check("image-search-rendered-document-and-jpeg", () =>
             {
                 bool[] Mask(BitmapSource image)

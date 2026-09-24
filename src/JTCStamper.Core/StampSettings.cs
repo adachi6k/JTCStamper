@@ -2,14 +2,14 @@ using System.Text.Json;
 namespace JTCStamper.Core;
 
 // Editable stamp settings are not authenticated originals and contain no secret key.
-public sealed record StampSettings(int Version, string Name, DateOnly DisplayDate, string Bottom)
+public sealed record StampSettings(int Version, string Name, DateOnly DisplayDate, string Bottom, bool Plain = false)
 {
     public void Validate()
     {
         if (Version != 1) throw new InvalidDataException("未対応の設定ファイル形式です。");
         if (string.IsNullOrWhiteSpace(Name) || Name.Length > 16 ||
             string.IsNullOrWhiteSpace(Bottom) || Bottom.Length > 16)
-            throw new InvalidDataException("氏名と下段文字は1〜16文字で指定してください。");
+            throw new InvalidDataException("上段文字と下段文字は1〜16文字で指定してください。");
     }
     public static StampSettings Load(string path)
     {

@@ -87,7 +87,7 @@
                         <Grid.ColumnDefinitions><ColumnDefinition x:Name="NavigationColumn" Width="184"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <StackPanel Margin="0,18,0,0">
                             <ToggleButton x:Name="NavigationToggle" IsChecked="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, TargetNullValue=False}" Width="40" Height="32" HorizontalAlignment="Left" Margin="12,0,0,8" ToolTip="サイドバーを折りたたむ" AutomationProperties.Name="サイドバーを折りたたむ／展開する">
-                                <Path Data="M0,2 H16 M0,8 H16 M0,14 H16" Width="16" Height="16" Stroke="{DynamicResource TextFillColorPrimaryBrush}" StrokeThickness="1.5"/>
+                                <Path x:Name="SidebarToggleIcon" Data="M1,1 H19 V17 H1 Z M7,1 V17 M15,5 L11,9 L15,13" Width="20" Height="18" Stroke="{DynamicResource TextFillColorPrimaryBrush}" StrokeThickness="1.5"/>
                             </ToggleButton>
                             <TabPanel IsItemsHost="True" KeyboardNavigation.TabIndex="0"/>
                         </StackPanel>
@@ -100,6 +100,7 @@
                         <Trigger SourceName="NavigationToggle" Property="IsChecked" Value="True">
                             <Setter TargetName="NavigationColumn" Property="Width" Value="66"/>
                             <Setter TargetName="NavigationToggle" Property="ToolTip" Value="サイドバーを展開する"/>
+                            <Setter TargetName="SidebarToggleIcon" Property="Data" Value="M1,1 H19 V17 H1 Z M7,1 V17 M11,5 L15,9 L11,13"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -114,18 +115,19 @@
                     <Border Background="White" Padding="12"><Image x:Name="Preview" Height="260" Stretch="Uniform"/></Border>
                 </GroupBox>
             <StackPanel Grid.Row="1" Grid.Column="2" MaxWidth="420" HorizontalAlignment="Stretch">
-                <TextBlock Text="氏名"/><TextBox x:Name="NameInput" Text="JTC" MaxLength="16" TextChanged="InputsChanged"/>
+                <TextBlock Text="上段文字"/><TextBox x:Name="NameInput" Text="JTC" MaxLength="16" TextChanged="InputsChanged"/>
                 <TextBlock Text="表示日付"/>
                 <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                     <TextBlock x:Name="DateModeLabel" Text="当日" VerticalAlignment="Center" Margin="0,0,8,0"/>
                     <TextBlock x:Name="TodayDisplay" VerticalAlignment="Center"/>
                     <DatePicker x:Name="DateInput" Visibility="Collapsed" IsEnabled="False"
-                                SelectedDateChanged="DateChanged" Width="155"/>
+                                SelectedDateChanged="DateChanged" Width="125"/>
+                    <Button x:Name="DateModeButton" Content="日付を指定…" Click="DateModeClick" Margin="8,0,0,0"/>
                 </StackPanel>
-                <Button x:Name="DateModeButton" Content="日付を指定…" Click="DateModeClick" HorizontalAlignment="Left"/>
                 <TextBlock Text="下段文字"/><TextBox x:Name="BottomInput" Text="(印)" MaxLength="16" TextChanged="InputsChanged"/>
+                <CheckBox x:Name="PlainMode" Content="プレーン印影（幾何コードを埋め込まない）" Checked="PlainModeChanged" Unchecked="PlainModeChanged" Margin="0,12,0,4"/>
                 <Button x:Name="CopyButton" Style="{DynamicResource AccentButtonStyle}" HorizontalAlignment="Stretch" Padding="14,10" Margin="0,10,0,8" Content="生成して PNG コピー" Click="CopyClick"/>
-                <TextBlock Text="円周の短い欠けは生成時に決まります。" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                <TextBlock x:Name="ModeHelp" Text="円周の短い欠けは生成時に決まります。" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
             </StackPanel>
                         <StackPanel Grid.Row="2" Grid.ColumnSpan="3" Margin="0,18,0,0">
                             <DockPanel LastChildFill="True">
@@ -142,10 +144,13 @@
                                         <Button Tag="{Binding Id}" Click="RecentHistoryClick" HorizontalContentAlignment="Stretch"
                                                 Padding="8,6" Margin="0,2,0,0" ToolTip="{Binding Label}">
                                             <Grid>
-                                                <Grid.ColumnDefinitions><ColumnDefinition Width="155"/><ColumnDefinition Width="*"/><ColumnDefinition Width="150"/></Grid.ColumnDefinitions>
-                                                <TextBlock FontSize="12" Text="{Binding GeneratedLabel}" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="1" Text="{Binding StampLabel}" TextTrimming="CharacterEllipsis" Margin="8,0" VerticalAlignment="Center"/>
-                                                <TextBlock FontSize="12" Grid.Column="2" Text="{Binding CopyState}" VerticalAlignment="Center"/>
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="62"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                <Border Background="White" Margin="0,0,8,0"><Image Source="{Binding Thumbnail}" Height="54" Width="54" ToolTip="{Binding ImageDescription}"/></Border>
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding StampLabel}" FontSize="15" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding GeneratedLabel}" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                                    <TextBlock Text="{Binding CopyState}" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                                </StackPanel>
                                             </Grid>
                                         </Button>
                                     </DataTemplate>
@@ -164,7 +169,13 @@
                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="2*"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                 <TextBlock Text="生成履歴" Style="{StaticResource PageHeading}"/>
                 <ListBox x:Name="History" Grid.Row="1" DisplayMemberPath="Label" SelectionChanged="HistoryChanged"/>
-                <TextBox x:Name="Details" Grid.Row="2" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="0,8,0,0"/>
+                <DockPanel Grid.Row="2" Margin="0,8,0,0">
+                    <StackPanel DockPanel.Dock="Left" Width="180" Margin="0,0,12,0">
+                        <Border Background="White"><Image x:Name="HistoryPreview" Height="140" Stretch="Uniform"/></Border>
+                        <TextBlock x:Name="HistoryImageDescription" TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <TextBox x:Name="Details" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
+                </DockPanel>
                 <StackPanel Grid.Row="3">
                     <TextBlock Text="用途・貼付先などの注釈" Margin="0,10,0,0"/>
                     <TextBox x:Name="NoteInput" MaxLength="2000"/>

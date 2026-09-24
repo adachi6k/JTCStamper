@@ -7,6 +7,7 @@ public sealed record RingReading(int? Code, double? RotationDegrees, string Reas
 // 12 payload bits + 8-bit format/orientation marker + CRC-8. None is authentication.
 public static class RingCode
 {
+    public const string PlainRenderer = "wpf-plain-v1";
     public const string Renderer = "wpf-v5-gap12";
     public const int CellCount = 28;
     public const double GapDegrees = 3.5;
@@ -14,7 +15,12 @@ public static class RingCode
     public static double SeparatorDifference(int code) => (code & 3) * 2 - 3;
     public static void Validate(Stamp stamp)
     {
-        if (stamp.Renderer != Renderer) throw new NotSupportedException("対応していない印影形式です。現在の12ビット形式のみ使用できます。");
+        if (stamp.Renderer == PlainRenderer)
+        {
+            if (stamp.GeometryCode is not null) throw new InvalidDataException("プレーン印影に幾何コードは指定できません。");
+            return;
+        }
+        if (stamp.Renderer != Renderer) throw new NotSupportedException("対応していない印影形式です。現在の12ビット形式とプレーン形式を使用できます。");
         if (stamp.GeometryCode is null or < 0 or > 4095) throw new InvalidDataException("12ビットの幾何コードが不正です。");
     }
     public static float[] RedStrength(byte[] bgra, int width, int height)

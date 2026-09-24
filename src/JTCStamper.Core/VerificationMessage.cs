@@ -11,14 +11,14 @@ public sealed record ImageSearchEvidence(int? Code, int CandidateCount, int Code
 public static class VerificationMessages
 {
     public const string ScoreHelp = "履歴との対応スコア（暫定）は確率ではありません。文字の形は最大0.300、コード一致は0.700です。1.000でも原本・PNGの完全一致や真正性を意味しません。";
-    public const string MethodHelp = "氏名・日付・下段文字の領域を別々に比較し、それぞれ最大0.100を加点します。96×96にそろえ、±8度の回転と1画素のずれを許容します。文字の意味を読むOCRではなく、形の比較です。空白や画素不足の領域には加点しません。\nコードは位置マーカー・CRC検査を通過して読み取れた12ビットが履歴と一致した場合に0.700、不一致・未読取は0です。読取信頼度の連続評価や部分一致への加点は行いません。CRCや冗長情報は別の証拠として加点しません。\n配点は暫定で、確率としての校正はしていません。同じ文字・同じ短いコードを持つ別イベントも高得点になります。完全一致の確認は原本の認証情報・PNG全体との照合で別に行います。";
-    public static string ShapeEvidence(int? readCode, int candidateCode, TextSimilarity text)
+    public const string MethodHelp = "上段文字・日付・下段文字の領域を別々に比較し、それぞれ最大0.100を加点します。96×96にそろえ、±8度の回転と1画素のずれを許容します。文字の意味を読むOCRではなく、形の比較です。空白や画素不足の領域には加点しません。\nコードは位置マーカー・CRC検査を通過して読み取れた12ビットが履歴と一致した場合に0.700、不一致・未読取は0です。読取信頼度の連続評価や部分一致への加点は行いません。CRCや冗長情報は別の証拠として加点しません。\n配点は暫定で、確率としての校正はしていません。同じ文字・同じ短いコードを持つ別イベントも高得点になります。完全一致の確認は原本の認証情報・PNG全体との照合で別に行います。";
+    public static string ShapeEvidence(int? readCode, int? candidateCode, TextSimilarity text)
     {
         var score = CorrespondenceScore.Calculate(text, readCode, candidateCode);
-        string code = readCode is null ? "コード未読取（未確認）" : readCode == candidateCode ? "コード一致" : "コード不一致";
+        string code = candidateCode is null ? "プレーン印影（コードなし）" : readCode is null ? "コード未読取（未確認）" : readCode == candidateCode ? "コード一致" : "コード不一致";
         string F(double value) => value.ToString("0.000", CultureInfo.InvariantCulture);
         return $"履歴との対応スコア {F(score.Total)}（暫定） ／ {code}\n" +
-            $"文字の形 {F(text.Contribution)} / 0.300［氏名 {F(text.Name / 10)}・日付 {F(text.Date / 10)}・下段 {F(text.Bottom / 10)}］\n" +
+            $"文字の形 {F(text.Contribution)} / 0.300［上段文字 {F(text.Name / 10)}・日付 {F(text.Date / 10)}・下段 {F(text.Bottom / 10)}］\n" +
             $"埋め込み情報 {F(score.CodeContribution)} / 0.700：{code}";
     }
     public static VerificationMessage Image(ImageSearchEvidence e)
@@ -38,7 +38,7 @@ public static class VerificationMessages
                 $"印影コードが一致し、形も似ている生成履歴が{e.CodeMatchedCandidates}件見つかりました。" +
                 (e.CandidateCount > e.CodeMatchedCandidates ? $" コードが異なる形のみの候補も{e.CandidateCount - e.CodeMatchedCandidates}件表示しています。" : ""),
                 "履歴との対応を示す手がかりが得られました。元PNG・原本の完全一致ではないため、どの生成時の画像かは確定していません。",
-                "氏名・表示日付・下段文字を見比べ、候補を選んで［選択した生成履歴を開く］から生成日時や注釈を確認してください。");
+                "上段文字・表示日付・下段文字を見比べ、候補を選んで［選択した生成履歴を開く］から生成日時や注釈を確認してください。");
         if (e.CandidateCount > 0)
             return new(VerificationMessageKind.Candidate, "形が似た履歴候補あり",
                 read + $" 形が似ている生成履歴が{e.CandidateCount}件見つかりました。" + (e.Code.HasValue ? " 表示中の候補は、読み取ったコードとは一致していません。" : ""),

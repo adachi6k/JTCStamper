@@ -84,7 +84,7 @@ public partial class MainWindow : Window
     string? settingsPath;
     readonly string appearanceRoot;
     string storageRoot = AppContext.BaseDirectory;
-    public sealed record HistoryRow(Guid Id, string Label, string GeneratedLabel, string StampLabel, string CopyState);
+    public sealed record HistoryRow(Guid Id, string Label, string GeneratedLabel, string StampLabel, string CopyState, ImageSource? Thumbnail = null, string ImageDescription = "");
     public MainWindow() : this(AppContext.BaseDirectory) { }
     internal MainWindow(string dataRoot)
     {
@@ -133,7 +133,7 @@ public partial class MainWindow : Window
         try
         {
             var settings = StampSettings.Load(dialog.FileName);
-            NameInput.Text = settings.Name; BottomInput.Text = settings.Bottom;
+            NameInput.Text = settings.Name; BottomInput.Text = settings.Bottom; PlainMode.IsChecked = settings.Plain;
             dateSelection.UseToday(); RefreshDateControls();
             settingsPath = dialog.FileName; UpdatePreview(); Status.Text = "設定を読み込みました。日付は当日に戻しました: " + settingsPath;
         }
@@ -153,7 +153,7 @@ public partial class MainWindow : Window
                 if (dialog.ShowDialog() != true) return;
                 path = dialog.FileName;
             }
-            new StampSettings(1, stamp.Name, stamp.DisplayDate, stamp.Bottom).Save(path);
+            new StampSettings(1, stamp.Name, stamp.DisplayDate, stamp.Bottom, stamp.Renderer == RingCode.PlainRenderer).Save(path);
             settingsPath = path; Status.Text = "設定を保存しました: " + path;
         }
         catch (Exception ex) { Status.Text = "設定を保存できません: " + ex.Message; }
@@ -170,14 +170,14 @@ public partial class MainWindow : Window
     Stamp Current()
     {
         if (string.IsNullOrWhiteSpace(NameInput.Text) || string.IsNullOrWhiteSpace(BottomInput.Text))
-            throw new ArgumentException("氏名と下段文字を入力してください。");
+            throw new ArgumentException("上段文字と下段文字を入力してください。");
         if (dateSelection.IsSpecified)
         {
             // Invalid/uncommitted input must not fall back to a previous date.
             if (!DateTime.TryParse(DateInput.Text, out var specified)) throw new ArgumentException("有効な指定日を入力してください。");
             dateSelection.Specify(DateOnly.FromDateTime(specified));
         }
-        return new(NameInput.Text.Trim(), dateSelection.Resolve(), BottomInput.Text.Trim(), RingCode.Renderer);
+        return new(NameInput.Text.Trim(), dateSelection.Resolve(), BottomInput.Text.Trim(), PlainMode.IsChecked == true ? RingCode.PlainRenderer : RingCode.Renderer);
     }
     void DateModeClick(object sender, RoutedEventArgs e)
     {
@@ -209,7 +209,19 @@ public partial class MainWindow : Window
         }
     }
 
-    void UpdatePreview() { if (!ready) return; try { Preview.Source = StampRenderer.Render(Current() with { Renderer = RingCode.Renderer, GeometryCode = 0 }); } catch { Preview.Source = null; } }
+    void PlainModeChanged(object sender, RoutedEventArgs e) => UpdatePreview();
+    void UpdatePreview()
+    {
+        if (!ready) return;
+        try
+        {
+            var stamp = Current();
+            bool plain = stamp.Renderer == RingCode.PlainRenderer;
+            Preview.Source = StampRenderer.Render(stamp with { GeometryCode = plain ? null : 0 });
+            ModeHelp.Text = plain ? "円の欠け・横線の傾き・コード埋め込みなし。生成記録は保存します。" : "円周の短い欠けは生成時に決まります。";
+        }
+        catch { Preview.Source = null; }
+    }
     void InputsChanged(object sender, TextChangedEventArgs e) => UpdatePreview();
     void DateChanged(object sender, SelectionChangedEventArgs e) => UpdatePreview();
     void CopyClick(object sender, RoutedEventArgs e)
@@ -253,12 +265,18 @@ public partial class MainWindow : Window
             var records = journal.Read();
             var completed = records.Where(r => r.Entry.Kind == "CopyCompleted").Select(r => r.Entry.EventId).ToHashSet();
             // Journal order is the generation order; a user-specified display date must not affect it.
-            var rows = new VerificationService(journal).ReadGenerations().Reverse().Select(g =>
+            var rows = new VerificationService(journal).ReadGenerations().Reverse().Select((g, index) =>
             {
                 var state = completed.Contains(g.EventId) ? "コピー記録あり" : "コピー未完了／不明";
                 var created = $"{g.CreatedUtc.ToLocalTime():yyyy/MM/dd HH:mm:ss}";
-                var stamp = $"{g.Stamp.Name}  印面 '{g.Stamp.DisplayDate:yy.MM.dd}  {g.Stamp.Bottom}";
-                return new HistoryRow(g.EventId, $"{created}  {g.Stamp.Name}  印面 {g.Stamp.DisplayDate:yyyy/MM/dd}  {g.Stamp.Bottom}  {state}", created, stamp, state);
+                var stamp = $"表示日付 '{g.Stamp.DisplayDate:yy.MM.dd}  上段 {g.Stamp.Name}  下段 {g.Stamp.Bottom}";
+                ImageSource? thumbnail = null; string imageDescription = "";
+                if (index < 3)
+                {
+                    try { var image = HistoryImage.Load(g); thumbnail = image.Image; imageDescription = image.Description; }
+                    catch { imageDescription = "保存画像を表示できません"; }
+                }
+                return new HistoryRow(g.EventId, $"表示日付 {g.Stamp.DisplayDate:yyyy/MM/dd}  上段 {g.Stamp.Name}  下段 {g.Stamp.Bottom}  ／ 生成 {created}  {state}", "生成 " + created, stamp, state, thumbnail, imageDescription);
             }).ToList();
             History.ItemsSource = rows;
             RecentHistory.ItemsSource = rows.Take(3).ToList();
@@ -280,13 +298,29 @@ public partial class MainWindow : Window
     }
     void HistoryChanged(object sender, SelectionChangedEventArgs e)
     {
+        HistoryPreview.Source = null; HistoryImageDescription.Text = "";
         try
         {
+            if (History.SelectedItem is HistoryRow selected && journal is not null)
+            {
+                var generation = new VerificationService(journal).ReadGenerations().Single(x => x.EventId == selected.Id);
+                var image = HistoryImage.Load(generation);
+                HistoryPreview.Source = image.Image; HistoryImageDescription.Text = image.Description;
+            }
             Details.Text = History.SelectedItem is HistoryRow row && journal is not null
                 ? string.Join(Environment.NewLine + Environment.NewLine, journal.Read().Where(x => x.Entry.EventId == row.Id)
-                    .Select(x => $"{x.Entry.Kind}  {x.Entry.RecordedUtc:O}\nID: {row.Id}\n{x.Entry.Payload}")) : "";
+                    .Select(x => $"{x.Entry.Kind}  {x.Entry.RecordedUtc:O}\nID: {row.Id}\n{HistoryPayload(x.Entry)}")) : "";
         }
         catch (Exception ex) { Status.Text = "履歴検証に失敗: " + ex.Message; CopyButton.IsEnabled = false; }
+    }
+    static string HistoryPayload(Entry entry)
+    {
+        if (entry.Kind != "Generated") return entry.Payload;
+        var generation = JsonSerializer.Deserialize<Generation>(entry.Payload);
+        if (generation is null) return "生成記録を読めません";
+        return $"表示日付：{generation.Stamp.DisplayDate:yyyy/MM/dd}\n上段文字：{generation.Stamp.Name}\n下段文字：{generation.Stamp.Bottom}\n" +
+            (generation.Stamp.Renderer == RingCode.PlainRenderer ? "プレーン印影" : "幾何コード付き印影") +
+            (generation.PngBase64 is null ? "\n画像本体は未保存" : "\n生成時のPNGを保存済み");
     }
     void NoteClick(object sender, RoutedEventArgs e)
     {

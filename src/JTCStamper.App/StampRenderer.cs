@@ -16,7 +16,7 @@ public static class StampRenderer
             var red = new SolidColorBrush(Color.FromRgb(195, 32, 40));
             var pen = new Pen(red, 1.1);
             // Design coordinates: 96 units. Circle, separators and text are independent primitives.
-            var gaps = RingCode.Encode(stamp.GeometryCode!.Value);
+            var gaps = stamp.Renderer == RingCode.PlainRenderer ? Array.Empty<bool>() : RingCode.Encode(stamp.GeometryCode!.Value);
             double start = 0;
             for (int i = 0; i < gaps.Length; i++) if (gaps[i])
             {
@@ -24,10 +24,11 @@ public static class StampRenderer
                 DrawArc(dc, pen, start, center - RingCode.GapDegrees / 2);
                 start = center + RingCode.GapDegrees / 2;
             }
-            DrawArc(dc, pen, start, 360);
+            if (stamp.Renderer == RingCode.PlainRenderer) dc.DrawEllipse(null, pen, new Point(48, 48), 43, 43);
+            else DrawArc(dc, pen, start, 360);
             foreach (double y in new[] { 33.0, 63.0 })
             {
-                double difference = RingCode.SeparatorDifference(stamp.GeometryCode!.Value);
+                double difference = stamp.Renderer == RingCode.PlainRenderer ? 0 : RingCode.SeparatorDifference(stamp.GeometryCode!.Value);
                 double angle = (y < 48 ? difference / 2 : -difference / 2) * Math.PI / 180;
                 double cosine = Math.Cos(angle), sine = Math.Sin(angle), offset = y - 48;
                 double half = Math.Sqrt(43 * 43 - offset * offset * cosine * cosine);

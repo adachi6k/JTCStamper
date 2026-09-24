@@ -5,7 +5,7 @@ using System.Text.Json;
 namespace JTCStamper.Core;
 
 public sealed record Stamp(string Name, DateOnly DisplayDate, string Bottom, string Renderer = RingCode.Renderer, int? GeometryCode = null);
-public sealed record Generation(Guid EventId, DateTimeOffset CreatedUtc, Stamp Stamp, string PngSha256);
+public sealed record Generation(Guid EventId, DateTimeOffset CreatedUtc, Stamp Stamp, string PngSha256, string? PngBase64 = null);
 public sealed record Entry(int Version, long Sequence, string PreviousMac, string Kind, Guid EventId,
     DateTimeOffset RecordedUtc, string Payload);
 public sealed record SignedEntry(string EntryJson, string Mac);
@@ -89,13 +89,15 @@ public sealed class CopyService(Journal journal, IClipboard clipboard)
     public Guid GenerateCodedAndCopy(Stamp stamp, Func<Stamp, byte[]> render)
     {
         var id = Guid.NewGuid();
-        var coded = stamp with { Renderer = RingCode.Renderer, GeometryCode = RingCode.ForEvent(id) };
+        if (stamp.Renderer != RingCode.Renderer && stamp.Renderer != RingCode.PlainRenderer) throw new NotSupportedException("対応していない印影形式です。");
+        var coded = stamp with { GeometryCode = stamp.Renderer == RingCode.PlainRenderer ? null : RingCode.ForEvent(id) };
+        RingCode.Validate(coded);
         var png = render(coded);
         return SaveAndCopy(id, coded, png);
     }
     Guid SaveAndCopy(Guid id, Stamp stamp, byte[] png)
     {
-        var generation = new Generation(id, DateTimeOffset.UtcNow, stamp, Convert.ToHexString(SHA256.HashData(png)));
+        var generation = new Generation(id, DateTimeOffset.UtcNow, stamp, Convert.ToHexString(SHA256.HashData(png)), Convert.ToBase64String(png));
         journal.Append("Generated", id, generation);
         journal.Append("CopyRequested", id, new { Format = "PNG" });
         try { clipboard.Copy(png); }
