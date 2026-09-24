@@ -16,12 +16,12 @@ namespace JTCStamper.App;
 public sealed class VerificationView : UserControl
 {
     readonly VerificationService service;
-    readonly TextBlock result = new() { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 8) };
+    readonly TextBlock result = new() { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 4, 0, 4) };
     readonly TextBlock title = new() { TextWrapping = TextWrapping.Wrap, FontSize = 20, FontWeight = FontWeights.SemiBold, Text = "画像または原本を選んでください" };
     readonly TextBlock meaning = new() { TextWrapping = TextWrapping.Wrap };
     readonly TextBlock nextStep = new() { TextWrapping = TextWrapping.Wrap };
     readonly TextBlock technical = new() { TextWrapping = TextWrapping.Wrap };
-    readonly TextBlock candidateHeading = new() { FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 12, 0, 4), Text = "生成履歴" };
+    readonly TextBlock candidateHeading = new() { FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 6, 0, 4), Text = "生成履歴" };
     readonly TextBlock scoreHelp = new() { Text = VerificationMessages.ScoreHelp, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 4, 0, 6), Visibility = Visibility.Collapsed };
     readonly ScrollViewer resultScroll = new() { VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
     Candidate[] candidateRows = [];
@@ -29,22 +29,22 @@ public sealed class VerificationView : UserControl
     Candidate? SelectedCandidate => candidateIndex >= 0 && candidateIndex < candidateRows.Length ? candidateRows[candidateIndex] : null;
     readonly TextBlock scoreValue = new() { FontSize = 44, FontWeight = FontWeights.SemiBold, Text = "—" };
     readonly TextBlock scoreVerdict = new() { FontSize = 19, FontWeight = FontWeights.SemiBold, TextWrapping = TextWrapping.Wrap, Text = "画像を選択してください" };
-    readonly Border scoreCard = new() { CornerRadius = new CornerRadius(10), Padding = new Thickness(16), Margin = new Thickness(0, 8, 0, 12) };
-    readonly TextBlock candidateText = new() { FontSize = 18, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 8) };
+    readonly Border scoreCard = new() { CornerRadius = new CornerRadius(10), Padding = new Thickness(10), Margin = new Thickness(0, 4, 0, 8) };
+    readonly TextBlock candidateText = new() { FontSize = 18, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 4, 0, 4) };
     readonly TextBlock candidateDetails = new() { FontSize = 15, TextWrapping = TextWrapping.Wrap };
     readonly TextBlock candidatePosition = new() { FontSize = 16, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 8, 0) };
     readonly Button previousCandidate = new() { Content = "← 前の候補", IsEnabled = false };
     readonly Button nextCandidate = new() { Content = "次の候補 →", IsEnabled = false };
-    readonly Image candidateImage = new() { Height = 112, Stretch = Stretch.Uniform };
-    readonly Border candidateImagePanel = new() { Background = Brushes.White, Padding = new Thickness(8), Visibility = Visibility.Collapsed };
+    readonly Image candidateImage = new() { Height = 92, Stretch = Stretch.Uniform };
+    readonly Border candidateImagePanel = new() { Background = Brushes.White, Padding = new Thickness(4), Visibility = Visibility.Collapsed };
     readonly TextBlock candidateImageDescription = new() { TextWrapping = TextWrapping.Wrap, FontSize = 14 };
     readonly TextBlock candidateCaution = new() { FontSize = 15, TextWrapping = TextWrapping.Wrap };
     readonly StackPanel candidateNavigation = new() { Orientation = Orientation.Horizontal };
     readonly Button previousRegion = new() { Content = "←", Width = 38, ToolTip = "前の印影", IsEnabled = false };
     readonly Button nextRegion = new() { Content = "→", Width = 38, ToolTip = "次の印影", IsEnabled = false };
     readonly TextBlock regionPosition = new() { Text = "検出した印影なし", VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 8, 0) };
-    readonly ListBox regions = new() { MaxHeight = 85 };
-    readonly Image preview = new() { Height = 250, Stretch = Stretch.Uniform, Cursor = Cursors.Cross };
+    readonly ListBox regions = new() { MaxHeight = 70 };
+    readonly Image preview = new() { Height = 200, Stretch = Stretch.Uniform, Cursor = Cursors.Cross };
     readonly Button show = new() { Content = "選択した生成履歴を開く", IsEnabled = false };
     readonly Button file = new() { Content = "ファイルを選択…" };
     readonly Button clipboard = new() { Content = "クリップボードの画像を照合" };
@@ -70,7 +70,7 @@ public sealed class VerificationView : UserControl
     public VerificationView(Journal journal, string storageRoot)
     {
         service = new(journal);
-        var panel = new DockPanel { Margin = new Thickness(12) }; Content = panel;
+        var panel = new DockPanel { Margin = new Thickness(6) }; Content = panel;
         var top = new StackPanel(); DockPanel.SetDock(top, Dock.Top); panel.Children.Add(top);
         top.Children.Add(new TextBlock { Text = "印影を照合", Style = (Style)FindResource("PageHeading") });
         var buttons = new WrapPanel(); top.Children.Add(buttons);
@@ -81,11 +81,11 @@ public sealed class VerificationView : UserControl
         top.Children.Add(codeFilter);
         codeFilter.Checked += Recompare; codeFilter.Unchecked += Recompare;
         var footer = new TextBlock { Text = "この照合は、保存した生成履歴との対応を調べるものです。利用の許可や貼付完了を証明するものではありません。",
-            TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 10, 0, 0) };
+            TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 6, 0, 0) };
         DockPanel.SetDock(footer, Dock.Bottom); panel.Children.Add(footer);
         var body = new Grid { Margin = new Thickness(0, 8, 0, 0) };
         body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(.9, GridUnitType.Star) });
-        body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(14) });
+        body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(10) });
         body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1.1, GridUnitType.Star) });
         panel.Children.Add(body);
         var imagePanel = new StackPanel();
@@ -99,7 +99,7 @@ public sealed class VerificationView : UserControl
         System.Windows.Automation.AutomationProperties.SetName(nextRegion, "次の印影");
         previousRegion.Click += (_, _) => MoveRegion(-1);
         nextRegion.Click += (_, _) => MoveRegion(1);
-        imagePanel.Children.Add(new TextBlock { Text = "印影が複数ある場合は一覧から選択してください。見つからない場合は、画像上で円全体をドラッグして囲めます。", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 8) });
+        imagePanel.Children.Add(new TextBlock { Text = "印影が複数ある場合は一覧から選択してください。見つからない場合は、画像上で円全体をドラッグして囲めます。", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 4, 0, 4) });
         imagePanel.Children.Add(regions);
         Grid.SetColumn(resultScroll, 2); body.Children.Add(resultScroll);
         candidateNavigation.Visibility = Visibility.Collapsed;
@@ -118,10 +118,10 @@ public sealed class VerificationView : UserControl
         scoreCard.Child = scoreContent; scoreCard.Background = Brushes.LightGray; scoreValue.Foreground = scoreVerdict.Foreground = Brushes.Black;
         results.Children.Add(scoreCard);
         results.Children.Add(candidateCaution);
-        var candidateInfo = new Grid { Margin = new Thickness(0, 12, 0, 8) };
-        candidateInfo.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(132) });
+        var candidateInfo = new Grid { Margin = new Thickness(0, 6, 0, 4) };
+        candidateInfo.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(112) });
         candidateInfo.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        var imageInfo = new StackPanel { Margin = new Thickness(0, 0, 12, 0) };
+        var imageInfo = new StackPanel { Margin = new Thickness(0, 0, 8, 0) };
         candidateImagePanel.Child = candidateImage;
         imageInfo.Children.Add(candidateImagePanel); imageInfo.Children.Add(candidateImageDescription);
         candidateInfo.Children.Add(imageInfo); Grid.SetColumn(candidateText, 1); candidateInfo.Children.Add(candidateText);
