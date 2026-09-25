@@ -40,7 +40,7 @@ Standard EXE SHA-256: 4A7C3F16AC1A43E4BD8BF3B20D9EE8F37C7CBEA973533E25FBA67C937A
 
 Lite EXE SHA-256: D5C275616359A0E442D12AF6806075F3C723F81C63513E05078E4C13DF7E178E
 
-[検証用Releaseドラフト](https://github.com/adachi6k/JTCStamper/releases/tag/untagged-836fb6961c1e2765a5f7)に同じZIPとchecksums.jsonを配置しました。閲覧には所有者のGitHubログインが必要です。
+[検証用Releaseドラフト](https://github.com/adachi6k/JTCStamper/releases)に同じZIPとchecksums.jsonを配置しました。閲覧には所有者のGitHubログインが必要です。
 
 残り: 実ブラウザーからのダウンロード警告と起動、Excel/Paintや形式指定貼付、GUI細目・実スリープ・OneDrive条件、照合説明の理解度と最終配布判断。EMFは初回PNGプレビューに未搭載です。Privateを維持します。
 
