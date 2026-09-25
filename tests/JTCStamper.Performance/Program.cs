@@ -83,31 +83,37 @@ internal static class Program
                 }
             });
             Console.WriteLine($"Measuring {count}...");
+            var startupProbe = new UiProbe();
             var watch = Stopwatch.StartNew();
             var window = (MainWindow)Activator.CreateInstance(typeof(MainWindow), BindingFlags.Instance | BindingFlags.NonPublic, null, [folder], null)!;
             double constructor = watch.Elapsed.TotalMilliseconds;
             var rendered = new TaskCompletionSource(); window.ContentRendered += (_, _) => rendered.TrySetResult(); window.Show(); await rendered.Task;
             double startup = watch.Elapsed.TotalMilliseconds;
+            await Pending(window, "InitializationPending").WaitAsync(TimeSpan.FromMinutes(2));
+            double startupReady = watch.Elapsed.TotalMilliseconds;
+            startupProbe.Dispose();
             if (!((Button)window.FindName("CopyButton")).IsEnabled) throw new InvalidDataException("Fixture journal was not accepted.");
             var history = (ListBox)window.FindName("History");
             if (history.Items.Count != count) throw new InvalidDataException("History count mismatch.");
-            var uiClock = Stopwatch.StartNew(); double lastTick = 0, maxGap = 0; int uiTicks = 0;
-            var heartbeat = new DispatcherTimer(DispatcherPriority.Normal) { Interval = TimeSpan.FromMilliseconds(20) };
-            heartbeat.Tick += (_, _) => { double now = uiClock.Elapsed.TotalMilliseconds; maxGap = Math.Max(maxGap, now - lastTick); lastTick = now; uiTicks++; };
-            heartbeat.Start();
+            var selectionProbe = new UiProbe();
             watch.Restart(); history.SelectedIndex = 0; double selection = watch.Elapsed.TotalMilliseconds;
-            var pending = (Task)typeof(MainWindow).GetProperty("HistoryDetailsPending", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(window)!;
-            await pending.WaitAsync(TimeSpan.FromMinutes(2));
+            await Pending(window, "HistoryDetailsPending").WaitAsync(TimeSpan.FromMinutes(2));
             double selectionReady = watch.Elapsed.TotalMilliseconds;
-            maxGap = Math.Max(maxGap, uiClock.Elapsed.TotalMilliseconds - lastTick); heartbeat.Stop();
+            selectionProbe.Dispose();
             if (!((TextBox)window.FindName("Details")).Text.Contains(((MainWindow.HistoryRow)history.SelectedItem).Id.ToString()))
                 throw new InvalidDataException("Selected history did not finish loading.");
+            var copyProbe = new UiProbe();
+            watch.Restart();
+            var copyTask = (Task<bool>)typeof(MainWindow).GetMethod("CopyAsync", BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(window, [new Sink()])!;
+            if (!await copyTask.WaitAsync(TimeSpan.FromMinutes(3))) throw new InvalidDataException("Full UI copy failed.");
+            double copy = watch.Elapsed.TotalMilliseconds;
+            await Pending(window, "HistoryDetailsPending").WaitAsync(TimeSpan.FromMinutes(2));
+            double copyAndDetails = watch.Elapsed.TotalMilliseconds;
+            copyProbe.Dispose();
             window.Close(); await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
-            double copy, exact; long bytes; int matches;
+            double exact; long bytes; int matches;
             using (var journal = new Journal(journalPath, key))
             {
-                watch.Restart(); new CopyService(journal, new Sink()).GenerateCodedAndCopy(fixtures[0].Stamp, s => StampRenderer.Png(StampRenderer.Render(s)));
-                copy = watch.Elapsed.TotalMilliseconds;
                 watch.Restart(); var match = new VerificationService(journal).Image(fixtures[0].Png); exact = watch.Elapsed.TotalMilliseconds;
                 matches = match.Matches.Count; if (match.Status != VerificationStatus.Match) throw new InvalidDataException("Exact match failed.");
                 bytes = Directory.GetFiles(journalPath, "*.json").Sum(p => new FileInfo(p).Length);
@@ -115,11 +121,14 @@ internal static class Program
             CryptographicOperations.ZeroMemory(key);
             using var process = Process.GetCurrentProcess(); process.Refresh();
             results.Add(new { Generations = count, JournalBytes = bytes, StartupToRenderMs = startup,
-                ConstructorBlockedUiMs = constructor, HistorySelectionBlockedUiMs = selection,
-                HistoryDetailsReadyMs = selectionReady, HistoryReadUiTicks = uiTicks, HistoryReadMaxUiGapMs = maxGap,
-                RenderAndThreeAppendsFakeClipboardMs = copy, ExactImageMs = exact, ExactMatches = matches,
+                ConstructorBlockedUiMs = constructor, StartupStoreReadyMs = startupReady,
+                StartupUiTicks = startupProbe.Ticks, StartupMaxUiGapMs = startupProbe.MaxGap,
+                HistorySelectionBlockedUiMs = selection,
+                HistoryDetailsReadyMs = selectionReady, HistoryReadUiTicks = selectionProbe.Ticks, HistoryReadMaxUiGapMs = selectionProbe.MaxGap,
+                FullCopyAndHistoryRefreshFakeClipboardMs = copy, FullCopyAndSelectedDetailMs = copyAndDetails,
+                CopyUiTicks = copyProbe.Ticks, CopyMaxUiGapMs = copyProbe.MaxGap, ExactImageMs = exact, ExactMatches = matches,
                 WorkingSetBytes = process.WorkingSet64, CumulativePeakWorkingSetBytes = process.PeakWorkingSet64 });
-            Save(); Console.WriteLine($"{count}: startup={startup:F0}ms, select-handler={selection:F0}ms, details={selectionReady:F0}ms, UI max gap={maxGap:F0}ms, copy pipeline={copy:F0}ms");
+            Save(); Console.WriteLine($"{count}: first frame={startup:F0}ms, store ready={startupReady:F0}ms (UI gap {startupProbe.MaxGap:F0}ms), details={selectionReady:F0}ms, full copy={copy:F0}ms (UI gap {copyProbe.MaxGap:F0}ms)");
             GC.Collect(); GC.WaitForPendingFinalizers();
         }
         var templates = fixtures.Select(f => new StampTemplate(f.Stamp, Normalize(f.Png))).ToArray();
@@ -127,6 +136,23 @@ internal static class Program
         results.Add(new { Case = "Rank300Images", Milliseconds = timer.Elapsed.TotalMilliseconds, Candidates = ranked.Count }); Save();
         var dense = Enumerable.Repeat(true, 12_000_000).ToArray(); timer.Restart(); var found = ImageSearch.Detect(dense, 4000, 3000); timer.Stop();
         results.Add(new { Case = "DenseRed12Megapixels", Milliseconds = timer.Elapsed.TotalMilliseconds, Regions = found.Count }); Save();
+    }
+    static Task Pending(MainWindow window, string property) =>
+        (Task)typeof(MainWindow).GetProperty(property, BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(window)!;
+    sealed class UiProbe : IDisposable
+    {
+        readonly Stopwatch watch = Stopwatch.StartNew();
+        readonly DispatcherTimer timer = new(DispatcherPriority.Normal) { Interval = TimeSpan.FromMilliseconds(20) };
+        double last;
+        public int Ticks { get; private set; }
+        public double MaxGap { get; private set; }
+        public UiProbe()
+        {
+            timer.Tick += (_, _) => { Sample(); Ticks++; };
+            timer.Start();
+        }
+        void Sample() { double now = watch.Elapsed.TotalMilliseconds; MaxGap = Math.Max(MaxGap, now - last); last = now; }
+        public void Dispose() { Sample(); timer.Stop(); }
     }
     static bool[] Normalize(byte[] png)
     {

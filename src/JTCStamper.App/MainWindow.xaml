@@ -82,7 +82,7 @@
                 </Button>
             </StackPanel>
         </Grid>
-        <StatusBar DockPanel.Dock="Bottom" Padding="8,3" Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"><TextBlock x:Name="Status" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StatusBar>
+        <StatusBar DockPanel.Dock="Bottom" Padding="8,3" Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"><ProgressBar x:Name="StoreProgressIndicator" Width="64" Height="4" Margin="0,0,8,0" IsIndeterminate="True" Visibility="Collapsed" AutomationProperties.Name="履歴の処理中"/><TextBlock x:Name="Status" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StatusBar>
         <TabControl x:Name="MainTabs" TabStripPlacement="Left" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource NavigationItem}">
             <TabControl.Template>
                 <ControlTemplate TargetType="TabControl">
@@ -117,7 +117,7 @@
                 <GroupBox Grid.Row="1" Header="プレビュー" VerticalAlignment="Top">
                     <Border Background="White" Padding="6"><Image x:Name="Preview" Height="200" Stretch="Uniform"/></Border>
                 </GroupBox>
-            <StackPanel Grid.Row="1" Grid.Column="2" MaxWidth="420" HorizontalAlignment="Stretch">
+            <StackPanel x:Name="StampInputs" Grid.Row="1" Grid.Column="2" MaxWidth="420" HorizontalAlignment="Stretch">
                 <TextBlock Text="上段文字"/><TextBox x:Name="NameInput" Text="JTC" MaxLength="16" TextChanged="InputsChanged"/>
                 <TextBlock Text="表示日付"/>
                 <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
@@ -181,7 +181,7 @@
                 <StackPanel Grid.Row="3">
                     <TextBlock Text="用途・貼付先などの注釈" Margin="0,10,0,0"/>
                     <TextBox x:Name="NoteInput" MaxLength="2000"/>
-                    <WrapPanel><Button Content="注釈を追記" Click="NoteClick"/><Button Content="原本を保存" Click="ExportClick"/></WrapPanel>
+                    <WrapPanel><Button x:Name="NoteButton" Content="注釈を追記" Click="NoteClick"/><Button x:Name="ExportButton" Content="原本を保存" Click="ExportClick"/></WrapPanel>
                     <TextBlock Text="コピー記録は貼付完了を示しません。" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                 </StackPanel>
             </Grid>

@@ -81,6 +81,7 @@ internal static class SmokeTest
                 window.ContentRendered += (_, _) => rendered.TrySetResult();
                 window.Show();
                 Require(await Task.WhenAny(rendered.Task, Task.Delay(15000)) == rendered.Task, "Window render timeout.");
+                await window.InitializationPending.WaitAsync(TimeSpan.FromSeconds(30));
                 await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
                 Require(window.IsVisible && window.ActualWidth > 0, "Window not visible.");
                 Require(((Button)window.FindName("CopyButton")).IsEnabled, "Journal initialization failed: " +
@@ -184,6 +185,7 @@ internal static class SmokeTest
                 }
                 finally { CryptographicOperations.ZeroMemory(key); }
                 var draftWindow = new MainWindow(folder);
+                await draftWindow.InitializationPending.WaitAsync(TimeSpan.FromSeconds(30));
                 var name = (TextBox)draftWindow.FindName("NameInput");
                 string originalName = name.Text;
                 try
@@ -224,6 +226,111 @@ internal static class SmokeTest
                         "Unrelated record tampering did not invalidate history display.");
                 }
                 finally { name.Text = originalName; draftWindow.ClearNoteDrafts(); draftWindow.Close(); }
+            });
+
+            await CheckAsync("async-startup-close-defers-until-store-is-released", async () =>
+            {
+                var folder = Path.Combine(root, "startup-close-" + Guid.NewGuid().ToString("N"));
+                var startupWindow = new MainWindow(folder);
+                try
+                {
+                    Require(startupWindow.IsStoreBusy, "Startup did not yield while loading the store.");
+                    startupWindow.Show(); startupWindow.Close();
+                    Require(startupWindow.IsVisible, "Window closed before startup released the journal.");
+                    await startupWindow.InitializationPending.WaitAsync(TimeSpan.FromSeconds(30));
+                    Require(!startupWindow.IsVisible, "Deferred startup close did not complete.");
+                    var key = KeyStore.Load(folder);
+                    try { using var reopened = new Journal(Path.Combine(folder, "journal"), key); Require(reopened.Read().Count == 0, "Unexpected startup record."); }
+                    finally { CryptographicOperations.ZeroMemory(key); }
+                }
+                finally { startupWindow.Close(); }
+            });
+
+            await CheckAsync("async-copy-rejects-reentry-switch-and-defers-close-until-recorded", async () =>
+            {
+                var folder = Path.Combine(root, "async-copy-" + Guid.NewGuid().ToString("N"));
+                var otherFolder = Path.Combine(root, "blocked-switch-" + Guid.NewGuid().ToString("N"));
+                var copyWindow = new MainWindow(folder);
+                try
+                {
+                    copyWindow.Show(); await copyWindow.InitializationPending.WaitAsync(TimeSpan.FromSeconds(30));
+                    var second = new FakeClipboard();
+                    var clipboard = new CallbackClipboard(_ =>
+                    {
+                        Require(copyWindow.Dispatcher.CheckAccess(), "Clipboard did not run on the UI STA thread.");
+                        Require(copyWindow.IsStoreBusy && !((Button)copyWindow.FindName("CopyButton")).IsEnabled,
+                            "Copy controls were enabled during recording.");
+                        var again = copyWindow.CopyAsync(second);
+                        var change = copyWindow.SwitchJournalAsync(otherFolder);
+                        Require(again.IsCompletedSuccessfully && !again.Result && change.IsCompletedSuccessfully && !change.Result,
+                            "Concurrent copy or store switch was accepted.");
+                        copyWindow.Close(); Require(copyWindow.IsVisible, "Copy closed before the completion record.");
+                    });
+                    Require(await copyWindow.CopyAsync(clipboard).WaitAsync(TimeSpan.FromSeconds(30)), "Copy operation failed.");
+                    Require(clipboard.Calls == 1 && second.Calls == 0 && !Directory.Exists(otherFolder), "Rejected operations had side effects.");
+                    Require(!copyWindow.IsVisible, "Successful copy did not finish the deferred close.");
+                    var key = KeyStore.Load(folder);
+                    try
+                    {
+                        using var reopened = new Journal(Path.Combine(folder, "journal"), key);
+                        Require(reopened.Read().Select(x => x.Entry.Kind).SequenceEqual(new[] { "Generated", "CopyRequested", "CopyCompleted" }),
+                            "Deferred close lost or duplicated copy records.");
+                    }
+                    finally { CryptographicOperations.ZeroMemory(key); }
+                }
+                finally { copyWindow.Close(); }
+            });
+
+            await CheckAsync("async-copy-failure-never-reports-success-or-hides-error-on-close", async () =>
+            {
+                foreach (bool afterClipboard in new[] { false, true })
+                {
+                    var folder = Path.Combine(root, "async-failure-" + Guid.NewGuid().ToString("N"));
+                    var copyWindow = new MainWindow(folder);
+                    var block = Path.Combine(folder, "journal", afterClipboard ? "000000000003.json" : "000000000001.json");
+                    try
+                    {
+                        copyWindow.Show(); await copyWindow.InitializationPending.WaitAsync(TimeSpan.FromSeconds(30));
+                        if (!afterClipboard) Directory.CreateDirectory(block); // Real atomic-publish rejection, not a full-disk claim.
+                        var clipboard = new CallbackClipboard(_ =>
+                        {
+                            Directory.CreateDirectory(block);
+                            copyWindow.Close();
+                        });
+                        Require(!await copyWindow.CopyAsync(clipboard).WaitAsync(TimeSpan.FromSeconds(30)), "Failed write was reported as success.");
+                        Require(clipboard.Calls == (afterClipboard ? 1 : 0), "Clipboard order violated write-before-copy.");
+                        Require(copyWindow.IsVisible && !copyWindow.IsStoreBusy &&
+                            ((TextBlock)copyWindow.FindName("Status")).Text.Contains("成功扱いにしていません"),
+                            "Write failure was hidden by deferred close.");
+                        Directory.Delete(block); copyWindow.Close();
+                        var key = KeyStore.Load(folder);
+                        try
+                        {
+                            using var reopened = new Journal(Path.Combine(folder, "journal"), key);
+                            Require(reopened.Read().Count == (afterClipboard ? 2 : 0) &&
+                                !reopened.Read().Any(x => x.Entry.Kind == "CopyCompleted"), "Incorrect completion record after failure.");
+                        }
+                        finally { CryptographicOperations.ZeroMemory(key); }
+                    }
+                    finally { if (Directory.Exists(block)) Directory.Delete(block); copyWindow.Close(); }
+                }
+            });
+
+            await CheckAsync("failed-async-store-switch-preserves-working-store", async () =>
+            {
+                var folder = Path.Combine(root, "store-switch-" + Guid.NewGuid().ToString("N"));
+                var invalid = Path.Combine(root, "store-is-file-" + Guid.NewGuid().ToString("N"));
+                File.WriteAllText(invalid, "synthetic obstruction");
+                var storeWindow = new MainWindow(folder);
+                try
+                {
+                    await storeWindow.InitializationPending.WaitAsync(TimeSpan.FromSeconds(30));
+                    Require(!await storeWindow.SwitchJournalAsync(invalid), "Invalid store switch succeeded.");
+                    var clipboard = new FakeClipboard();
+                    Require(await storeWindow.CopyAsync(clipboard).WaitAsync(TimeSpan.FromSeconds(30)) && clipboard.Calls == 1,
+                        "Failed store switch destroyed the previous usable store.");
+                }
+                finally { storeWindow.Close(); }
             });
 
             Check("render-png-date-and-transparent-margin", () =>
@@ -659,6 +766,11 @@ internal static class SmokeTest
         var paths = new[] { Path.Combine(root, "key.dpapi"), Path.Combine(root, "test.jtcstamp") }
             .Concat(Directory.GetFiles(Path.Combine(root, "journal"), "*.json"));
         return paths.ToDictionary(x => Path.GetRelativePath(root, x), x => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(x))));
+    }
+    sealed class CallbackClipboard(Action<byte[]> action) : IClipboard
+    {
+        public int Calls { get; private set; }
+        public void Copy(byte[] png) { Calls++; action(png); }
     }
     sealed class FakeClipboard : IClipboard
     {

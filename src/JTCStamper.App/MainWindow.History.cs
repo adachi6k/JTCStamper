@@ -38,7 +38,7 @@ public partial class MainWindow
             HistoryImageDescription.Text = "履歴を検証できませんでした。";
             Details.Text = "";
             Status.Text = "履歴検証に失敗: " + ex.Message;
-            CopyButton.IsEnabled = false;
+            historyReady = false; UpdateStoreControls();
         }
         finally
         {

@@ -42,27 +42,29 @@ public partial class MainWindow : Window
         if (journal is null) { Status.Text = "照合する履歴の保存先を開いてください。"; return; }
         MainTabs.SelectedItem = VerificationTab;
     }
-    void DeleteHistoryClick(object sender, RoutedEventArgs e)
+    async void DeleteHistoryClick(object sender, RoutedEventArgs e)
     {
         if (journal is null) { Status.Text = "履歴の保存先を開いてください。"; return; }
-        if (verification?.IsBusy == true) { Status.Text = "照合が完了してから履歴を削除してください。"; return; }
-        try
+        await RunStoreOperationAsync("削除する履歴を確認しています…", "履歴の削除処理に失敗しました：", async () =>
         {
-            var records = journal.Read();
-            if (records.Count == 0) { Status.Text = "削除する履歴はありません。"; return; }
-            int count = records.Count(x => x.Entry.Kind == "Generated");
+            var source = journal;
+            var counts = await Task.Run(() => { var records = source.Read(); return (Total: records.Count, Generated: records.Count(x => x.Entry.Kind == "Generated")); });
+            if (counts.Total == 0) { Status.Text = "削除する履歴はありません。"; return; }
+            var count = counts.Generated;
+            // A close request during the preliminary read must never open a destructive confirmation.
+            if (closeAfterStoreOperation) return;
             var answer = MessageBox.Show(this,
                 $"現在の保存先の生成履歴{count}件と、コピー記録・注釈をすべて削除します。\n\n保存先：{storageRoot}\n\n元に戻せません。削除した記録は照合に使えなくなります。別途保存した画像・原本、鍵、印面設定は削除しません。\n\n削除しますか？",
                 "生成履歴をすべて削除", MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.Cancel);
-            if (answer != MessageBoxResult.OK) return;
-            string outcome;
-            CancelHistoryDetails();
-            try { journal.DeleteAllHistory(); outcome = "現在の保存先の生成履歴・コピー記録・注釈をすべて削除しました。"; }
-            catch (Exception ex) { outcome = "削除を完了できませんでした。一部の新しい記録は削除済みの可能性があります：" + ex.Message; }
-            InstallVerification(); ClearNoteDrafts(); Details.Text = ""; RefreshHistory();
-            Status.Text = outcome;
-        }
-        catch (Exception ex) { Status.Text = "履歴の削除処理に失敗しました：" + ex.Message; }
+            if (answer != MessageBoxResult.OK) { Status.Text = "履歴の削除を取り消しました。"; return; }
+            Exception? failure = null;
+            try { await Task.Run(source.DeleteAllHistory); }
+            catch (Exception ex) { failure = ex; }
+            InstallVerification(); ClearNoteDrafts(); Details.Text = "";
+            await RefreshHistoryAsync();
+            if (failure is not null) throw new IOException("一部の新しい記録は削除済みの可能性があります。" + failure.Message, failure);
+            Status.Text = "現在の保存先の生成履歴・コピー記録・注釈をすべて削除しました。";
+        });
     }
     void ShowHistoryClick(object sender, RoutedEventArgs e) => MainTabs.SelectedItem = HistoryTab;
     VerificationView? verification;
@@ -70,10 +72,9 @@ public partial class MainWindow : Window
     {
         verification?.CancelPending();
         verification = new VerificationView(journal!, storageRoot);
-        verification.HistoryRequested += id =>
+        verification.HistoryRequested += async id =>
         {
-            try { RefreshHistory(id); MainTabs.SelectedItem = HistoryTab; }
-            catch (Exception ex) { Status.Text = "履歴を開けません: " + ex.Message; }
+            if (await RefreshHistoryOperationAsync(id)) MainTabs.SelectedItem = HistoryTab;
         };
         VerificationHost.Content = verification;
         VerificationTab.IsEnabled = true;
@@ -96,42 +97,17 @@ public partial class MainWindow : Window
         InitializeComponent(); InitializeCaption(); UpdateThemeChecks(); DateInput.SelectedDate = DateTime.Today;
         ready = true; RefreshDateControls(); UpdatePreview();
         savedSettings = EditableSettings;
-        Closing += (_, e) => { if (!ConfirmDiscard(true, true, "終了")) e.Cancel = true; };
+        Closing += OnStoreAwareClosing;
         dateTimer.Tick += (_, _) => RefreshToday();
         Activated += (_, _) => RefreshToday();
         dateTimer.Start();
-        SwitchJournal(dataRoot);
-        if (appearanceError is not null) Status.Text += " ／ 外観設定を読めないためWindows設定を使用: " + appearanceError;
-        Closed += (_, _) => { CancelHistoryDetails(); dateTimer.Stop(); verification?.CancelPending(); journal?.Dispose(); };
-    }
-    void SwitchJournal(string root)
-    {
-        try
-        {
-            if (journal is not null && Path.GetFullPath(root) == Path.GetFullPath(storageRoot)) return;
-            if (verification?.IsBusy == true) { Status.Text = "照合が完了してから履歴の保存先を変更してください。"; return; }
-            if (journal is not null && !ConfirmDiscard(false, true, "保存先を変更")) return;
-            var key = KeyStore.Load(root);
-            Journal next;
-            try { next = new Journal(Path.Combine(root, "journal"), key); }
-            finally { CryptographicOperations.ZeroMemory(key); }
-            CancelHistoryDetails(); journal?.Dispose(); journal = next; storageRoot = root; ClearNoteDrafts();
-            InstallVerification();
-            CopyButton.IsEnabled = true; RefreshHistory(); Status.Text = "履歴保存先: " + root;
-        }
-        catch (Exception ex)
-        {
-            if (journal is null)
-            {
-                CopyButton.IsEnabled = false;
-                RecentHistoryMessage.Text = "履歴の保存先を開けません。［履歴］メニューから保存先を選択してください。";
-                RecentHistoryMessage.Visibility = Visibility.Visible;
-            }
-            Status.Text = "保存先を開けません: " + ex.Message + " ［履歴］から保存先を選択できます。";
-        }
+        appearanceLoadError = appearanceError;
+        InitializationPending = SwitchJournalAsync(dataRoot);
+        Closed += (_, _) => { storeClosed = true; CancelHistoryDetails(); dateTimer.Stop(); verification?.CancelPending(); journal?.Dispose(); };
     }
     void OpenSettingsClick(object sender, RoutedEventArgs e)
     {
+        if (!CanStartStoreOperation()) return;
         var dialog = new OpenFileDialog { Filter = "印面設定|*.jtcstamp|JSON|*.json" };
         if (dialog.ShowDialog() != true) return;
         try
@@ -148,6 +124,7 @@ public partial class MainWindow : Window
     void SaveSettingsAsClick(object sender, RoutedEventArgs e) => SaveSettings(true);
     void SaveSettings(bool choosePath)
     {
+        if (!CanStartStoreOperation()) return;
         try
         {
             var stamp = Current();
@@ -163,11 +140,12 @@ public partial class MainWindow : Window
         }
         catch (Exception ex) { Status.Text = "設定を保存できません: " + ex.Message; }
     }
-    void DefaultHistoryClick(object sender, RoutedEventArgs e) => SwitchJournal(AppContext.BaseDirectory);
-    void ChooseHistoryClick(object sender, RoutedEventArgs e)
+    async void DefaultHistoryClick(object sender, RoutedEventArgs e) => await SwitchJournalAsync(AppContext.BaseDirectory);
+    async void ChooseHistoryClick(object sender, RoutedEventArgs e)
     {
+        if (!CanStartStoreOperation()) return;
         var dialog = new OpenFolderDialog { Title = "履歴と鍵を保存するフォルダー" };
-        if (dialog.ShowDialog() == true) SwitchJournal(dialog.FolderName);
+        if (dialog.ShowDialog() == true) await SwitchJournalAsync(dialog.FolderName);
     }
     void ExitClick(object sender, RoutedEventArgs e) => Close();
     void AboutClick(object sender, RoutedEventArgs e) => MessageBox.Show(this,
@@ -229,78 +207,15 @@ public partial class MainWindow : Window
     }
     void InputsChanged(object sender, TextChangedEventArgs e) => UpdatePreview();
     void DateChanged(object sender, SelectionChangedEventArgs e) => UpdatePreview();
-    void CopyClick(object sender, RoutedEventArgs e)
-    {
-        if (journal is null) return;
-        try
-        {
-            RefreshToday();
-            var stamp = Current();
-            var id = new CopyService(journal, new WindowsClipboard()).GenerateCodedAndCopy(stamp, coded =>
-            {
-                var bitmap = StampRenderer.Render(coded);
-                Preview.Source = bitmap;
-                return StampRenderer.Png(bitmap);
-            });
-            RefreshHistory(id); Status.Text = $"PNGコピーと記録が完了しました。貼付は未確認です。イベントID: {id}";
-        }
-        catch (Exception ex)
-        {
-            Status.Text = "成功扱いにしていません。クリップボードに画像が残っている可能性があります。 " + ex.Message;
-            try { RefreshHistory(); } catch { CopyButton.IsEnabled = false; }
-        }
-    }
-    void RecentHistoryClick(object sender, RoutedEventArgs e)
+    async void CopyClick(object sender, RoutedEventArgs e) => await CopyAsync(new WindowsClipboard());
+
+    async void RecentHistoryClick(object sender, RoutedEventArgs e)
     {
         if (sender is not FrameworkElement { Tag: Guid id }) return;
-        try
+        if (await RefreshHistoryOperationAsync(id))
         {
-            RefreshHistory(id);
             MainTabs.SelectedItem = HistoryTab;
             if (History.SelectedItem is not null) History.ScrollIntoView(History.SelectedItem);
-        }
-        catch (Exception ex) { Status.Text = "履歴を開けません: " + ex.Message; }
-    }
-    void RefreshHistory(Guid? select = null)
-    {
-        if (journal is null) return;
-        CancelHistoryDetails();
-        select ??= (History.SelectedItem as HistoryRow)?.Id;
-        try
-        {
-            var snapshot = new VerificationService(journal).ReadHistory();
-            var records = snapshot.Entries;
-            var completed = records.Where(r => r.Entry.Kind == "CopyCompleted").Select(r => r.Entry.EventId).ToHashSet();
-            // Journal order is the generation order; a user-specified display date must not affect it.
-            var rows = snapshot.Generations.Reverse().Select((g, index) =>
-            {
-                var state = completed.Contains(g.EventId) ? "コピー記録あり" : "コピー未完了／不明";
-                var created = $"{g.CreatedUtc.ToLocalTime():yyyy/MM/dd HH:mm:ss}";
-                var stamp = $"表示日付 '{g.Stamp.DisplayDate:yy.MM.dd}  上段 {g.Stamp.Name}  下段 {g.Stamp.Bottom}";
-                ImageSource? thumbnail = null; string imageDescription = "";
-                if (index < 3)
-                {
-                    try { var image = HistoryImage.Load(g); thumbnail = image.Image; imageDescription = image.Description; }
-                    catch { imageDescription = "保存画像を表示できません"; }
-                }
-                return new HistoryRow(g.EventId, $"表示日付 {g.Stamp.DisplayDate:yyyy/MM/dd}  上段 {g.Stamp.Name}  下段 {g.Stamp.Bottom}  ／ 生成 {created}  {state}", "生成 " + created, stamp, state, thumbnail, imageDescription);
-            }).ToList();
-            History.ItemsSource = rows;
-            RecentHistory.ItemsSource = rows.Take(3).ToList();
-            RecentHistoryHeading.Text = $"直近の生成履歴（{Math.Min(3, rows.Count)}件／全{rows.Count}件）";
-            RecentHistoryMessage.Text = "この保存先にはまだ生成履歴がありません。生成すると、ここに記録が表示されます。";
-            RecentHistoryMessage.Visibility = rows.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
-            if (select.HasValue) History.SelectedItem = rows.FirstOrDefault(x => x.Id == select);
-        }
-        catch
-        {
-            History.ItemsSource = null;
-            RecentHistory.ItemsSource = null;
-            RecentHistoryHeading.Text = "直近の生成履歴";
-            RecentHistoryMessage.Text = "履歴を確認できません。画面下部のエラー内容を確認してください。";
-            RecentHistoryMessage.Visibility = Visibility.Visible;
-            CopyButton.IsEnabled = false;
-            throw;
         }
     }
     void HistoryChanged(object sender, SelectionChangedEventArgs e)
@@ -324,24 +239,31 @@ public partial class MainWindow : Window
             (generation.Stamp.Renderer == RingCode.PlainRenderer ? "プレーン印影" : "幾何コード付き印影") +
             (generation.PngBase64 is null ? "\n画像本体は未保存" : "\n生成時のPNGを保存済み");
     }
-    void NoteClick(object sender, RoutedEventArgs e)
+    async void NoteClick(object sender, RoutedEventArgs e)
     {
-        try
+        if (journal is null || History.SelectedItem is not HistoryRow row) { Status.Text = "履歴を選択してください。"; return; }
+        var text = NoteInput.Text;
+        await RunStoreOperationAsync("注釈を追記しています…", "追記できません: ", async () =>
         {
-            if (journal is null || History.SelectedItem is not HistoryRow row) throw new InvalidOperationException("履歴を選択してください。");
-            journal.Annotate(row.Id, NoteInput.Text); noteDrafts.Remove(row.Id); NoteInput.Clear(); RefreshHistory(row.Id); Status.Text = "注釈を追記しました。";
-        }
-        catch (Exception ex) { Status.Text = "追記できません: " + ex.Message; }
+            await Task.Run(() => journal.Annotate(row.Id, text));
+            noteDrafts.Remove(row.Id); NoteInput.Clear();
+            await RefreshHistoryAsync(row.Id); Status.Text = "注釈を追記しました。";
+        });
     }
-    void ExportClick(object sender, RoutedEventArgs e)
+    async void ExportClick(object sender, RoutedEventArgs e)
     {
-        try
+        if (!CanStartStoreOperation()) return;
+        if (journal is null || History.SelectedItem is not HistoryRow row) { Status.Text = "履歴を選択してください。"; return; }
+        var dialog = new SaveFileDialog { Filter = "JTC原本|*.jtc", FileName = row.Id + ".jtc" };
+        if (dialog.ShowDialog() != true) return;
+        await RunStoreOperationAsync("原本を保存しています…", "原本を保存できません: ", async () =>
         {
-            if (journal is null || History.SelectedItem is not HistoryRow row) throw new InvalidOperationException("履歴を選択してください。");
-            var original = journal.Read().Single(x => x.Entry.EventId == row.Id && x.Entry.Kind == "Generated").Signed;
-            var dialog = new SaveFileDialog { Filter = "JTC原本|*.jtc", FileName = row.Id + ".jtc" };
-            if (dialog.ShowDialog() == true) { AtomicFile.Write(dialog.FileName, stream => stream.Write(JsonSerializer.SerializeToUtf8Bytes(original))); Status.Text = "認証情報付き原本を保存しました。秘密鍵は含みません。"; }
-        }
-        catch (Exception ex) { Status.Text = "原本を保存できません: " + ex.Message; }
+            await Task.Run(() =>
+            {
+                var original = journal.Read().Single(x => x.Entry.EventId == row.Id && x.Entry.Kind == "Generated").Signed;
+                AtomicFile.Write(dialog.FileName, stream => stream.Write(JsonSerializer.SerializeToUtf8Bytes(original)));
+            });
+            Status.Text = "認証情報付き原本を保存しました。秘密鍵は含みません。";
+        });
     }
 }
