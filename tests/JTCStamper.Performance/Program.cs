@@ -91,7 +91,17 @@ internal static class Program
             if (!((Button)window.FindName("CopyButton")).IsEnabled) throw new InvalidDataException("Fixture journal was not accepted.");
             var history = (ListBox)window.FindName("History");
             if (history.Items.Count != count) throw new InvalidDataException("History count mismatch.");
+            var uiClock = Stopwatch.StartNew(); double lastTick = 0, maxGap = 0; int uiTicks = 0;
+            var heartbeat = new DispatcherTimer(DispatcherPriority.Normal) { Interval = TimeSpan.FromMilliseconds(20) };
+            heartbeat.Tick += (_, _) => { double now = uiClock.Elapsed.TotalMilliseconds; maxGap = Math.Max(maxGap, now - lastTick); lastTick = now; uiTicks++; };
+            heartbeat.Start();
             watch.Restart(); history.SelectedIndex = 0; double selection = watch.Elapsed.TotalMilliseconds;
+            var pending = (Task)typeof(MainWindow).GetProperty("HistoryDetailsPending", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(window)!;
+            await pending.WaitAsync(TimeSpan.FromMinutes(2));
+            double selectionReady = watch.Elapsed.TotalMilliseconds;
+            maxGap = Math.Max(maxGap, uiClock.Elapsed.TotalMilliseconds - lastTick); heartbeat.Stop();
+            if (!((TextBox)window.FindName("Details")).Text.Contains(((MainWindow.HistoryRow)history.SelectedItem).Id.ToString()))
+                throw new InvalidDataException("Selected history did not finish loading.");
             window.Close(); await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
             double copy, exact; long bytes; int matches;
             using (var journal = new Journal(journalPath, key))
@@ -106,9 +116,10 @@ internal static class Program
             using var process = Process.GetCurrentProcess(); process.Refresh();
             results.Add(new { Generations = count, JournalBytes = bytes, StartupToRenderMs = startup,
                 ConstructorBlockedUiMs = constructor, HistorySelectionBlockedUiMs = selection,
+                HistoryDetailsReadyMs = selectionReady, HistoryReadUiTicks = uiTicks, HistoryReadMaxUiGapMs = maxGap,
                 RenderAndThreeAppendsFakeClipboardMs = copy, ExactImageMs = exact, ExactMatches = matches,
                 WorkingSetBytes = process.WorkingSet64, CumulativePeakWorkingSetBytes = process.PeakWorkingSet64 });
-            Save(); Console.WriteLine($"{count}: startup={startup:F0}ms, select={selection:F0}ms, copy pipeline={copy:F0}ms");
+            Save(); Console.WriteLine($"{count}: startup={startup:F0}ms, select-handler={selection:F0}ms, details={selectionReady:F0}ms, UI max gap={maxGap:F0}ms, copy pipeline={copy:F0}ms");
             GC.Collect(); GC.WaitForPendingFinalizers();
         }
         var templates = fixtures.Select(f => new StampTemplate(f.Stamp, Normalize(f.Png))).ToArray();

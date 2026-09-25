@@ -30,6 +30,24 @@ try
         File.WriteAllText(path, File.ReadAllText(path).Replace("first", "altered"));
         Throws(() => service.ReadHistory());
     });
+    Check("event-read-verifies-unrelated-records-and-observes-cancellation", dir =>
+    {
+        using var journal = new Journal(dir, key);
+        var copy = new CopyService(journal, new FakeClipboard());
+        var selected = copy.GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
+        var other = copy.GenerateCodedAndCopy(stamp, _ => [4, 5, 6]);
+        journal.Annotate(selected, "selected note");
+        Assert(journal.ReadEvent(selected).Count == 4);
+        Assert(journal.ReadEvent(selected).All(x => x.Entry.EventId == selected));
+        Assert(journal.ReadEvent(Guid.NewGuid()).Count == 0);
+        using var cancelled = new CancellationTokenSource(); cancelled.Cancel();
+        try { journal.ReadEvent(selected, cancelled.Token); throw new Exception("Cancellation ignored"); }
+        catch (OperationCanceledException) { }
+        var path = Path.Combine(dir, "000000000006.json");
+        File.WriteAllText(path, File.ReadAllText(path).Replace("PNG", "BAD"));
+        Throws(() => journal.ReadEvent(selected));
+        Throws(() => journal.ReadEvent(Guid.NewGuid()));
+    });
     Check("restore-retains-authenticated-images-notes-and-original", dir =>
     {
         using var source = new Journal(Path.Combine(dir, "source"), key);

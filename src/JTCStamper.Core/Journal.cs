@@ -26,12 +26,18 @@ public sealed class Journal : IDisposable
         try { foreach (var _ in ReadVerified()) { } } catch { owner.Dispose(); CryptographicOperations.ZeroMemory(this.key); throw; }
     }
     public IReadOnlyList<VerifiedEntry> Read() => ReadVerified().ToArray();
-    IEnumerable<VerifiedEntry> ReadVerified()
+    // Authenticate the entire chain, retaining only this event's records.
+    // A missing event still requires a complete verification; never return a partial chain.
+    public IReadOnlyList<VerifiedEntry> ReadEvent(Guid eventId, CancellationToken cancellationToken = default) =>
+        ReadVerified(cancellationToken).Where(x => x.Entry.EventId == eventId).ToArray();
+    IEnumerable<VerifiedEntry> ReadVerified(CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         long sequence = 0;
         string previous = "GENESIS";
         foreach (var path in Directory.GetFiles(directory, "*.json").Order(StringComparer.Ordinal))
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var signed = JsonSerializer.Deserialize<SignedEntry>(File.ReadAllText(path)) ?? throw new InvalidDataException("Empty record");
             var entry = Verify(signed);
             if (entry.Version != 1 || entry.Sequence != ++sequence || entry.PreviousMac != previous ||
@@ -39,6 +45,7 @@ public sealed class Journal : IDisposable
             previous = signed.Mac;
             yield return new(entry, signed);
         }
+        cancellationToken.ThrowIfCancellationRequested();
     }
     public Entry Verify(SignedEntry signed)
     {

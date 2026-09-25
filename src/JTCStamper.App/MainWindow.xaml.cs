@@ -56,6 +56,7 @@ public partial class MainWindow : Window
                 "生成履歴をすべて削除", MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.Cancel);
             if (answer != MessageBoxResult.OK) return;
             string outcome;
+            CancelHistoryDetails();
             try { journal.DeleteAllHistory(); outcome = "現在の保存先の生成履歴・コピー記録・注釈をすべて削除しました。"; }
             catch (Exception ex) { outcome = "削除を完了できませんでした。一部の新しい記録は削除済みの可能性があります：" + ex.Message; }
             InstallVerification(); ClearNoteDrafts(); Details.Text = ""; RefreshHistory();
@@ -101,7 +102,7 @@ public partial class MainWindow : Window
         dateTimer.Start();
         SwitchJournal(dataRoot);
         if (appearanceError is not null) Status.Text += " ／ 外観設定を読めないためWindows設定を使用: " + appearanceError;
-        Closed += (_, _) => { dateTimer.Stop(); verification?.CancelPending(); journal?.Dispose(); };
+        Closed += (_, _) => { CancelHistoryDetails(); dateTimer.Stop(); verification?.CancelPending(); journal?.Dispose(); };
     }
     void SwitchJournal(string root)
     {
@@ -114,7 +115,7 @@ public partial class MainWindow : Window
             Journal next;
             try { next = new Journal(Path.Combine(root, "journal"), key); }
             finally { CryptographicOperations.ZeroMemory(key); }
-            journal?.Dispose(); journal = next; storageRoot = root; ClearNoteDrafts();
+            CancelHistoryDetails(); journal?.Dispose(); journal = next; storageRoot = root; ClearNoteDrafts();
             InstallVerification();
             CopyButton.IsEnabled = true; RefreshHistory(); Status.Text = "履歴保存先: " + root;
         }
@@ -263,6 +264,7 @@ public partial class MainWindow : Window
     void RefreshHistory(Guid? select = null)
     {
         if (journal is null) return;
+        CancelHistoryDetails();
         select ??= (History.SelectedItem as HistoryRow)?.Id;
         try
         {
@@ -305,21 +307,13 @@ public partial class MainWindow : Window
     {
         SelectNoteDraft((History.SelectedItem as HistoryRow)?.Id);
         HistoryPreview.Source = null; HistoryImageDescription.Text = "";
-        try
-        {
-            var snapshot = journal is not null && History.SelectedItem is HistoryRow
-                ? new VerificationService(journal).ReadHistory() : null;
-            if (History.SelectedItem is HistoryRow selected && snapshot is not null)
-            {
-                var generation = snapshot.Generations.Single(x => x.EventId == selected.Id);
-                var image = HistoryImage.Load(generation);
-                HistoryPreview.Source = image.Image; HistoryImageDescription.Text = image.Description;
-            }
-            Details.Text = History.SelectedItem is HistoryRow row && snapshot is not null
-                ? string.Join(Environment.NewLine + Environment.NewLine, snapshot.Entries.Where(x => x.Entry.EventId == row.Id)
-                    .Select(x => $"{x.Entry.Kind}  {x.Entry.RecordedUtc:O}\nID: {row.Id}\n{HistoryPayload(x.Entry)}")) : "";
-        }
-        catch (Exception ex) { Status.Text = "履歴検証に失敗: " + ex.Message; CopyButton.IsEnabled = false; }
+        CancelHistoryDetails();
+        Details.Text = "";
+        if (journal is null || History.SelectedItem is not HistoryRow selected) return;
+        var cancellation = new CancellationTokenSource();
+        historyDetailsCancellation = cancellation;
+        HistoryImageDescription.Text = "履歴を検証しています…（別の履歴を選ぶと切り替わります）";
+        HistoryDetailsPending = LoadHistoryDetailsAsync(journal, selected, cancellation);
     }
     static string HistoryPayload(Entry entry)
     {

@@ -171,7 +171,7 @@ internal static class SmokeTest
             catch (Exception ex) { checks.Add(new("real-window-startup-preview-and-icon", "failed", ex.ToString())); }
             finally { window?.Close(); }
 
-            Check("unsaved-settings-and-per-event-note-drafts", () =>
+            await CheckAsync("async-history-selection-integrity-and-note-drafts", async () =>
             {
                 var folder = Path.Combine(root, "draft-ui-" + Guid.NewGuid().ToString("N"));
                 var key = KeyStore.Load(folder);
@@ -199,6 +199,29 @@ internal static class SmokeTest
                     list.SelectedIndex = 0; Require(note.Text == "note for first event", "First draft was lost.");
                     note.Clear(); list.SelectedIndex = 1;
                     Require(note.Text == "note for second event" && draftWindow.HasUnsavedNotes, "Second draft was lost.");
+                    var previous = draftWindow.HistoryDetailsPending;
+                    list.SelectedIndex = 0;
+                    var current = draftWindow.HistoryDetailsPending;
+                    await Task.WhenAll(previous, current).WaitAsync(TimeSpan.FromSeconds(15));
+                    var selected = (MainWindow.HistoryRow)list.SelectedItem;
+                    var details = (TextBox)draftWindow.FindName("Details");
+                    Require(details.Text.Contains(selected.Id.ToString()) &&
+                        ((Image)draftWindow.FindName("HistoryPreview")).Source is not null,
+                        "Late result replaced the currently selected event.");
+                    list.SelectedIndex = 1;
+                    var discarded = draftWindow.HistoryDetailsPending;
+                    list.SelectedIndex = -1;
+                    await discarded.WaitAsync(TimeSpan.FromSeconds(15));
+                    Require(details.Text == "" && ((Image)draftWindow.FindName("HistoryPreview")).Source is null,
+                        "Clearing selection displayed an obsolete result.");
+                    // Damage a different event: selected-event reads must still authenticate the whole chain.
+                    var path = Path.Combine(folder, "journal", "000000000006.json");
+                    File.WriteAllText(path, File.ReadAllText(path).Replace("PNG", "BAD"));
+                    list.SelectedIndex = 1;
+                    await draftWindow.HistoryDetailsPending.WaitAsync(TimeSpan.FromSeconds(15));
+                    Require(!((Button)draftWindow.FindName("CopyButton")).IsEnabled && details.Text == "" &&
+                        ((Image)draftWindow.FindName("HistoryPreview")).Source is null,
+                        "Unrelated record tampering did not invalidate history display.");
                 }
                 finally { name.Text = originalName; draftWindow.ClearNoteDrafts(); draftWindow.Close(); }
             });
