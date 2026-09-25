@@ -66,6 +66,7 @@ public partial class MainWindow : Window
         });
     }
     void ShowHistoryClick(object sender, RoutedEventArgs e) => MainTabs.SelectedItem = HistoryTab;
+    void StatusDetailsClick(object sender, RoutedEventArgs e) => new StatusDetailsDialog(this, Status.Text).ShowDialog();
     VerificationView? verification;
     void InstallVerification()
     {

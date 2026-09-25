@@ -229,6 +229,40 @@ internal static class SmokeTest
                     File.WriteAllBytes(Path.Combine(root, $"window-{mode}-{phase}.png"), StampRenderer.Png(themeCapture));
                 }
                 checks.Add(new("sidebar-and-theme-persistence-with-unchanged-stamp", "passed"));
+                Check("status-details-menu-preserves-long-message-and-owner", () =>
+                {
+                    var status = (TextBlock)window.FindName("Status");
+                    var saved = status.Text;
+                    var longMessage = string.Concat(Enumerable.Repeat("保存先の検証に失敗しました。長い状態メッセージの確認用。\n", 100));
+                    status.Text = longMessage;
+                    Exception? failure = null;
+                    bool inspected = false;
+                    window.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(() =>
+                    {
+                        var dialog = window.OwnedWindows.OfType<StatusDetailsDialog>().SingleOrDefault();
+                        try
+                        {
+                            Require(dialog is not null && dialog.IsVisible, "Status dialog was not shown above its owner.");
+                            Require(dialog!.Message.Text == longMessage, "Long status text was truncated.");
+                            Require(System.Windows.Input.FocusManager.GetFocusedElement(dialog) == dialog.Message,
+                                "Status message did not receive initial logical focus.");
+                            status.Text = "別の状態";
+                            Require(dialog.Message.Text == longMessage && dialog.Message.IsReadOnly,
+                                "Status snapshot was overwritten or editable.");
+                            inspected = true;
+                        }
+                        catch (Exception ex) { failure = ex; }
+                        finally { dialog?.Close(); }
+                    }));
+                    try
+                    {
+                        ((MenuItem)window.FindName("StatusDetailsItem")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                        if (failure is not null) throw failure;
+                        Require(inspected, "Status dialog inspection did not run.");
+                        Require(!window.OwnedWindows.OfType<StatusDetailsDialog>().Any(), "Status dialog remained open.");
+                    }
+                    finally { status.Text = saved; }
+                });
                 var dateInput = (DatePicker)window.FindName("DateInput");
                 var dateButton = (Button)window.FindName("DateModeButton");
                 var dateLabel = (TextBlock)window.FindName("DateModeLabel");

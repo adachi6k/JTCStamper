@@ -62,6 +62,8 @@
             </MenuItem>
             <MenuItem Header="照合(_C)" Style="{StaticResource CompactCaptionMenuItem}"><MenuItem Header="照合画面を開く" Click="VerifyClick"/></MenuItem>
             <MenuItem Header="表示(_V)" Style="{StaticResource CompactCaptionMenuItem}">
+                <MenuItem x:Name="StatusDetailsItem" Header="現在の状態を確認(_S)…" Click="StatusDetailsClick"/>
+                <Separator/>
                 <MenuItem Header="テーマ">
                     <MenuItem x:Name="SystemThemeItem" Header="Windowsの設定に合わせる" Tag="System" IsCheckable="True" Click="ThemeClick"/>
                     <MenuItem x:Name="LightThemeItem" Header="ライト" Tag="Light" IsCheckable="True" Click="ThemeClick"/>

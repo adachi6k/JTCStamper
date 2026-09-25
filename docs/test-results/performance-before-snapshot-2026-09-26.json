@@ -1,0 +1,83 @@
+{
+  "Os": "Microsoft Windows NT 10.0.26200.0",
+  "Utc": "2026-09-25T15:41:08.8043835+00:00",
+  "Product": "0.1.0-preview.11\u002Bcf4f727e7ced9b3cefd3bba1d18a9761ac95c61d",
+  "WarmFileCache": true,
+  "SamplesPerCase": 1,
+  "Clipboard": "Fake sink; never modifies the user\u0027s clipboard",
+  "Results": [
+    {
+      "Generations": 100,
+      "JournalBytes": 4343769,
+      "StartupToRenderMs": 622.3438,
+      "ConstructorBlockedUiMs": 377.9766,
+      "StartupStoreReadyMs": 832.4557,
+      "StartupUiTicks": 7,
+      "StartupMaxUiGapMs": 611.3853,
+      "HistorySelectionBlockedUiMs": 3.1056,
+      "HistoryDetailsReadyMs": 53.7013,
+      "HistoryReadUiTicks": 1,
+      "HistoryReadMaxUiGapMs": 47.6928,
+      "FullCopyAndHistoryRefreshFakeClipboardMs": 158.5496,
+      "FullCopyAndSelectedDetailMs": 195.1434,
+      "CopyUiTicks": 6,
+      "CopyMaxUiGapMs": 48.7585,
+      "ExactImageMs": 68.2851,
+      "ExactMatches": 1,
+      "WorkingSetBytes": 207777792,
+      "CumulativePeakWorkingSetBytes": 227680256
+    },
+    {
+      "Generations": 1000,
+      "JournalBytes": 42852676,
+      "StartupToRenderMs": 202.0027,
+      "ConstructorBlockedUiMs": 50.1658,
+      "StartupStoreReadyMs": 2029.6396,
+      "StartupUiTicks": 59,
+      "StartupMaxUiGapMs": 196.891,
+      "HistorySelectionBlockedUiMs": 0.2354,
+      "HistoryDetailsReadyMs": 331.1042,
+      "HistoryReadUiTicks": 10,
+      "HistoryReadMaxUiGapMs": 35.7009,
+      "FullCopyAndHistoryRefreshFakeClipboardMs": 1219.6902,
+      "FullCopyAndSelectedDetailMs": 1471.7166,
+      "CopyUiTicks": 45,
+      "CopyMaxUiGapMs": 46.67559999999992,
+      "ExactImageMs": 1494.1776,
+      "ExactMatches": 4,
+      "WorkingSetBytes": 508076032,
+      "CumulativePeakWorkingSetBytes": 595980288
+    },
+    {
+      "Generations": 10000,
+      "JournalBytes": 427967528,
+      "StartupToRenderMs": 168.9436,
+      "ConstructorBlockedUiMs": 26.8803,
+      "StartupStoreReadyMs": 14082.3389,
+      "StartupUiTicks": 445,
+      "StartupMaxUiGapMs": 164.9988,
+      "HistorySelectionBlockedUiMs": 0.136,
+      "HistoryDetailsReadyMs": 10131.0998,
+      "HistoryReadUiTicks": 313,
+      "HistoryReadMaxUiGapMs": 48.84940000000006,
+      "FullCopyAndHistoryRefreshFakeClipboardMs": 25876.6282,
+      "FullCopyAndSelectedDetailMs": 36809.77,
+      "CopyUiTicks": 1153,
+      "CopyMaxUiGapMs": 54.780399999999645,
+      "ExactImageMs": 9487.7446,
+      "ExactMatches": 34,
+      "WorkingSetBytes": 2917449728,
+      "CumulativePeakWorkingSetBytes": 3428839424
+    },
+    {
+      "Case": "Rank300Images",
+      "Milliseconds": 402.2306,
+      "Candidates": 8
+    },
+    {
+      "Case": "DenseRed12Megapixels",
+      "Milliseconds": 704.7928,
+      "Regions": 0
+    }
+  ]
+}
