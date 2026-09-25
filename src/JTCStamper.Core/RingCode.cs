@@ -72,8 +72,9 @@ public static class RingCode
         }
         return crc;
     }
-    public static RingReading Decode(float[] red, int width, int height, ImageRegion box)
+    public static RingReading Decode(float[] red, int width, int height, ImageRegion box, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         if (width <= 0 || height <= 0 || (long)width * height != red.Length || box.X < 0 || box.Y < 0 || box.Width <= 0 || box.Height <= 0 ||
             (long)box.X + box.Width > width || (long)box.Y + box.Height > height) throw new ArgumentException();
         if (box.Width < 80 || box.Height < 80 || Math.Abs((double)box.Width / box.Height - 1) > 0.04)
@@ -84,6 +85,7 @@ public static class RingCode
         foreach (double centerY in new[] { -0.5, 0.0, 0.5 })
         for (double rotation = -8; rotation <= 8; rotation += 0.25)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var values = new double[CellCount];
             for (int i = 0; i < CellCount; i++)
             {

@@ -121,8 +121,12 @@ public sealed class Journal : IDisposable, IJournalWriter
     public void DeleteAllHistory()
     {
         var records = Read();
-        foreach (var record in records.Reverse())
-            File.Delete(Path.Combine(directory, $"{record.Entry.Sequence:D12}.json"));
+        try
+        {
+            foreach (var record in records.Reverse())
+                File.Delete(Path.Combine(directory, $"{record.Entry.Sequence:D12}.json"));
+        }
+        finally { lock (cacheGate) { parsed.Clear(); cacheBytes = 0; } }
     }
     public void Annotate(Guid eventId, string text)
     {

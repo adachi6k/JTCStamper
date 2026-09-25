@@ -24,28 +24,39 @@ public static class ImageSearch
         }
         return mask;
     }
-    public static IReadOnlyList<ImageRegion> Detect(bool[] mask, int width, int height)
+    public static IReadOnlyList<ImageRegion> Detect(bool[] mask, int width, int height, CancellationToken cancellationToken = default)
     {
         Validate(mask, width, height);
+        cancellationToken.ThrowIfCancellationRequested();
         var found = new List<ImageRegion>();
         // Search multiple scales so short gaps reconnect for discovery. Decode always uses original pixels.
         for (int scale = 1; scale <= 64 && Math.Min(width, height) / scale >= 28; scale *= 2)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             int w = (width + scale - 1) / scale, h = (height + scale - 1) / scale;
             var reduced = scale == 1 ? mask : new bool[w * h];
             if (scale > 1)
-                for (int y = 0; y < height; y++) for (int x = 0; x < width; x++)
-                    if (mask[y * width + x]) reduced[(y / scale) * w + x / scale] = true;
-            foreach (var region in DetectSingle(reduced, w, h))
+                for (int y = 0; y < height; y++)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    for (int x = 0; x < width; x++)
+                        if (mask[y * width + x]) reduced[(y / scale) * w + x / scale] = true;
+                }
+            foreach (var region in DetectSingle(reduced, w, h, cancellationToken))
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 ImageRegion mapped = region;
                 if (scale > 1)
                 {
                     int left = width, top = height, right = -1, bottom = -1;
                     int x0 = Math.Max(0, (region.X - 1) * scale), y0 = Math.Max(0, (region.Y - 1) * scale);
                     int x1 = Math.Min(width, (region.X + region.Width + 1) * scale), y1 = Math.Min(height, (region.Y + region.Height + 1) * scale);
-                    for (int y = y0; y < y1; y++) for (int x = x0; x < x1; x++) if (mask[y * width + x])
-                    { left = Math.Min(left, x); right = Math.Max(right, x); top = Math.Min(top, y); bottom = Math.Max(bottom, y); }
+                    for (int y = y0; y < y1; y++)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        for (int x = x0; x < x1; x++) if (mask[y * width + x])
+                        { left = Math.Min(left, x); right = Math.Max(right, x); top = Math.Min(top, y); bottom = Math.Max(bottom, y); }
+                    }
                     if (right < left) continue;
                     mapped = new(left, top, right - left + 1, bottom - top + 1);
                 }
@@ -65,9 +76,13 @@ public static class ImageSearch
             }
         }
         // A closed glyph inside an already detected stamp is not a second stamp.
-        return found.Where(inner => !found.Any(outer => outer != inner &&
+        return found.Where(inner =>
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return !found.Any(outer => outer != inner &&
             (long)outer.Width * outer.Height > 2L * inner.Width * inner.Height &&
-            inner.X >= outer.X && inner.Y >= outer.Y && inner.X + inner.Width <= outer.X + outer.Width && inner.Y + inner.Height <= outer.Y + outer.Height))
+            inner.X >= outer.X && inner.Y >= outer.Y && inner.X + inner.Width <= outer.X + outer.Width && inner.Y + inner.Height <= outer.Y + outer.Height);
+        })
             .OrderBy(x => x.Y).ThenBy(x => x.X).ToArray();
     }
     static double Overlap(ImageRegion a, ImageRegion b)
@@ -76,23 +91,29 @@ public static class ImageSearch
             (double)Math.Max(0, Math.Min(a.Y + a.Height, b.Y + b.Height) - Math.Max(a.Y, b.Y));
         return area / ((double)a.Width * a.Height + (double)b.Width * b.Height - area);
     }
-    static IReadOnlyList<ImageRegion> DetectSingle(bool[] mask, int width, int height)
+    static IReadOnlyList<ImageRegion> DetectSingle(bool[] mask, int width, int height, CancellationToken cancellationToken)
     {
         Validate(mask, width, height);
         // Join small antialiasing/JPEG gaps in a circle. Classification uses the original mask.
         var joined = new bool[mask.Length];
         for (int y = 1; y < height - 1; y++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
             for (int x = 1; x < width - 1; x++)
                 if (mask[y * width + x])
                     for (int dy = -1; dy <= 1; dy++) for (int dx = -1; dx <= 1; dx++) joined[(y + dy) * width + x + dx] = true;
+        }
         var queue = new Queue<int>(); var found = new List<ImageRegion>();
         for (int p = 0; p < joined.Length; p++)
         {
+            if ((p & 4095) == 0) cancellationToken.ThrowIfCancellationRequested();
             if (!joined[p]) continue;
             joined[p] = false; queue.Enqueue(p);
             int left = width, right = 0, top = height, bottom = 0;
+            int visited = 0;
             while (queue.TryDequeue(out int at))
             {
+                if ((visited++ & 4095) == 0) cancellationToken.ThrowIfCancellationRequested();
                 int x = at % width, y = at / width;
                 left = Math.Min(left, x); right = Math.Max(right, x); top = Math.Min(top, y); bottom = Math.Max(bottom, y);
                 for (int dy = -1; dy <= 1; dy++) for (int dx = -1; dx <= 1; dx++)
@@ -149,14 +170,16 @@ public static class ImageSearch
         }
         return output;
     }
-    public static IReadOnlyList<VisualCandidate> Rank(bool[] ink, IReadOnlyList<StampTemplate> templates, int? readCode = null)
+    public static IReadOnlyList<VisualCandidate> Rank(bool[] ink, IReadOnlyList<StampTemplate> templates, int? readCode = null, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         if (ink.Length != Side * Side || templates.Any(x => x.Ink.Length != Side * Side)) throw new ArgumentException();
         // Ignore the common outer circle; compare interior text and separators symmetrically.
         var variants = Enumerable.Range(-8, 17).Select(angle => (Angle: angle, Ink: Rotate(ink, angle))).ToArray();
         var ranked = new List<VisualCandidate>();
         foreach (var template in templates)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             double best = 0; int rotation = 0; TextSimilarity text = new(0, 0, 0);
             foreach (var variant in variants)
             {

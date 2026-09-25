@@ -16,6 +16,22 @@ void Throws(Action action) { try { action(); } catch { return; } throw new Excep
 var stamp = new Stamp("山田", new DateOnly(1900, 1, 1), "確認");
 try
 {
+    Check("image-and-history-pipelines-observe-cancellation", dir =>
+    {
+        using var journal = new Journal(dir, key);
+        new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
+        using var cancellation = new CancellationTokenSource(); cancellation.Cancel();
+        void Cancelled(Action action)
+        {
+            try { action(); throw new Exception("Cancellation was ignored"); }
+            catch (OperationCanceledException) { }
+        }
+        Cancelled(() => new VerificationService(journal).Image([1, 2, 3], cancellation.Token));
+        Cancelled(() => new VerificationService(journal).ReadGenerations(cancellation.Token));
+        Cancelled(() => ImageSearch.Detect(new bool[96 * 96], 96, 96, cancellation.Token));
+        Cancelled(() => ImageSearch.Rank(new bool[96 * 96], [], null, cancellation.Token));
+        Cancelled(() => RingCode.Decode(new float[96 * 96], 96, 96, new(0, 0, 96, 96), cancellation.Token));
+    });
     Check("warm-cache-checks-bytes-not-mtime-or-size", dir =>
     {
         using var journal = new Journal(dir, key);

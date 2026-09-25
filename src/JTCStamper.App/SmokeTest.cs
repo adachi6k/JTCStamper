@@ -96,6 +96,84 @@ internal static class SmokeTest
                 var host = (ContentControl)window.FindName("VerificationHost");
                 var view = host.Content;
                 Require(view is VerificationView && verifyTab.IsEnabled, "Verification tab is not initialized.");
+                await CheckAsync("verification-cancel-resume-invalid-input-and-stale-result", async () =>
+                {
+                    var folder = Path.Combine(root, "verification-work-" + Guid.NewGuid().ToString("N"));
+                    var key = RandomNumberGenerator.GetBytes(32);
+                    try
+                    {
+                        using var journal = new Journal(folder, key);
+                        byte[]? stored = null;
+                        new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, coded => stored = StampRenderer.Png(StampRenderer.Render(coded)));
+                        var screen = new VerificationView(journal, folder);
+                        var pixels = new byte[4000 * 3000 * 4];
+                        for (int at = 0; at < pixels.Length; at += 4) { pixels[at + 2] = 195; pixels[at + 3] = 255; }
+                        var bitmap = BitmapSource.Create(4000, 3000, 96, 96, PixelFormats.Bgra32, null, pixels, 4000 * 4);
+                        var dense = StampRenderer.Png(bitmap);
+                        var pending = screen.VerifyBytesAsync(dense);
+                        Require(screen.IsBusy, "Image verification did not enter busy state.");
+                        await Dispatcher.Yield(DispatcherPriority.Background);
+                        screen.CancelCurrent();
+                        await pending.WaitAsync(TimeSpan.FromSeconds(15));
+                        Require(!screen.IsBusy && screen.CandidateCount == 0 && screen.ResultTitle == "照合を中止しました", "Cancelled result was published as a match or not cleared.");
+                        await screen.VerifyBytesAsync(stored!).WaitAsync(TimeSpan.FromSeconds(15));
+                        Require(screen.CandidateCount == 1 && !screen.IsBusy, "Verification did not resume after cancellation.");
+                        await screen.VerifyBytesAsync([1, 2, 3]).WaitAsync(TimeSpan.FromSeconds(15));
+                        Require(screen.CandidateCount == 0 && screen.ResultTitle == "照合を完了できませんでした", "Broken image kept an old match.");
+                        await screen.VerifyBytesAsync(new byte[32 * 1024 * 1024 + 1]);
+                        Require(screen.CandidateCount == 0 && screen.Findings.Contains("サイズ上限"), "File size limit did not clear old results.");
+                        var large = BitmapSource.Create(4000, 3001, 96, 96, PixelFormats.Bgra32, null, new byte[4000 * 3001 * 4], 4000 * 4);
+                        await screen.VerifyBytesAsync(StampRenderer.Png(large)).WaitAsync(TimeSpan.FromSeconds(15));
+                        Require(screen.CandidateCount == 0 && screen.Findings.Contains("1200万画素"), "Pixel limit did not reject oversized input.");
+                        pending = screen.VerifyBytesAsync(dense);
+                        var oldTitle = screen.ResultTitle; screen.CancelPending();
+                        await pending.WaitAsync(TimeSpan.FromSeconds(15));
+                        Require(screen.CandidateCount == 0 && screen.ResultTitle == oldTitle, "Disposed verification view published a late result.");
+                        var windowRoot = Path.Combine(root, "verification-window-" + Guid.NewGuid().ToString("N"));
+                        var busyWindow = new MainWindow(windowRoot);
+                        try
+                        {
+                            busyWindow.Show(); await busyWindow.InitializationPending;
+                            var attached = (VerificationView)((ContentControl)busyWindow.FindName("VerificationHost")).Content;
+                            pending = attached.VerifyBytesAsync(dense);
+                            var blockedTarget = Path.Combine(root, "blocked-verification-store-" + Guid.NewGuid().ToString("N"));
+                            Require(!await busyWindow.SwitchJournalAsync(blockedTarget) && !Directory.Exists(blockedTarget), "Busy verification allowed a store switch.");
+                            var navigation = (TabControl)busyWindow.FindName("MainTabs");
+                            navigation.SelectedItem = busyWindow.FindName("HistoryTab"); navigation.SelectedItem = busyWindow.FindName("VerificationTab");
+                            Require(ReferenceEquals(attached, ((ContentControl)busyWindow.FindName("VerificationHost")).Content), "Busy tab switch replaced verification state.");
+                            await attached.VerifyBytesAsync(stored!); // A repeated request while busy is rejected.
+                            var closingTitle = attached.ResultTitle;
+                            busyWindow.Close(); await pending.WaitAsync(TimeSpan.FromSeconds(15));
+                            Require(!busyWindow.IsVisible && attached.CandidateCount == 0 && attached.ResultTitle == closingTitle, "Closed window published a late verification result.");
+                        }
+                        finally { if (busyWindow.IsVisible) busyWindow.Close(); }
+                        Require(journal.Read().Count == 3, "Read-only verification changed history.");
+                    }
+                    finally { CryptographicOperations.ZeroMemory(key); }
+                });
+                await CheckAsync("verification-many-stamps-honors-region-limit", async () =>
+                {
+                    var folder = Path.Combine(root, "verification-regions-" + Guid.NewGuid().ToString("N"));
+                    var key = RandomNumberGenerator.GetBytes(32);
+                    try
+                    {
+                        using var journal = new Journal(folder, key); BitmapSource? image = null;
+                        new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, coded => StampRenderer.Png(image = StampRenderer.Render(coded)));
+                        var visual = new DrawingVisual();
+                        using (var draw = visual.RenderOpen())
+                        {
+                            draw.DrawRectangle(Brushes.White, null, new Rect(0, 0, 1000, 760));
+                            for (int y = 0; y < 6; y++) for (int x = 0; x < 8; x++) draw.DrawImage(image, new Rect(10 + 124 * x, 10 + 124 * y, 96, 96));
+                        }
+                        var bitmap = new RenderTargetBitmap(1000, 760, 96, 96, PixelFormats.Pbgra32); bitmap.Render(visual);
+                        var screen = new VerificationView(journal, folder);
+                        await screen.VerifyBytesAsync(StampRenderer.Png(bitmap)).WaitAsync(TimeSpan.FromSeconds(60));
+                        Require(screen.DetectedRegionCount == 30 && screen.SearchCoverage.Contains("先頭30件"), "Many-stamp result did not show the bounded search coverage.");
+                        Require(!screen.IsBusy, "Many-stamp search did not complete.");
+                        screen.CancelPending();
+                    }
+                    finally { CryptographicOperations.ZeroMemory(key); }
+                });
                 var note = (TextBox)window.FindName("NoteInput");
                 note.Text = "tab-state-check";
                 tabs.SelectedItem = verifyTab;

@@ -20,9 +20,9 @@ public sealed record VerifiedHistory(IReadOnlyList<VerifiedEntry> Entries, IRead
 // Read-only exact matching. An image match never identifies a unique event by itself.
 public sealed class VerificationService(Journal journal)
 {
-    public VerificationResult Image(byte[] bytes) => Guard(() =>
+    public VerificationResult Image(byte[] bytes, CancellationToken cancellationToken = default) => Guard(() =>
     {
-        var history = Generations();
+        var history = Generations(cancellationToken);
         var hash = Convert.ToHexString(SHA256.HashData(bytes));
         var matches = history.Where(x => x.Generation.PngSha256.Equals(hash, StringComparison.OrdinalIgnoreCase))
             .Select(x => x.Generation).ToArray();
@@ -31,13 +31,14 @@ public sealed class VerificationService(Journal journal)
             : "この保存先にファイル全体が完全一致するPNGの記録はありません。加工・再保存された画像や別の保存先の履歴は、この方法では照合できません。偽造を意味しません。", matches);
     });
 
-    public VerificationResult Original(string json) => Guard(() =>
+    public VerificationResult Original(string json, CancellationToken cancellationToken = default) => Guard(() =>
     {
+        cancellationToken.ThrowIfCancellationRequested();
         if (json.Length > 1024 * 1024) throw new InvalidDataException();
         var signed = JsonSerializer.Deserialize<SignedEntry>(json) ?? throw new InvalidDataException();
         var entry = journal.Verify(signed);
         var generation = Parse(entry);
-        var history = Generations();
+        var history = Generations(cancellationToken);
         var sameId = history.Where(x => x.Generation.EventId == generation.EventId).ToArray();
         if (sameId.Length == 0)
             return new(VerificationStatus.NoRecord, "原本の認証情報は検証できましたが、この保存先には該当イベントの生成記録がありません。偽造を意味しません。", []);
@@ -46,7 +47,7 @@ public sealed class VerificationService(Journal journal)
         return new(VerificationStatus.Match, "原本の認証情報・イベントID・生成記録の内容が一致しました。貼付完了や画像の利用者を証明するものではありません。", [generation]);
     });
 
-    public IReadOnlyList<Generation> ReadGenerations() => Generations().Select(x => x.Generation).ToArray();
+    public IReadOnlyList<Generation> ReadGenerations(CancellationToken cancellationToken = default) => Generations(cancellationToken).Select(x => x.Generation).ToArray();
 
     // A fresh authenticated snapshot per operation; Journal re-reads every file even on cache hits.
     public VerifiedHistory ReadHistory()
@@ -71,12 +72,17 @@ public sealed class VerificationService(Journal journal)
         return new(entries, generations);
     }
 
-    List<(Generation Generation, SignedEntry Signed)> Generations() => Generations(journal.Read());
-    static List<(Generation Generation, SignedEntry Signed)> Generations(IReadOnlyList<VerifiedEntry> entries)
+    List<(Generation Generation, SignedEntry Signed)> Generations(CancellationToken cancellationToken = default) =>
+        Generations(journal.ReadVerified(cancellationToken).ToArray(), cancellationToken);
+    static List<(Generation Generation, SignedEntry Signed)> Generations(IReadOnlyList<VerifiedEntry> entries, CancellationToken cancellationToken = default)
     {
         var result = new List<(Generation, SignedEntry)>();
         foreach (var record in entries)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
             if (CurrentGeneration(record.Entry) is Generation generation) result.Add((generation, record.Signed));
+        }
+        cancellationToken.ThrowIfCancellationRequested();
         return result;
     }
 

@@ -56,6 +56,52 @@ public sealed class VerificationView : UserControl
     readonly List<StampTemplate> templates = [];
     string coverage = "";
     bool busy;
+    CancellationTokenSource? operationCancellation;
+    readonly Button cancel = new() { Content = "照合を中止", IsEnabled = false };
+    internal void CancelCurrent() { operationCancellation?.Cancel(); }
+    internal string ResultTitle => title.Text;
+    internal int CandidateCount => candidateRows.Length;
+    internal int DetectedRegionCount => regions.Items.Count;
+    internal string Findings => result.Text;
+    internal string SearchCoverage => coverage;
+    async Task RunVerificationAsync(Func<CancellationToken, Task> action)
+    {
+        if (busy || disposed) return;
+        using var cancellation = new CancellationTokenSource();
+        operationCancellation = cancellation; SetBusy(true);
+        try { await action(cancellation.Token); cancellation.Token.ThrowIfCancellationRequested(); }
+        catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
+        {
+            if (!disposed)
+            {
+                Reset();
+                Present(new(VerificationMessageKind.Unavailable, "照合を中止しました", "結果は確定していません。", "履歴の一致・不一致は判断していません。", "［再照合］または別の画像を選択してください。"));
+            }
+        }
+        catch (Exception ex) { if (!disposed) Failed("照合できませんでした：" + ex.Message); }
+        finally
+        {
+            if (ReferenceEquals(operationCancellation, cancellation)) operationCancellation = null;
+            if (!disposed) SetBusy(false);
+        }
+    }
+    internal Task VerifyBytesAsync(byte[] bytes, bool original = false) =>
+        RunVerificationAsync(token => LoadInput(bytes, original, token));
+    async Task LoadInput(byte[] bytes, bool original, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+        lastBytes = null; lastBitmap = null; lastOriginal = original;
+        Reset();
+        if (bytes.Length > (original ? 1024 * 1024 : 32 * 1024 * 1024)) throw new InvalidDataException("ファイルがサイズ上限を超えています。");
+        lastBytes = bytes;
+        Progress("履歴と入力を確認しています…");
+        if (original)
+        {
+            var value = await Task.Run(() => service.Original(new UTF8Encoding(false, true).GetString(bytes).TrimStart('\uFEFF'), token), token);
+            token.ThrowIfCancellationRequested(); Display(value);
+        }
+        else await LoadImage(bytes, null, token);
+    }
     Point? dragStart;
     public event Action<Guid>? HistoryRequested;
     public bool IsBusy => busy;
@@ -64,7 +110,7 @@ public sealed class VerificationView : UserControl
     BitmapSource? lastBitmap;
     bool lastOriginal;
     readonly Button refresh = new() { Content = "再照合", IsEnabled = false };
-    public void CancelPending() { disposed = true; preview.ReleaseMouseCapture(); }
+    public void CancelPending() { disposed = true; operationCancellation?.Cancel(); preview.ReleaseMouseCapture(); }
 
     public VerificationView(Journal journal, string storageRoot)
     {
@@ -76,6 +122,7 @@ public sealed class VerificationView : UserControl
         file.Click += Open; buttons.Children.Add(file);
         clipboard.Click += FromClipboard; buttons.Children.Add(clipboard);
         refresh.Click += RefreshInput; buttons.Children.Add(refresh);
+        cancel.Click += (_, _) => CancelCurrent(); buttons.Children.Add(cancel);
         codeFilter.ToolTip = "印影コードを読めた場合だけ、同じコードの履歴に絞ります。外すと、コードが異なる形のみの候補も表示します。";
         top.Children.Add(codeFilter);
         codeFilter.Checked += Recompare; codeFilter.Unchecked += Recompare;
@@ -214,7 +261,7 @@ public sealed class VerificationView : UserControl
     }
     void SetBusy(bool value)
     {
-        busy = value; UpdateRegionNavigation(); codeFilter.IsEnabled = !value && source is not null; file.IsEnabled = clipboard.IsEnabled = regions.IsEnabled = !value;
+        busy = value; cancel.IsEnabled = value; UpdateRegionNavigation(); codeFilter.IsEnabled = !value && source is not null; file.IsEnabled = clipboard.IsEnabled = regions.IsEnabled = !value;
         refresh.IsEnabled = !value && (lastBytes is not null || lastBitmap is not null);
         UpdateCandidateNavigation();
     }
@@ -253,83 +300,77 @@ public sealed class VerificationView : UserControl
     {
         source = null; mask = null; selectedRegion = null; preview.Source = null; regions.ItemsSource = null; SetCandidates([]);
         templates.Clear(); history = []; coverage = ""; show.IsEnabled = false;
+        candidateHeading.Text = "生成履歴"; scoreHelp.Visibility = Visibility.Collapsed;
     }
     async void Open(object sender, RoutedEventArgs e)
     {
+        if (busy || disposed) return;
         var dialog = new OpenFileDialog { Filter = "画像・原本|*.png;*.jpg;*.jpeg;*.bmp;*.tif;*.tiff;*.jtc|画像|*.png;*.jpg;*.jpeg;*.bmp;*.tif;*.tiff|原本|*.jtc", CheckFileExists = true };
         if (dialog.ShowDialog(Window.GetWindow(this)) != true) return;
-        lastBytes = null; lastBitmap = null; lastOriginal = false;
-        Reset(); SetBusy(true);
-        try
+        await RunVerificationAsync(async token =>
         {
-            using var stream = File.OpenRead(dialog.FileName);
+            lastBytes = null; lastBitmap = null; lastOriginal = false; Reset();
+            Progress("ファイルを読み取っています…");
             bool original = Path.GetExtension(dialog.FileName).Equals(".jtc", StringComparison.OrdinalIgnoreCase);
-            var bytes = ReadLimited(stream, original ? 1024 * 1024 : 32 * 1024 * 1024);
-            lastBytes = bytes; lastOriginal = original;
-            if (original) Display(service.Original(new UTF8Encoding(false, true).GetString(bytes).TrimStart('\uFEFF')));
-            else await LoadImage(bytes, null);
-        }
-        catch (Exception ex) { Failed("ファイルを読み取れませんでした：" + ex.Message); }
-        finally { SetBusy(false); }
+            var bytes = await Task.Run(() =>
+            {
+                using var stream = File.OpenRead(dialog.FileName);
+                return ReadLimited(stream, original ? 1024 * 1024 : 32 * 1024 * 1024, token);
+            }, token);
+            await LoadInput(bytes, original, token);
+        });
     }
     async void FromClipboard(object sender, RoutedEventArgs e)
     {
-        lastBytes = null; lastBitmap = null; lastOriginal = false;
-        Reset(); SetBusy(true);
-        try
+        await RunVerificationAsync(async token =>
         {
+            lastBytes = null; lastBitmap = null; lastOriginal = false;
+            Reset(); Progress("クリップボードの画像を読み取っています…");
             var data = await ClipboardImages.ReadAsync();
-            if (disposed) return;
-            if (data?.Png is byte[] bytes) { lastBytes = bytes; await LoadImage(bytes, null); }
-            else if (data?.Bitmap is BitmapSource bitmap) { lastBitmap = bitmap; await LoadImage(null, bitmap); }
+            token.ThrowIfCancellationRequested();
+            if (data?.Png is byte[] bytes) await LoadInput(bytes, false, token);
+            else if (data?.Bitmap is BitmapSource bitmap) { lastBitmap = bitmap; await LoadImage(null, bitmap, token); }
             else Failed("クリップボードに画像がありません。");
-        }
-        catch (Exception ex) { Failed("クリップボードを読み取れませんでした：" + ex.Message); }
-        finally { SetBusy(false); }
+        });
     }
     async void RefreshInput(object sender, RoutedEventArgs e)
     {
-        if (busy || disposed || (lastBytes is null && lastBitmap is null)) return;
-        Reset(); SetBusy(true);
-        try
+        if (lastBytes is null && lastBitmap is null) return;
+        await RunVerificationAsync(async token =>
         {
-            if (lastOriginal) Display(service.Original(new UTF8Encoding(false, true).GetString(lastBytes!).TrimStart('\uFEFF')));
-            else await LoadImage(lastBytes, lastBitmap);
-        }
-        catch (Exception ex) { Failed("再照合できませんでした：" + ex.Message); }
-        finally { SetBusy(false); }
+            if (lastBytes is not null) await LoadInput(lastBytes, lastOriginal, token);
+            else { Reset(); await LoadImage(null, lastBitmap, token); }
+        });
     }
-    async Task LoadImage(byte[]? bytes, BitmapSource? bitmap)
+    async Task LoadImage(byte[]? bytes, BitmapSource? bitmap, CancellationToken token)
     {
         if (bytes is not null)
         {
-            var exact = service.Image(bytes);
+            var exact = await Task.Run(() => service.Image(bytes, token), token);
+            token.ThrowIfCancellationRequested();
             if (exact.Status != VerificationStatus.NoRecord) { Display(exact); return; }
-            using var input = new MemoryStream(bytes);
-            var decoder = BitmapDecoder.Create(input, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None);
-            if (decoder.Frames.Count != 1) { Failed("複数ページの画像は、照合したいページをPNGやJPEGにして選択してください。"); return; }
-            var frame = decoder.Frames[0];
-            if ((long)frame.PixelWidth * frame.PixelHeight > 12_000_000) { Failed("画像は1200万画素以内にしてください。"); return; }
-            var converted = new FormatConvertedBitmap(frame, PixelFormats.Bgra32, null, 0);
-            var pixels = new byte[checked(frame.PixelWidth * frame.PixelHeight * 4)];
-            converted.CopyPixels(pixels, frame.PixelWidth * 4, 0);
-            bitmap = BitmapSource.Create(frame.PixelWidth, frame.PixelHeight, 96, 96, PixelFormats.Bgra32, null, pixels, frame.PixelWidth * 4);
+            bitmap = await Task.Run(() => DecodeInput(bytes), token);
+            token.ThrowIfCancellationRequested();
         }
         if (bitmap is null || (long)bitmap.PixelWidth * bitmap.PixelHeight > 12_000_000) { Failed("画像は1200万画素以内にしてください。"); return; }
         // Keep source pixels: shrinking a whole document can erase the 12-bit marks.
         source = bitmap;
         source.Freeze(); Draw(null);
         var width = source.PixelWidth; var height = source.PixelHeight;
-        mask = ToMask(source);
+        mask = await Task.Run(() => ToMask(source), token);
+        token.ThrowIfCancellationRequested();
         Progress("画像内の印影を探しています…");
-        var found = await Task.Run(() => ImageSearch.Detect(mask, width, height));
-        if (disposed) return;
+        var found = await Task.Run(() => ImageSearch.Detect(mask, width, height, token), token);
+        token.ThrowIfCancellationRequested();
         Progress("生成履歴の印面を準備しています…");
-        history = service.ReadGenerations(); // Revalidates all HMACs before creating reference images.
+        history = await Task.Run(() => service.ReadGenerations(token), token);
+        token.ThrowIfCancellationRequested();
         var groups = HistoryReferences.LatestImages(history, 301);
         int skipped = 0;
         foreach (var generation in groups.Take(300))
         {
+            await Dispatcher.Yield(DispatcherPriority.Background);
+            token.ThrowIfCancellationRequested();
             var stamp = generation.Stamp;
             var historical = HistoryImage.Load(generation);
             if (historical.Image is not BitmapSource rendered) { skipped++; continue; }
@@ -337,7 +378,6 @@ public sealed class VerificationView : UserControl
             var reference = ToMask(rendered);
             if (ImageSearch.Bounds(reference, rendered.PixelWidth, rendered.PixelHeight) is ImageRegion bounds)
                 { templates.Add(new(stamp, ImageSearch.Normalize(reference, rendered.PixelWidth, rendered.PixelHeight, bounds), hash)); }
-            if (templates.Count % 8 == 0) { await Dispatcher.Yield(DispatcherPriority.Background); if (disposed) return; }
         }
         coverage = $"比較対象：保存画像{templates.Count}種類。" + (groups.Length > 300 ? "直近300種類に限定しています。" : "") +
             (skipped > 0 ? $"過去画像を再現できない{skipped}種類は比較対象外です。" : "");
@@ -345,48 +385,61 @@ public sealed class VerificationView : UserControl
         if (found.Count > 30) coverage += "検出領域は先頭30件を表示しています。";
         if (found.Count == 0) { Failed("赤い円形の印影を自動検出できませんでした。画像上で印影を囲んで範囲を指定できます。\n" + coverage); return; }
         regions.SelectedIndex = 0;
-        await Compare(found[0]);
+        await CompareCore(found[0], token);
     }
-    async Task Compare(ImageRegion region)
+    Task Compare(ImageRegion region) => RunVerificationAsync(token => CompareCore(region, token));
+    async Task CompareCore(ImageRegion region, CancellationToken token)
     {
         if (source is null || mask is null) return;
         selectedRegion = region;
-        SetBusy(true); SetCandidates([]); Draw(region); Progress("選択した印影を履歴と比較しています…");
-        try
-        {
-            history = service.ReadGenerations(); // Recheck integrity when selecting another region or changing the filter.
-            var ink = ImageSearch.Normalize(mask, source.PixelWidth, source.PixelHeight, region);
-            var crop = new CroppedBitmap(source, new Int32Rect(region.X, region.Y, region.Width, region.Height));
-            var red = RingCode.RedStrength(ToPixels(crop), region.Width, region.Height);
-            var localBox = new ImageRegion(0, 0, region.Width, region.Height);
-            var reading = await Task.Run(() => RingCode.Decode(red, region.Width, region.Height, localBox));
-            if (disposed) return;
-            bool filter = codeFilter.IsChecked == true && reading.Code.HasValue;
-            var references = templates.Where(t => !filter || t.Stamp.GeometryCode == reading.Code).ToArray();
-            var ranked = await Task.Run(() => ImageSearch.Rank(ink, references, reading.Code));
-            if (disposed) return;
-            var rows = ranked.SelectMany(x => HistoryReferences.Matching(history, x)
-                .Select(g => new Candidate(g, VerificationMessages.ShapeEvidence(reading.Code, g.Stamp.GeometryCode, x.Text), CorrespondenceScore.Calculate(x.Text, reading.Code, g.Stamp.GeometryCode).Total))).ToArray();
-            SetCandidates(rows);
-            int codeMatches = reading.Code.HasValue ? rows.Count(x => x.Generation.Stamp.GeometryCode == reading.Code) : 0;
-            int codeHistory = reading.Code.HasValue ? history.Count(x => x.Stamp.GeometryCode == reading.Code) : 0;
-            candidateHeading.Text = $"生成履歴候補（スコア順）：{rows.Length}件";
-            scoreHelp.Visibility = rows.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
-            var message = history.Count == 0
-                ? new VerificationMessage(VerificationMessageKind.NoCandidate, "照合対象の生成履歴がありません",
-                    "この保存先には、対応する形式の生成記録がありません。", "この保存先についての結果です。偽造という意味ではありません。",
-                    "生成したときの履歴の保存先を確認してください。")
-                : VerificationMessages.Image(new(reading.Code, rows.Length, codeMatches, codeHistory, templates.Count, filter));
-            Present(message, (reading.Code is int decoded ? $"読取コード：{RingCode.Label(decoded)}（12ビット）\n" : "コード未読取：" + reading.Reason + "\n") +
-                (filter ? "同じコードの履歴に絞っています。" : "コードによる絞り込みは適用していません。") + "\n" + coverage +
-                "\n従来の内側全体の形比較が0.72以上の候補から、対応スコア順で上位8画像の記録を表示します。0.72は候補抽出用で、対応スコアの基準ではありません。文字・日付は目視で確認してください。");
-        }
-        catch (Exception ex) { Failed("画像を比較できませんでした：" + ex.Message); }
-        finally { SetBusy(false); }
+        SetCandidates([]); Draw(region); Progress("選択した印影を履歴と比較しています…");
+        history = await Task.Run(() => service.ReadGenerations(token), token);
+        token.ThrowIfCancellationRequested();
+        var width = source.PixelWidth; var height = source.PixelHeight;
+        var ink = await Task.Run(() => ImageSearch.Normalize(mask, width, height, region), token);
+        token.ThrowIfCancellationRequested();
+        var crop = new CroppedBitmap(source, new Int32Rect(region.X, region.Y, region.Width, region.Height));
+        var red = RingCode.RedStrength(ToPixels(crop), region.Width, region.Height);
+        var localBox = new ImageRegion(0, 0, region.Width, region.Height);
+        var reading = await Task.Run(() => RingCode.Decode(red, region.Width, region.Height, localBox, token), token);
+        token.ThrowIfCancellationRequested();
+        bool filter = codeFilter.IsChecked == true && reading.Code.HasValue;
+        var references = templates.Where(t => !filter || t.Stamp.GeometryCode == reading.Code).ToArray();
+        var ranked = await Task.Run(() => ImageSearch.Rank(ink, references, reading.Code, token), token);
+        token.ThrowIfCancellationRequested();
+        var rows = ranked.SelectMany(x => HistoryReferences.Matching(history, x)
+            .Select(g => new Candidate(g, VerificationMessages.ShapeEvidence(reading.Code, g.Stamp.GeometryCode, x.Text), CorrespondenceScore.Calculate(x.Text, reading.Code, g.Stamp.GeometryCode).Total))).ToArray();
+        SetCandidates(rows);
+        int codeMatches = reading.Code.HasValue ? rows.Count(x => x.Generation.Stamp.GeometryCode == reading.Code) : 0;
+        int codeHistory = reading.Code.HasValue ? history.Count(x => x.Stamp.GeometryCode == reading.Code) : 0;
+        candidateHeading.Text = $"生成履歴候補（スコア順）：{rows.Length}件";
+        scoreHelp.Visibility = rows.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
+        var message = history.Count == 0
+            ? new VerificationMessage(VerificationMessageKind.NoCandidate, "照合対象の生成履歴がありません",
+                "この保存先には、対応する形式の生成記録がありません。", "この保存先についての結果です。偽造という意味ではありません。",
+                "生成したときの履歴の保存先を確認してください。")
+            : VerificationMessages.Image(new(reading.Code, rows.Length, codeMatches, codeHistory, templates.Count, filter));
+        Present(message, (reading.Code is int decoded ? $"読取コード：{RingCode.Label(decoded)}（12ビット）\n" : "コード未読取：" + reading.Reason + "\n") +
+            (filter ? "同じコードの履歴に絞っています。" : "コードによる絞り込みは適用していません。") + "\n" + coverage +
+            "\n従来の内側全体の形比較が0.72以上の候補から、対応スコア順で上位8画像の記録を表示します。0.72は候補抽出用で、対応スコアの基準ではありません。文字・日付は目視で確認してください。");
     }
+
     async void Recompare(object sender, RoutedEventArgs e)
     {
         if (!busy && selectedRegion is ImageRegion region) await Compare(region);
+    }
+    static BitmapSource DecodeInput(byte[] bytes)
+    {
+        using var input = new MemoryStream(bytes);
+        var decoder = BitmapDecoder.Create(input, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None);
+        if (decoder.Frames.Count != 1) throw new InvalidDataException("複数ページの画像は、照合したいページをPNGやJPEGにして選択してください。");
+        var frame = decoder.Frames[0];
+        if ((long)frame.PixelWidth * frame.PixelHeight > 12_000_000) throw new InvalidDataException("画像は1200万画素以内にしてください。");
+        var converted = new FormatConvertedBitmap(frame, PixelFormats.Bgra32, null, 0);
+        var pixels = new byte[checked(frame.PixelWidth * frame.PixelHeight * 4)];
+        converted.CopyPixels(pixels, frame.PixelWidth * 4, 0);
+        var bitmap = BitmapSource.Create(frame.PixelWidth, frame.PixelHeight, 96, 96, PixelFormats.Bgra32, null, pixels, frame.PixelWidth * 4);
+        bitmap.Freeze(); return bitmap;
     }
     static bool[] ToMask(BitmapSource bitmap)
     {
@@ -435,11 +488,12 @@ public sealed class VerificationView : UserControl
         regions.SelectedIndex = -1;
         await Compare(new(left, top, right - left + 1, bottom - top + 1));
     }
-    static byte[] ReadLimited(Stream stream, int limit)
+    static byte[] ReadLimited(Stream stream, int limit, CancellationToken token)
     {
         using var output = new MemoryStream(); var buffer = new byte[8192]; int count;
         while ((count = stream.Read(buffer)) > 0)
         {
+            token.ThrowIfCancellationRequested();
             if (output.Length + count > limit) throw new InvalidDataException("ファイルがサイズ上限を超えています。");
             output.Write(buffer, 0, count);
         }
