@@ -8,14 +8,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using JTCStamper.Core;
 
-internal static class Program
+internal static partial class Program
 {
     static readonly List<object> Results = [];
     static string root = "";
     static bool failed;
+    static readonly HashSet<string> ownedClipboardHashes = new(StringComparer.OrdinalIgnoreCase);
     [STAThread]
     static int Main(string[] args)
     {
+        if (args.Length == 2 && args[0] == "--hold-clipboard") return HoldClipboard(args[1]);
         if (args.Length is not (1 or 2) || (args.Length == 2 && args[1] != "--skip-office")) return 2;
         bool skipOffice = args.Length == 2;
         root = Path.GetFullPath(args[0]);
@@ -29,10 +31,13 @@ internal static class Program
         var standard = Path.Combine(root, "Standard", "JTCStamper.App.exe");
         var lite = Path.Combine(root, "Lite", "JTCStamper.App.exe");
         DataObject? saved = null; bool clipboardReady = false;
+        uint initialClipboardSequence = JTCStamper.App.NativeClipboard.SequenceNumber;
         try
         {
             try { saved = CloneClipboard(); clipboardReady = true; }
             catch (Exception ex) { Result("clipboard-preservation", "skipped", ex.GetType().Name); }
+            if (clipboardReady) ClipboardContention();
+            EnvironmentCases(standard, lite, temp);
             var absent = Start(lite, ["--smoke-test"], "missing-runtime", false);
             Result("lite-runtime-missing-diagnostic", absent.ExitCode != 0 && absent.Error.Contains(".NET") ? "passed" : "failed", new { absent.ExitCode });
             foreach (var (name, initial, replacement) in new[] { ("standard", standard, lite), ("lite", lite, standard) })
@@ -51,6 +56,7 @@ internal static class Program
                     // Standard seed/restart also prove operation with no discoverable .NET 10 runtime.
                     bool runtime = name == "standard" ? phase == "replacement" : phase != "replacement";
                     var run = Start(exe, arguments, name + "-" + phase, runtime);
+                    RememberOwnedClipboard(data);
                     var report = Path.Combine(data, "report-" + testPhase + ".json");
                     var passed = run.ExitCode == 0 && File.Exists(report) && JsonDocument.Parse(File.ReadAllText(report)).RootElement.GetProperty("Passed").GetBoolean();
                     Result(name + "-" + phase, passed ? "passed" : "failed", new { run.ExitCode, Clipboard = clipboardReady, PrivateRuntime = runtime });
@@ -67,12 +73,30 @@ internal static class Program
         {
             if (clipboardReady)
             {
-                try { if (saved is null) Clipboard.Clear(); else Clipboard.SetDataObject(saved, true); Result("original-clipboard-restored", "passed"); }
+                try
+                {
+                    uint sequence = JTCStamper.App.NativeClipboard.SequenceNumber;
+                    if (sequence == initialClipboardSequence) Result("original-clipboard-restored", "passed", "Clipboard was unchanged.");
+                    else
+                    {
+                        var current = JTCStamper.App.NativeClipboard.ReadPng().Bytes;
+                        if (current is not null && ownedClipboardHashes.Contains(Convert.ToHexString(SHA256.HashData(current))) &&
+                            sequence == JTCStamper.App.NativeClipboard.SequenceNumber)
+                        {
+                            if (saved is null) Clipboard.Clear(); else Clipboard.SetDataObject(saved, true);
+                            Result("original-clipboard-restored", "passed");
+                        }
+                        else Result("original-clipboard-restored", "skipped", "Clipboard no longer contains our test data; preserved the current clipboard.");
+                    }
+                }
                 catch (Exception ex) { Result("original-clipboard-restored", "failed", ex.Message); }
             }
             File.WriteAllText(Path.Combine(root, "acceptance.json"), JsonSerializer.Serialize(new
             {
                 Os = Environment.OSVersion.VersionString, Utc = DateTimeOffset.UtcNow,
+                RunnerVersion = typeof(Program).Assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
+                    .Cast<System.Reflection.AssemblyInformationalVersionAttribute>().Single().InformationalVersion,
+                RunnerSha256 = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(Environment.ProcessPath!))),
                 IsElevated = new System.Security.Principal.WindowsPrincipal(System.Security.Principal.WindowsIdentity.GetCurrent())
                     .IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator),
                 OfficeBuild = Microsoft.Win32.Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Office\ClickToRun\Configuration", "VersionToReport", null),
@@ -87,13 +111,14 @@ internal static class Program
         failed |= status == "failed";
         Results.Add(new { Name = name, Status = status, Detail = detail }); Console.WriteLine(name + ": " + status);
     }
-    static (int ExitCode, string Error) Start(string exe, IEnumerable<string> arguments, string label, bool runtime)
+    static (int ExitCode, string Error) Start(string exe, IEnumerable<string> arguments, string label, bool runtime, string? extractionRoot = null)
     {
         var info = new ProcessStartInfo(exe) { UseShellExecute = false, RedirectStandardError = true, RedirectStandardOutput = true };
         foreach (var argument in arguments) info.ArgumentList.Add(argument);
         info.Environment["DOTNET_ROOT_X64"] = Path.Combine(root, runtime ? "runtime" : "missing-runtime");
         info.Environment["DOTNET_ROOT"] = info.Environment["DOTNET_ROOT_X64"];
         info.Environment["DOTNET_MULTILEVEL_LOOKUP"] = "0"; info.Environment["DOTNET_DISABLE_GUI_ERRORS"] = "1";
+        if (extractionRoot is not null) info.Environment["DOTNET_BUNDLE_EXTRACT_BASE_DIR"] = extractionRoot;
         using var process = Process.Start(info) ?? throw new IOException("Cannot start test process.");
         var error = process.StandardError.ReadToEndAsync(); var output = process.StandardOutput.ReadToEndAsync();
         if (!process.WaitForExit(90000)) { process.Kill(true); process.WaitForExit(); throw new TimeoutException(label); }
