@@ -1,0 +1,4622 @@
+[
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "original384",
+      "Origin": 0,
+      "ExpectedId": "479129ec-02d5-3377-0da4-97a6d68a9b13",
+      "ExpectedCode": 1911,
+      "File": "0000-genuine-original384.png",
+      "Sha256": "C3E708136D830A8B3B41E1A27356D1E0B23FA45BC5F39A7F89CAB5DD14D7777F",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1911,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page96",
+      "Origin": 0,
+      "ExpectedId": "479129ec-02d5-3377-0da4-97a6d68a9b13",
+      "ExpectedCode": 1911,
+      "File": "0001-genuine-page96.png",
+      "Sha256": "C7A815182BF1521B5E82D3880670DF917B8DFA34265551E3238202063D87F01A",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1911,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page72",
+      "Origin": 0,
+      "ExpectedId": "479129ec-02d5-3377-0da4-97a6d68a9b13",
+      "ExpectedCode": 1911,
+      "File": "0002-genuine-page72.png",
+      "Sha256": "1565B528369EE33AEFF7470D96F9ADAFBC43E71093DC7E966C03015DE698ED7C",
+      "ExpectedBounds": {
+        "X": 123,
+        "Y": 93,
+        "Width": 66,
+        "Height": 66
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page48",
+      "Origin": 0,
+      "ExpectedId": "479129ec-02d5-3377-0da4-97a6d68a9b13",
+      "ExpectedCode": 1911,
+      "File": "0003-genuine-page48.png",
+      "Sha256": "83FCE7A71B6AB040043D700F0B48E26619AC8A7BEE30D733B0E7623F8FA2DD08",
+      "ExpectedBounds": {
+        "X": 122,
+        "Y": 92,
+        "Width": 44,
+        "Height": 44
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "jpeg85",
+      "Origin": 0,
+      "ExpectedId": "479129ec-02d5-3377-0da4-97a6d68a9b13",
+      "ExpectedCode": 1911,
+      "File": "0004-genuine-jpeg85.jpg",
+      "Sha256": "C7928450193A5C630265665B9EDF45B37224CAB3D15629BB414E47136937C937",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1911,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "rotation3",
+      "Origin": 0,
+      "ExpectedId": "479129ec-02d5-3377-0da4-97a6d68a9b13",
+      "ExpectedCode": 1911,
+      "File": "0005-genuine-rotation3.png",
+      "Sha256": "407CC20FEB62212009DB8C98A0EAB8385F9BA14E720842FAAAEB253D424F1910",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1911,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "gray-background",
+      "Origin": 0,
+      "ExpectedId": "479129ec-02d5-3377-0da4-97a6d68a9b13",
+      "ExpectedCode": 1911,
+      "File": "0006-genuine-gray-background.png",
+      "Sha256": "60659FEBF24BBE5B29185C90017BFE3628CE0D9361DCC71161B8DBE3CD1F0CA1",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1911,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "horizontal110",
+      "Origin": 0,
+      "ExpectedId": "479129ec-02d5-3377-0da4-97a6d68a9b13",
+      "ExpectedCode": 1911,
+      "File": "0007-genuine-horizontal110.png",
+      "Sha256": "FDFBD0A2C8833E328876A9A911206DC6A1100A0E5A4176869485B7A5BFEF59B2",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 96,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "horizontal-lines",
+      "Origin": 0,
+      "ExpectedId": null,
+      "ExpectedCode": 1911,
+      "File": "0008-imitation-horizontal-lines.png",
+      "Sha256": "FB1EBEA52A76D7F0019EEF9E6002F6FCB68300B749D71B47FA29C8460419D488",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "copied-geometric-code",
+      "Origin": 0,
+      "ExpectedId": null,
+      "ExpectedCode": 1911,
+      "File": "0009-imitation-copied-geometric-code.png",
+      "Sha256": "FEFC430271B54A182D8D3AA92A296F9ACABBCFA90CC556C1D4A72838D6E70BC0",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1911,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "original-bytes",
+      "Origin": 0,
+      "ExpectedId": "479129ec-02d5-3377-0da4-97a6d68a9b13",
+      "ExpectedCode": 1911,
+      "File": "0010-unauthorized-copy-original-bytes.png",
+      "Sha256": "C3E708136D830A8B3B41E1A27356D1E0B23FA45BC5F39A7F89CAB5DD14D7777F",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1911,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "resaved-page",
+      "Origin": 0,
+      "ExpectedId": "479129ec-02d5-3377-0da4-97a6d68a9b13",
+      "ExpectedCode": 1911,
+      "File": "0011-unauthorized-copy-resaved-page.png",
+      "Sha256": "C7A815182BF1521B5E82D3880670DF917B8DFA34265551E3238202063D87F01A",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1911,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "original384",
+      "Origin": 1,
+      "ExpectedId": "de285c22-2e06-ce62-2101-30ce7b89fa0d",
+      "ExpectedCode": 3881,
+      "File": "0012-genuine-original384.png",
+      "Sha256": "A1584E865A85C59379A272F41C5F5EE36189843C5D8547C7B0A4F64F80300595",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3881,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page96",
+      "Origin": 1,
+      "ExpectedId": "de285c22-2e06-ce62-2101-30ce7b89fa0d",
+      "ExpectedCode": 3881,
+      "File": "0013-genuine-page96.png",
+      "Sha256": "03E359AAB08882BAE53F9AB20F6069391797EA5A72C873989E959D9E0CA1A6FA",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3881,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page72",
+      "Origin": 1,
+      "ExpectedId": "de285c22-2e06-ce62-2101-30ce7b89fa0d",
+      "ExpectedCode": 3881,
+      "File": "0014-genuine-page72.png",
+      "Sha256": "367C3C95B97F45B527F8A5C1F94E95E9010683A9B3E2646977CFD43109D45D85",
+      "ExpectedBounds": {
+        "X": 123,
+        "Y": 93,
+        "Width": 66,
+        "Height": 66
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page48",
+      "Origin": 1,
+      "ExpectedId": "de285c22-2e06-ce62-2101-30ce7b89fa0d",
+      "ExpectedCode": 3881,
+      "File": "0015-genuine-page48.png",
+      "Sha256": "7B2C1A812554752ED914C37DE85945A9EC1A16F36167B2D8C126DA22EF433262",
+      "ExpectedBounds": {
+        "X": 122,
+        "Y": 92,
+        "Width": 44,
+        "Height": 44
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "jpeg85",
+      "Origin": 1,
+      "ExpectedId": "de285c22-2e06-ce62-2101-30ce7b89fa0d",
+      "ExpectedCode": 3881,
+      "File": "0016-genuine-jpeg85.jpg",
+      "Sha256": "B865DB70EBF5D96164DEE23842B538122802DCE1A4747E54796DD12C5C097A4C",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3881,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "rotation3",
+      "Origin": 1,
+      "ExpectedId": "de285c22-2e06-ce62-2101-30ce7b89fa0d",
+      "ExpectedCode": 3881,
+      "File": "0017-genuine-rotation3.png",
+      "Sha256": "42808754B8388635962C2F6036EB3D26BE6E9F8495E1964910B1536235CEC1B9",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3881,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "gray-background",
+      "Origin": 1,
+      "ExpectedId": "de285c22-2e06-ce62-2101-30ce7b89fa0d",
+      "ExpectedCode": 3881,
+      "File": "0018-genuine-gray-background.png",
+      "Sha256": "FD1E7AA81028FA8CB5525874E111E8285C69C661BF31F474844478AE0B23683E",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3881,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "horizontal110",
+      "Origin": 1,
+      "ExpectedId": "de285c22-2e06-ce62-2101-30ce7b89fa0d",
+      "ExpectedCode": 3881,
+      "File": "0019-genuine-horizontal110.png",
+      "Sha256": "0D59BCEAC792D9CD6060C383514A2021E300886482EF078823B7526C08F61352",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 96,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "horizontal-lines",
+      "Origin": 1,
+      "ExpectedId": null,
+      "ExpectedCode": 3881,
+      "File": "0020-imitation-horizontal-lines.png",
+      "Sha256": "66D310793675CAEE588F4AE648BF95B5B68CA71C896052E8AEDAF7C9FC53FF4B",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "copied-geometric-code",
+      "Origin": 1,
+      "ExpectedId": null,
+      "ExpectedCode": 3881,
+      "File": "0021-imitation-copied-geometric-code.png",
+      "Sha256": "4ED24E324AB37BDAE20CD99EBA956FFBB5F0E50BB0A678CCE65B63E6B6ADB5A5",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3881,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "original-bytes",
+      "Origin": 1,
+      "ExpectedId": "de285c22-2e06-ce62-2101-30ce7b89fa0d",
+      "ExpectedCode": 3881,
+      "File": "0022-unauthorized-copy-original-bytes.png",
+      "Sha256": "A1584E865A85C59379A272F41C5F5EE36189843C5D8547C7B0A4F64F80300595",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3881,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "resaved-page",
+      "Origin": 1,
+      "ExpectedId": "de285c22-2e06-ce62-2101-30ce7b89fa0d",
+      "ExpectedCode": 3881,
+      "File": "0023-unauthorized-copy-resaved-page.png",
+      "Sha256": "03E359AAB08882BAE53F9AB20F6069391797EA5A72C873989E959D9E0CA1A6FA",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3881,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "original384",
+      "Origin": 2,
+      "ExpectedId": "a74ea4b1-e05d-8ecd-26b6-b36a9d5325a3",
+      "ExpectedCode": 4022,
+      "File": "0024-genuine-original384.png",
+      "Sha256": "A5BD0911D9469AC0921D931CA4F30455DBD9DEF3CB8F3DE908380D011A64904A",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 4022,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page96",
+      "Origin": 2,
+      "ExpectedId": "a74ea4b1-e05d-8ecd-26b6-b36a9d5325a3",
+      "ExpectedCode": 4022,
+      "File": "0025-genuine-page96.png",
+      "Sha256": "E479C66D45F817F1D511C8B453BF0910167BE7250E3AB5FBF652E86DBA86715F",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 4022,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page72",
+      "Origin": 2,
+      "ExpectedId": "a74ea4b1-e05d-8ecd-26b6-b36a9d5325a3",
+      "ExpectedCode": 4022,
+      "File": "0026-genuine-page72.png",
+      "Sha256": "38A31ED5742722812456DB7AF9BD52C7B7BEA81C43ACAF6EDFFA08ED6FBFA3C3",
+      "ExpectedBounds": {
+        "X": 123,
+        "Y": 93,
+        "Width": 66,
+        "Height": 66
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page48",
+      "Origin": 2,
+      "ExpectedId": "a74ea4b1-e05d-8ecd-26b6-b36a9d5325a3",
+      "ExpectedCode": 4022,
+      "File": "0027-genuine-page48.png",
+      "Sha256": "18A427A9C24BDFB824DAFD60DC28A082200C85F2B64A2BD06B53ADB3E9C198F3",
+      "ExpectedBounds": {
+        "X": 122,
+        "Y": 92,
+        "Width": 44,
+        "Height": 44
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "jpeg85",
+      "Origin": 2,
+      "ExpectedId": "a74ea4b1-e05d-8ecd-26b6-b36a9d5325a3",
+      "ExpectedCode": 4022,
+      "File": "0028-genuine-jpeg85.jpg",
+      "Sha256": "77D40E659A68C0451883DF47138B3FFF02D76E4B5CABE3C66D7BD51F87A227E6",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 4022,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "rotation3",
+      "Origin": 2,
+      "ExpectedId": "a74ea4b1-e05d-8ecd-26b6-b36a9d5325a3",
+      "ExpectedCode": 4022,
+      "File": "0029-genuine-rotation3.png",
+      "Sha256": "93AD072E5C1E214F51C2F30B45D21E4761F9EB08305E3EAFD2C3157715B48651",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 4022,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "gray-background",
+      "Origin": 2,
+      "ExpectedId": "a74ea4b1-e05d-8ecd-26b6-b36a9d5325a3",
+      "ExpectedCode": 4022,
+      "File": "0030-genuine-gray-background.png",
+      "Sha256": "C51DAFE5E86030D9A8CAFAA32D8C2FA6456A06B6BB2509DF26C278459A3F0E85",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 4022,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "horizontal110",
+      "Origin": 2,
+      "ExpectedId": "a74ea4b1-e05d-8ecd-26b6-b36a9d5325a3",
+      "ExpectedCode": 4022,
+      "File": "0031-genuine-horizontal110.png",
+      "Sha256": "FD9114D6EF3BFDFFF96A8FF14A01E3BC5B6FB28898B7E03552AB1794E72F3F3D",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 96,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "horizontal-lines",
+      "Origin": 2,
+      "ExpectedId": null,
+      "ExpectedCode": 4022,
+      "File": "0032-imitation-horizontal-lines.png",
+      "Sha256": "6CE715C5CE3F9592E0CB5011A3B46299655C98E95EA3DD0A86BD849F01E0FA0F",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "copied-geometric-code",
+      "Origin": 2,
+      "ExpectedId": null,
+      "ExpectedCode": 4022,
+      "File": "0033-imitation-copied-geometric-code.png",
+      "Sha256": "D794ADD5C9EE07AADE68F6A2AE7ECA77D5C6DCDE497FF8F5C5CE5C9F6C1C0FC8",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 4022,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "original-bytes",
+      "Origin": 2,
+      "ExpectedId": "a74ea4b1-e05d-8ecd-26b6-b36a9d5325a3",
+      "ExpectedCode": 4022,
+      "File": "0034-unauthorized-copy-original-bytes.png",
+      "Sha256": "A5BD0911D9469AC0921D931CA4F30455DBD9DEF3CB8F3DE908380D011A64904A",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 4022,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "resaved-page",
+      "Origin": 2,
+      "ExpectedId": "a74ea4b1-e05d-8ecd-26b6-b36a9d5325a3",
+      "ExpectedCode": 4022,
+      "File": "0035-unauthorized-copy-resaved-page.png",
+      "Sha256": "E479C66D45F817F1D511C8B453BF0910167BE7250E3AB5FBF652E86DBA86715F",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 4022,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "original384",
+      "Origin": 3,
+      "ExpectedId": "4c795e69-701a-ac27-fc3a-f037936f0765",
+      "ExpectedCode": 2533,
+      "File": "0036-genuine-original384.png",
+      "Sha256": "8F1F4399C94709A8BA06226EFB9EB7B76F5EC7132415876473C2D08C5AEAE5D8",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2533,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page96",
+      "Origin": 3,
+      "ExpectedId": "4c795e69-701a-ac27-fc3a-f037936f0765",
+      "ExpectedCode": 2533,
+      "File": "0037-genuine-page96.png",
+      "Sha256": "06EA5997AF2D33959D10C3A5EB92F619B715AE10ED4B9073E7682CA1A30D03F7",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2533,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page72",
+      "Origin": 3,
+      "ExpectedId": "4c795e69-701a-ac27-fc3a-f037936f0765",
+      "ExpectedCode": 2533,
+      "File": "0038-genuine-page72.png",
+      "Sha256": "7DD790B5BA8C908C21DD7D216396B1A321CC24CA215BD7B853AE924D78893B97",
+      "ExpectedBounds": {
+        "X": 123,
+        "Y": 93,
+        "Width": 66,
+        "Height": 66
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page48",
+      "Origin": 3,
+      "ExpectedId": "4c795e69-701a-ac27-fc3a-f037936f0765",
+      "ExpectedCode": 2533,
+      "File": "0039-genuine-page48.png",
+      "Sha256": "9EB358E6AB4231EFB03D58DCBF0259C9A5B4B347E94B2BE33C01386419CD6520",
+      "ExpectedBounds": {
+        "X": 122,
+        "Y": 92,
+        "Width": 44,
+        "Height": 44
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "jpeg85",
+      "Origin": 3,
+      "ExpectedId": "4c795e69-701a-ac27-fc3a-f037936f0765",
+      "ExpectedCode": 2533,
+      "File": "0040-genuine-jpeg85.jpg",
+      "Sha256": "C07333F5A7C65F4257EB12CF1E49B9ACD1035BBECB4A0C46B4430CC9A6EBAB0C",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2533,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "rotation3",
+      "Origin": 3,
+      "ExpectedId": "4c795e69-701a-ac27-fc3a-f037936f0765",
+      "ExpectedCode": 2533,
+      "File": "0041-genuine-rotation3.png",
+      "Sha256": "7751BB5B54D3112C12EF05F1C8B2610DBCA611527D80442439457919CF4A1B82",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2533,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "gray-background",
+      "Origin": 3,
+      "ExpectedId": "4c795e69-701a-ac27-fc3a-f037936f0765",
+      "ExpectedCode": 2533,
+      "File": "0042-genuine-gray-background.png",
+      "Sha256": "C3E9E66662D138D19ECC727F2B5F4CE1CDB522726BBD98164DD4220E366D7B35",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2533,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "horizontal110",
+      "Origin": 3,
+      "ExpectedId": "4c795e69-701a-ac27-fc3a-f037936f0765",
+      "ExpectedCode": 2533,
+      "File": "0043-genuine-horizontal110.png",
+      "Sha256": "A9E042EFA8DBEC7ADA8DA2F45685BC508A4DF8A5E4664BBBB55EA4EB5E758260",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 96,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "horizontal-lines",
+      "Origin": 3,
+      "ExpectedId": null,
+      "ExpectedCode": 2533,
+      "File": "0044-imitation-horizontal-lines.png",
+      "Sha256": "267CE27CD1347A6684D534A9536192579FC1626DE32BC5F3FD038353B0C6243B",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "copied-geometric-code",
+      "Origin": 3,
+      "ExpectedId": null,
+      "ExpectedCode": 2533,
+      "File": "0045-imitation-copied-geometric-code.png",
+      "Sha256": "F2E26546A0D024A36A57D73B76B1B3A565CB98F54BD53C770C57C5743A834D35",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2533,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "original-bytes",
+      "Origin": 3,
+      "ExpectedId": "4c795e69-701a-ac27-fc3a-f037936f0765",
+      "ExpectedCode": 2533,
+      "File": "0046-unauthorized-copy-original-bytes.png",
+      "Sha256": "8F1F4399C94709A8BA06226EFB9EB7B76F5EC7132415876473C2D08C5AEAE5D8",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2533,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "resaved-page",
+      "Origin": 3,
+      "ExpectedId": "4c795e69-701a-ac27-fc3a-f037936f0765",
+      "ExpectedCode": 2533,
+      "File": "0047-unauthorized-copy-resaved-page.png",
+      "Sha256": "06EA5997AF2D33959D10C3A5EB92F619B715AE10ED4B9073E7682CA1A30D03F7",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2533,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "original384",
+      "Origin": 4,
+      "ExpectedId": "b5432331-17ae-8fe9-12aa-908ecba4569f",
+      "ExpectedCode": 3603,
+      "File": "0048-genuine-original384.png",
+      "Sha256": "31379AC1762304B915E1800C4C6D8977788F73DC78DB47E8499E7A6E1589A316",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3603,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page96",
+      "Origin": 4,
+      "ExpectedId": "b5432331-17ae-8fe9-12aa-908ecba4569f",
+      "ExpectedCode": 3603,
+      "File": "0049-genuine-page96.png",
+      "Sha256": "7507583AE8FBA3BEC1CEAB291C4F0700F3CFB0D2D48C4CC600BA91ADC6C37B81",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3603,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page72",
+      "Origin": 4,
+      "ExpectedId": "b5432331-17ae-8fe9-12aa-908ecba4569f",
+      "ExpectedCode": 3603,
+      "File": "0050-genuine-page72.png",
+      "Sha256": "835ECCCDF29D21BA3722861AB3BF61EEBDD75292FF4164C7ACF2FB5EF238E72E",
+      "ExpectedBounds": {
+        "X": 123,
+        "Y": 93,
+        "Width": 66,
+        "Height": 66
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page48",
+      "Origin": 4,
+      "ExpectedId": "b5432331-17ae-8fe9-12aa-908ecba4569f",
+      "ExpectedCode": 3603,
+      "File": "0051-genuine-page48.png",
+      "Sha256": "AEA1D53EC10FC95134D720132D4D3D65C3F0DA0CA0C1BD9A2D31093133C81657",
+      "ExpectedBounds": {
+        "X": 122,
+        "Y": 92,
+        "Width": 44,
+        "Height": 44
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "jpeg85",
+      "Origin": 4,
+      "ExpectedId": "b5432331-17ae-8fe9-12aa-908ecba4569f",
+      "ExpectedCode": 3603,
+      "File": "0052-genuine-jpeg85.jpg",
+      "Sha256": "3FFFD3C1905D81B3A36201FFD94901279B62A82F85DB732221A0D8E61267AA91",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3603,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "rotation3",
+      "Origin": 4,
+      "ExpectedId": "b5432331-17ae-8fe9-12aa-908ecba4569f",
+      "ExpectedCode": 3603,
+      "File": "0053-genuine-rotation3.png",
+      "Sha256": "A18CFE51197847AE85B84241A77E8CE6EBD3AAC8FB76B8F003F4FB3CD10CAF41",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3603,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "gray-background",
+      "Origin": 4,
+      "ExpectedId": "b5432331-17ae-8fe9-12aa-908ecba4569f",
+      "ExpectedCode": 3603,
+      "File": "0054-genuine-gray-background.png",
+      "Sha256": "C84861F03C68AE5E8A8BC18AB01F1A3CA046F4CA56E0780EAACE0164FC349901",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3603,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "horizontal110",
+      "Origin": 4,
+      "ExpectedId": "b5432331-17ae-8fe9-12aa-908ecba4569f",
+      "ExpectedCode": 3603,
+      "File": "0055-genuine-horizontal110.png",
+      "Sha256": "BF373FF18ECA8873991ECA930B6330C9BC8EEDD8F112C9FD293866D3D469E609",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 96,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "horizontal-lines",
+      "Origin": 4,
+      "ExpectedId": null,
+      "ExpectedCode": 3603,
+      "File": "0056-imitation-horizontal-lines.png",
+      "Sha256": "D4751D444856C1BB39EAF8624E148783898CB8A8BBD856FF10EB6369BE4F11B4",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "copied-geometric-code",
+      "Origin": 4,
+      "ExpectedId": null,
+      "ExpectedCode": 3603,
+      "File": "0057-imitation-copied-geometric-code.png",
+      "Sha256": "37A97B0012EA93DCFE522F8A4B473D215E0689ACB50E29F260FA3D13AFB0E62B",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3603,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "original-bytes",
+      "Origin": 4,
+      "ExpectedId": "b5432331-17ae-8fe9-12aa-908ecba4569f",
+      "ExpectedCode": 3603,
+      "File": "0058-unauthorized-copy-original-bytes.png",
+      "Sha256": "31379AC1762304B915E1800C4C6D8977788F73DC78DB47E8499E7A6E1589A316",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3603,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "resaved-page",
+      "Origin": 4,
+      "ExpectedId": "b5432331-17ae-8fe9-12aa-908ecba4569f",
+      "ExpectedCode": 3603,
+      "File": "0059-unauthorized-copy-resaved-page.png",
+      "Sha256": "7507583AE8FBA3BEC1CEAB291C4F0700F3CFB0D2D48C4CC600BA91ADC6C37B81",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3603,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "original384",
+      "Origin": 5,
+      "ExpectedId": "c9ee8e15-d5ae-01fd-79d7-854f5ba10961",
+      "ExpectedCode": 3483,
+      "File": "0060-genuine-original384.png",
+      "Sha256": "514A866EB8395D2541BA023CE0A0D60E9162B803383B25ECFCB11EA0E52D3018",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3483,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page96",
+      "Origin": 5,
+      "ExpectedId": "c9ee8e15-d5ae-01fd-79d7-854f5ba10961",
+      "ExpectedCode": 3483,
+      "File": "0061-genuine-page96.png",
+      "Sha256": "587A4E6704D456EF75BFFB61883D197DAC331320A1A8414E1152F5685CD32B45",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3483,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page72",
+      "Origin": 5,
+      "ExpectedId": "c9ee8e15-d5ae-01fd-79d7-854f5ba10961",
+      "ExpectedCode": 3483,
+      "File": "0062-genuine-page72.png",
+      "Sha256": "241437897CECCC5203C6B37463A2E5F153380AAE904D80D0A1102FFDF2D881F0",
+      "ExpectedBounds": {
+        "X": 123,
+        "Y": 93,
+        "Width": 66,
+        "Height": 66
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page48",
+      "Origin": 5,
+      "ExpectedId": "c9ee8e15-d5ae-01fd-79d7-854f5ba10961",
+      "ExpectedCode": 3483,
+      "File": "0063-genuine-page48.png",
+      "Sha256": "550F34A7DBE7CABA8F2513A1932E70F321D9A99FA551EE2B298386EC0708CD8B",
+      "ExpectedBounds": {
+        "X": 122,
+        "Y": 92,
+        "Width": 44,
+        "Height": 44
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "jpeg85",
+      "Origin": 5,
+      "ExpectedId": "c9ee8e15-d5ae-01fd-79d7-854f5ba10961",
+      "ExpectedCode": 3483,
+      "File": "0064-genuine-jpeg85.jpg",
+      "Sha256": "BCF7BF572CA2B32779F0D9AA0834252155D04BB6F9EB99DE4DB0D86F0B57EDEC",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3483,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "rotation3",
+      "Origin": 5,
+      "ExpectedId": "c9ee8e15-d5ae-01fd-79d7-854f5ba10961",
+      "ExpectedCode": 3483,
+      "File": "0065-genuine-rotation3.png",
+      "Sha256": "AC0046BC9819BCC00C047E7DB999E832BB7887ADAB0E949A20E389602272F3A4",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3483,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "gray-background",
+      "Origin": 5,
+      "ExpectedId": "c9ee8e15-d5ae-01fd-79d7-854f5ba10961",
+      "ExpectedCode": 3483,
+      "File": "0066-genuine-gray-background.png",
+      "Sha256": "360FC31D94059F230B61400B380524FB15312040C508D95D021C89675F95582F",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3483,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "horizontal110",
+      "Origin": 5,
+      "ExpectedId": "c9ee8e15-d5ae-01fd-79d7-854f5ba10961",
+      "ExpectedCode": 3483,
+      "File": "0067-genuine-horizontal110.png",
+      "Sha256": "B05C971CBFF26015BD9DC4862BA277C85BA1B35949B93B09369B4B7C6F058FE7",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 96,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "horizontal-lines",
+      "Origin": 5,
+      "ExpectedId": null,
+      "ExpectedCode": 3483,
+      "File": "0068-imitation-horizontal-lines.png",
+      "Sha256": "8AB9D8AFCEEE6EF7C88A9331DF5A1BA443D02AB8FDAB001A77594AC2AACC5970",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "copied-geometric-code",
+      "Origin": 5,
+      "ExpectedId": null,
+      "ExpectedCode": 3483,
+      "File": "0069-imitation-copied-geometric-code.png",
+      "Sha256": "15AEC504755CBC76D8AA6B59D207AD2CF6FDDAD393C9F1FBC2E417FE00C68C02",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3483,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "original-bytes",
+      "Origin": 5,
+      "ExpectedId": "c9ee8e15-d5ae-01fd-79d7-854f5ba10961",
+      "ExpectedCode": 3483,
+      "File": "0070-unauthorized-copy-original-bytes.png",
+      "Sha256": "514A866EB8395D2541BA023CE0A0D60E9162B803383B25ECFCB11EA0E52D3018",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3483,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "resaved-page",
+      "Origin": 5,
+      "ExpectedId": "c9ee8e15-d5ae-01fd-79d7-854f5ba10961",
+      "ExpectedCode": 3483,
+      "File": "0071-unauthorized-copy-resaved-page.png",
+      "Sha256": "587A4E6704D456EF75BFFB61883D197DAC331320A1A8414E1152F5685CD32B45",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3483,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "original384",
+      "Origin": 6,
+      "ExpectedId": "88719e00-4b26-610a-ba05-36115f25121f",
+      "ExpectedCode": 1424,
+      "File": "0072-genuine-original384.png",
+      "Sha256": "2BC1A775A2488647B97A9F1BD3CB637941811C1FC47998470F3876DAACDE7911",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1424,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page96",
+      "Origin": 6,
+      "ExpectedId": "88719e00-4b26-610a-ba05-36115f25121f",
+      "ExpectedCode": 1424,
+      "File": "0073-genuine-page96.png",
+      "Sha256": "95EDD9CA6F2CFEF6339DDCA05410B2A0AAA4B08BF205AD218135ADD6B504C940",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1424,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page72",
+      "Origin": 6,
+      "ExpectedId": "88719e00-4b26-610a-ba05-36115f25121f",
+      "ExpectedCode": 1424,
+      "File": "0074-genuine-page72.png",
+      "Sha256": "B9FAF43B862B0F4CFF7A9D90D720DFE6EC1F4B42D0F096D39897D82C1C13EE8D",
+      "ExpectedBounds": {
+        "X": 123,
+        "Y": 93,
+        "Width": 66,
+        "Height": 66
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page48",
+      "Origin": 6,
+      "ExpectedId": "88719e00-4b26-610a-ba05-36115f25121f",
+      "ExpectedCode": 1424,
+      "File": "0075-genuine-page48.png",
+      "Sha256": "CD6B98865BD78B42BBB7E852A7FA1EAB1A3BDD078949A25C4152A0017A6984EA",
+      "ExpectedBounds": {
+        "X": 122,
+        "Y": 92,
+        "Width": 44,
+        "Height": 44
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "jpeg85",
+      "Origin": 6,
+      "ExpectedId": "88719e00-4b26-610a-ba05-36115f25121f",
+      "ExpectedCode": 1424,
+      "File": "0076-genuine-jpeg85.jpg",
+      "Sha256": "46D7FD2E3F223849CE376EA01F5EBEA987415B55CE08DC4950C9469E9DD9D9CB",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1424,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "rotation3",
+      "Origin": 6,
+      "ExpectedId": "88719e00-4b26-610a-ba05-36115f25121f",
+      "ExpectedCode": 1424,
+      "File": "0077-genuine-rotation3.png",
+      "Sha256": "7DCDEAB0C685942ADCF1CA38B30622FFA73F9790D71E3B5F73D8BC1700EC8BDD",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1424,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "gray-background",
+      "Origin": 6,
+      "ExpectedId": "88719e00-4b26-610a-ba05-36115f25121f",
+      "ExpectedCode": 1424,
+      "File": "0078-genuine-gray-background.png",
+      "Sha256": "4187808793D3740F9B13AD85308F3FAB40B0C113484831DA604F30D86CAA8A04",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1424,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "horizontal110",
+      "Origin": 6,
+      "ExpectedId": "88719e00-4b26-610a-ba05-36115f25121f",
+      "ExpectedCode": 1424,
+      "File": "0079-genuine-horizontal110.png",
+      "Sha256": "C6F8FB49065F32AEC199B8028D6F4986DBDA557CB152835733385DB0CAA74197",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 96,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "horizontal-lines",
+      "Origin": 6,
+      "ExpectedId": null,
+      "ExpectedCode": 1424,
+      "File": "0080-imitation-horizontal-lines.png",
+      "Sha256": "5517D58B6D6DA1D1206BDA7C0F1E01EA193B3925D46144ECEB256A96ABF35E91",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "copied-geometric-code",
+      "Origin": 6,
+      "ExpectedId": null,
+      "ExpectedCode": 1424,
+      "File": "0081-imitation-copied-geometric-code.png",
+      "Sha256": "49466D13EDC7BC5083C1E11F783A03C60F164D752CF0F84CF43DF99CD5FFA04B",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1424,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "original-bytes",
+      "Origin": 6,
+      "ExpectedId": "88719e00-4b26-610a-ba05-36115f25121f",
+      "ExpectedCode": 1424,
+      "File": "0082-unauthorized-copy-original-bytes.png",
+      "Sha256": "2BC1A775A2488647B97A9F1BD3CB637941811C1FC47998470F3876DAACDE7911",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1424,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "resaved-page",
+      "Origin": 6,
+      "ExpectedId": "88719e00-4b26-610a-ba05-36115f25121f",
+      "ExpectedCode": 1424,
+      "File": "0083-unauthorized-copy-resaved-page.png",
+      "Sha256": "95EDD9CA6F2CFEF6339DDCA05410B2A0AAA4B08BF205AD218135ADD6B504C940",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1424,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "original384",
+      "Origin": 7,
+      "ExpectedId": "a3b4d1cf-bd37-f517-4fc2-4991621288df",
+      "ExpectedCode": 1678,
+      "File": "0084-genuine-original384.png",
+      "Sha256": "EE9E74877AD642D78FE1010CBC4A5810A6DAA4993FA5E327755D7BDB02F6B48C",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1678,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page96",
+      "Origin": 7,
+      "ExpectedId": "a3b4d1cf-bd37-f517-4fc2-4991621288df",
+      "ExpectedCode": 1678,
+      "File": "0085-genuine-page96.png",
+      "Sha256": "C220B51402113B031F56ADA57C03E66A5968DB846D46791F33B208D7F0F0E6B9",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1678,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page72",
+      "Origin": 7,
+      "ExpectedId": "a3b4d1cf-bd37-f517-4fc2-4991621288df",
+      "ExpectedCode": 1678,
+      "File": "0086-genuine-page72.png",
+      "Sha256": "E108A333E68E694C8925A78B7851330AC9D6FF00D2F43BBF49E7B9034604054D",
+      "ExpectedBounds": {
+        "X": 123,
+        "Y": 93,
+        "Width": 66,
+        "Height": 66
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page48",
+      "Origin": 7,
+      "ExpectedId": "a3b4d1cf-bd37-f517-4fc2-4991621288df",
+      "ExpectedCode": 1678,
+      "File": "0087-genuine-page48.png",
+      "Sha256": "58FAAC56DBD4E20AC20037B39C052F0D9E4C8C5CF482C2CD8CA161057309D73D",
+      "ExpectedBounds": {
+        "X": 122,
+        "Y": 92,
+        "Width": 44,
+        "Height": 44
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "jpeg85",
+      "Origin": 7,
+      "ExpectedId": "a3b4d1cf-bd37-f517-4fc2-4991621288df",
+      "ExpectedCode": 1678,
+      "File": "0088-genuine-jpeg85.jpg",
+      "Sha256": "1BDE43AE0AC6C57C84B5856F5D2AD39A21FC0142A42A7F2577E741A9D4764D28",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1678,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "rotation3",
+      "Origin": 7,
+      "ExpectedId": "a3b4d1cf-bd37-f517-4fc2-4991621288df",
+      "ExpectedCode": 1678,
+      "File": "0089-genuine-rotation3.png",
+      "Sha256": "A22416FDA34F73781FBF6AC1B208A04C1E528F8F0656485B4D75FDA35B8A69BD",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1678,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "gray-background",
+      "Origin": 7,
+      "ExpectedId": "a3b4d1cf-bd37-f517-4fc2-4991621288df",
+      "ExpectedCode": 1678,
+      "File": "0090-genuine-gray-background.png",
+      "Sha256": "BC7D6C7F05E872416218179F4407A0434FBEEABEC3E551FAAD1253A637FE4A92",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1678,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "horizontal110",
+      "Origin": 7,
+      "ExpectedId": "a3b4d1cf-bd37-f517-4fc2-4991621288df",
+      "ExpectedCode": 1678,
+      "File": "0091-genuine-horizontal110.png",
+      "Sha256": "3AD93037476EB2239FC4C39400C1BB29E047C940ED9211DF46D18EC5BFB22DAC",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 96,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "horizontal-lines",
+      "Origin": 7,
+      "ExpectedId": null,
+      "ExpectedCode": 1678,
+      "File": "0092-imitation-horizontal-lines.png",
+      "Sha256": "080951FDD3C95F811EEA6B33B9AADFF533243585AA514C3D010C2903377154F0",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "copied-geometric-code",
+      "Origin": 7,
+      "ExpectedId": null,
+      "ExpectedCode": 1678,
+      "File": "0093-imitation-copied-geometric-code.png",
+      "Sha256": "5C4E944AF90E995E1180EDA668B63248A25FAAD11D214DC29581BE7EA726FC4C",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1678,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "original-bytes",
+      "Origin": 7,
+      "ExpectedId": "a3b4d1cf-bd37-f517-4fc2-4991621288df",
+      "ExpectedCode": 1678,
+      "File": "0094-unauthorized-copy-original-bytes.png",
+      "Sha256": "EE9E74877AD642D78FE1010CBC4A5810A6DAA4993FA5E327755D7BDB02F6B48C",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1678,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "resaved-page",
+      "Origin": 7,
+      "ExpectedId": "a3b4d1cf-bd37-f517-4fc2-4991621288df",
+      "ExpectedCode": 1678,
+      "File": "0095-unauthorized-copy-resaved-page.png",
+      "Sha256": "C220B51402113B031F56ADA57C03E66A5968DB846D46791F33B208D7F0F0E6B9",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1678,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "original384",
+      "Origin": 8,
+      "ExpectedId": "453a94d7-ba0f-9e8f-c64e-28cf8992f11d",
+      "ExpectedCode": 1846,
+      "File": "0096-genuine-original384.png",
+      "Sha256": "39D0F832A61271A1193918BC27041209D2371125269CABD0B4A573109F0315E1",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1846,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page96",
+      "Origin": 8,
+      "ExpectedId": "453a94d7-ba0f-9e8f-c64e-28cf8992f11d",
+      "ExpectedCode": 1846,
+      "File": "0097-genuine-page96.png",
+      "Sha256": "F3982284D1EE98D3B682B3FA3578B962CC68F9986B31E0E2FED9C5ADB302ADE8",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1846,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page72",
+      "Origin": 8,
+      "ExpectedId": "453a94d7-ba0f-9e8f-c64e-28cf8992f11d",
+      "ExpectedCode": 1846,
+      "File": "0098-genuine-page72.png",
+      "Sha256": "5A7E1C3D4605B6D553FE503690CBF89CC0238105193E548E5F518FF04B64932A",
+      "ExpectedBounds": {
+        "X": 123,
+        "Y": 93,
+        "Width": 66,
+        "Height": 66
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page48",
+      "Origin": 8,
+      "ExpectedId": "453a94d7-ba0f-9e8f-c64e-28cf8992f11d",
+      "ExpectedCode": 1846,
+      "File": "0099-genuine-page48.png",
+      "Sha256": "1D9FEE50FCE709DB39EDD04106E23C9A97A21C55DC3EE1DC4BA9D7CD15C89FB8",
+      "ExpectedBounds": {
+        "X": 122,
+        "Y": 92,
+        "Width": 44,
+        "Height": 44
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "jpeg85",
+      "Origin": 8,
+      "ExpectedId": "453a94d7-ba0f-9e8f-c64e-28cf8992f11d",
+      "ExpectedCode": 1846,
+      "File": "0100-genuine-jpeg85.jpg",
+      "Sha256": "692F4D2AEDF40D89918A36292CD13BB7D3D0986193AB9B56691C71C731DFCCC4",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1846,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "rotation3",
+      "Origin": 8,
+      "ExpectedId": "453a94d7-ba0f-9e8f-c64e-28cf8992f11d",
+      "ExpectedCode": 1846,
+      "File": "0101-genuine-rotation3.png",
+      "Sha256": "6F116A1D34D8C624C1A1A33DE967ED2B4A3DFDE1B5D3D57E59F383DB64D41415",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1846,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "gray-background",
+      "Origin": 8,
+      "ExpectedId": "453a94d7-ba0f-9e8f-c64e-28cf8992f11d",
+      "ExpectedCode": 1846,
+      "File": "0102-genuine-gray-background.png",
+      "Sha256": "E1A02D4ED4A8C4119A42D57D515157624AE6D3FC99F58F77DC54DBBDF341AAD2",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1846,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "horizontal110",
+      "Origin": 8,
+      "ExpectedId": "453a94d7-ba0f-9e8f-c64e-28cf8992f11d",
+      "ExpectedCode": 1846,
+      "File": "0103-genuine-horizontal110.png",
+      "Sha256": "E2DE295D8E1A2CEDB5C369D929A8C18F68DBE4B64EC631EAD71357FDF597C121",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 96,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "horizontal-lines",
+      "Origin": 8,
+      "ExpectedId": null,
+      "ExpectedCode": 1846,
+      "File": "0104-imitation-horizontal-lines.png",
+      "Sha256": "B001CA1D40755C18B69623920A620401BA1F838F8687E8AB38C74E158D5B16D8",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "copied-geometric-code",
+      "Origin": 8,
+      "ExpectedId": null,
+      "ExpectedCode": 1846,
+      "File": "0105-imitation-copied-geometric-code.png",
+      "Sha256": "7C54224C8A7093D61217173CDD56F31D0B6A768A0C889B6D0D01FCB9D2FAE711",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1846,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "original-bytes",
+      "Origin": 8,
+      "ExpectedId": "453a94d7-ba0f-9e8f-c64e-28cf8992f11d",
+      "ExpectedCode": 1846,
+      "File": "0106-unauthorized-copy-original-bytes.png",
+      "Sha256": "39D0F832A61271A1193918BC27041209D2371125269CABD0B4A573109F0315E1",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1846,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "resaved-page",
+      "Origin": 8,
+      "ExpectedId": "453a94d7-ba0f-9e8f-c64e-28cf8992f11d",
+      "ExpectedCode": 1846,
+      "File": "0107-unauthorized-copy-resaved-page.png",
+      "Sha256": "F3982284D1EE98D3B682B3FA3578B962CC68F9986B31E0E2FED9C5ADB302ADE8",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1846,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "original384",
+      "Origin": 9,
+      "ExpectedId": "97597074-f00e-3feb-8035-06e6da49a3cd",
+      "ExpectedCode": 2868,
+      "File": "0108-genuine-original384.png",
+      "Sha256": "2656A30CC2D92E9F72E26F62C968C0607552DAA69C71188D0F199122F1273EE1",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2868,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page96",
+      "Origin": 9,
+      "ExpectedId": "97597074-f00e-3feb-8035-06e6da49a3cd",
+      "ExpectedCode": 2868,
+      "File": "0109-genuine-page96.png",
+      "Sha256": "940B4526F433985415CD01558D05B7F7ECDBC4BE24466013581D92CC527DC4FF",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2868,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page72",
+      "Origin": 9,
+      "ExpectedId": "97597074-f00e-3feb-8035-06e6da49a3cd",
+      "ExpectedCode": 2868,
+      "File": "0110-genuine-page72.png",
+      "Sha256": "04E82BF4DA7ED199F867C5BE0D7106D1222D31B481456DE37F0D16DEA16C9F26",
+      "ExpectedBounds": {
+        "X": 123,
+        "Y": 93,
+        "Width": 66,
+        "Height": 66
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page48",
+      "Origin": 9,
+      "ExpectedId": "97597074-f00e-3feb-8035-06e6da49a3cd",
+      "ExpectedCode": 2868,
+      "File": "0111-genuine-page48.png",
+      "Sha256": "2116D8DFDCA6B6E38512B22DB44053F1B72B1D2DD6658ACDC825B2CD5FF22EC5",
+      "ExpectedBounds": {
+        "X": 122,
+        "Y": 92,
+        "Width": 44,
+        "Height": 44
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "jpeg85",
+      "Origin": 9,
+      "ExpectedId": "97597074-f00e-3feb-8035-06e6da49a3cd",
+      "ExpectedCode": 2868,
+      "File": "0112-genuine-jpeg85.jpg",
+      "Sha256": "43830B1D3EB3A2773FF1BC98EE0C52426B8516FDF0628A3E1BAB25B6088CB660",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2868,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "rotation3",
+      "Origin": 9,
+      "ExpectedId": "97597074-f00e-3feb-8035-06e6da49a3cd",
+      "ExpectedCode": 2868,
+      "File": "0113-genuine-rotation3.png",
+      "Sha256": "377A2BD4664F59FA3FFB80A4FA2BE33481E9E12721CF096CAA0DF07088B2E08F",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2868,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "gray-background",
+      "Origin": 9,
+      "ExpectedId": "97597074-f00e-3feb-8035-06e6da49a3cd",
+      "ExpectedCode": 2868,
+      "File": "0114-genuine-gray-background.png",
+      "Sha256": "FDA47B5E82509E0CC1944236AEC7FA1BC48E20E8B6246576DC1290F6A937E3FB",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2868,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "horizontal110",
+      "Origin": 9,
+      "ExpectedId": "97597074-f00e-3feb-8035-06e6da49a3cd",
+      "ExpectedCode": 2868,
+      "File": "0115-genuine-horizontal110.png",
+      "Sha256": "72C4891360AAF5E069ECAA6104E5CF47EA83643D56CA7B8C858C5F563D15126C",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 96,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "horizontal-lines",
+      "Origin": 9,
+      "ExpectedId": null,
+      "ExpectedCode": 2868,
+      "File": "0116-imitation-horizontal-lines.png",
+      "Sha256": "D6D5A302E93FAB54FBC4E448AE34994B2C4B30FEF5EB61B0B357F07A34F4FB4B",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "copied-geometric-code",
+      "Origin": 9,
+      "ExpectedId": null,
+      "ExpectedCode": 2868,
+      "File": "0117-imitation-copied-geometric-code.png",
+      "Sha256": "E51260E8A89023D5EA1DDD719171BB36009B6E639F85868AD672F2B6A453F2EA",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2868,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "original-bytes",
+      "Origin": 9,
+      "ExpectedId": "97597074-f00e-3feb-8035-06e6da49a3cd",
+      "ExpectedCode": 2868,
+      "File": "0118-unauthorized-copy-original-bytes.png",
+      "Sha256": "2656A30CC2D92E9F72E26F62C968C0607552DAA69C71188D0F199122F1273EE1",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2868,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "resaved-page",
+      "Origin": 9,
+      "ExpectedId": "97597074-f00e-3feb-8035-06e6da49a3cd",
+      "ExpectedCode": 2868,
+      "File": "0119-unauthorized-copy-resaved-page.png",
+      "Sha256": "940B4526F433985415CD01558D05B7F7ECDBC4BE24466013581D92CC527DC4FF",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2868,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "original384",
+      "Origin": 10,
+      "ExpectedId": "60452032-d51d-c781-1bb6-3b4f452b8467",
+      "ExpectedCode": 3413,
+      "File": "0120-genuine-original384.png",
+      "Sha256": "16462B91A752479E9F667DE5F70597CF448160930C73ABC044ABFE4D6A9CEBAB",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3413,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page96",
+      "Origin": 10,
+      "ExpectedId": "60452032-d51d-c781-1bb6-3b4f452b8467",
+      "ExpectedCode": 3413,
+      "File": "0121-genuine-page96.png",
+      "Sha256": "F5D661FA3F06E9FD5E54E0CB9D1CC2BA24D3B7FEC0C3268D83B58438F51102BC",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3413,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page72",
+      "Origin": 10,
+      "ExpectedId": "60452032-d51d-c781-1bb6-3b4f452b8467",
+      "ExpectedCode": 3413,
+      "File": "0122-genuine-page72.png",
+      "Sha256": "897527C22A79FC593E8EBB0FAF2DB2DE3ED19E788AC3CBA9D18771909260FA29",
+      "ExpectedBounds": {
+        "X": 123,
+        "Y": 93,
+        "Width": 66,
+        "Height": 66
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page48",
+      "Origin": 10,
+      "ExpectedId": "60452032-d51d-c781-1bb6-3b4f452b8467",
+      "ExpectedCode": 3413,
+      "File": "0123-genuine-page48.png",
+      "Sha256": "0F9AE33E0FB55D5F1060227FCF84FCA45D5CEFD5D1AD6C843BD61E469E1B9766",
+      "ExpectedBounds": {
+        "X": 122,
+        "Y": 92,
+        "Width": 44,
+        "Height": 44
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "jpeg85",
+      "Origin": 10,
+      "ExpectedId": "60452032-d51d-c781-1bb6-3b4f452b8467",
+      "ExpectedCode": 3413,
+      "File": "0124-genuine-jpeg85.jpg",
+      "Sha256": "A87CC4F476BAAC074532B90DA610252DDC1C759ED23DDD3485BFBFDC29C386C8",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3413,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "rotation3",
+      "Origin": 10,
+      "ExpectedId": "60452032-d51d-c781-1bb6-3b4f452b8467",
+      "ExpectedCode": 3413,
+      "File": "0125-genuine-rotation3.png",
+      "Sha256": "A327B8DA6F2205F80FA30A85E4E89BC334378BBFC04F44AA6E3AC4C82C5C570D",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3413,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "gray-background",
+      "Origin": 10,
+      "ExpectedId": "60452032-d51d-c781-1bb6-3b4f452b8467",
+      "ExpectedCode": 3413,
+      "File": "0126-genuine-gray-background.png",
+      "Sha256": "59197149B0F634863635BC58A7B2248489F7A4048438AA3767878C6BA2D7D94A",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3413,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "horizontal110",
+      "Origin": 10,
+      "ExpectedId": "60452032-d51d-c781-1bb6-3b4f452b8467",
+      "ExpectedCode": 3413,
+      "File": "0127-genuine-horizontal110.png",
+      "Sha256": "11D74F8E91E3112D16956F135697115132D89E9BD75DFEAC533ABF2BB5E914B7",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 96,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "horizontal-lines",
+      "Origin": 10,
+      "ExpectedId": null,
+      "ExpectedCode": 3413,
+      "File": "0128-imitation-horizontal-lines.png",
+      "Sha256": "3AA6A4617CFCEF47F293A25CD9F896F5F41DF1CBD780AA73E54544E1BFF573EF",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "copied-geometric-code",
+      "Origin": 10,
+      "ExpectedId": null,
+      "ExpectedCode": 3413,
+      "File": "0129-imitation-copied-geometric-code.png",
+      "Sha256": "76496856A642BDE8872289E3240A1687FC7AFF4EAA78E8B7EABAC9A4D842CD79",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3413,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "original-bytes",
+      "Origin": 10,
+      "ExpectedId": "60452032-d51d-c781-1bb6-3b4f452b8467",
+      "ExpectedCode": 3413,
+      "File": "0130-unauthorized-copy-original-bytes.png",
+      "Sha256": "16462B91A752479E9F667DE5F70597CF448160930C73ABC044ABFE4D6A9CEBAB",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3413,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "resaved-page",
+      "Origin": 10,
+      "ExpectedId": "60452032-d51d-c781-1bb6-3b4f452b8467",
+      "ExpectedCode": 3413,
+      "File": "0131-unauthorized-copy-resaved-page.png",
+      "Sha256": "F5D661FA3F06E9FD5E54E0CB9D1CC2BA24D3B7FEC0C3268D83B58438F51102BC",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3413,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "original384",
+      "Origin": 11,
+      "ExpectedId": "078a5396-f90d-855f-ddd6-f1d6c63d25be",
+      "ExpectedCode": 2245,
+      "File": "0132-genuine-original384.png",
+      "Sha256": "A774FBCB1E7EBEB40A832D27941420AFDC89F1A02EC48586F597C4FBF7060218",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2245,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page96",
+      "Origin": 11,
+      "ExpectedId": "078a5396-f90d-855f-ddd6-f1d6c63d25be",
+      "ExpectedCode": 2245,
+      "File": "0133-genuine-page96.png",
+      "Sha256": "D7B27C9F96999C94CD47827E602D92CF6833B63D4605A9095929DBBEC9F628A2",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2245,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page72",
+      "Origin": 11,
+      "ExpectedId": "078a5396-f90d-855f-ddd6-f1d6c63d25be",
+      "ExpectedCode": 2245,
+      "File": "0134-genuine-page72.png",
+      "Sha256": "47082F8BB248538AB3E845FBC80E3A851859BCFE3F972E158AE67C950679E1E8",
+      "ExpectedBounds": {
+        "X": 123,
+        "Y": 93,
+        "Width": 66,
+        "Height": 66
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page48",
+      "Origin": 11,
+      "ExpectedId": "078a5396-f90d-855f-ddd6-f1d6c63d25be",
+      "ExpectedCode": 2245,
+      "File": "0135-genuine-page48.png",
+      "Sha256": "197BFC2C2EA3A870B5AFFF143E979BB96E64B321168E79C44B67BD725FD2D1F8",
+      "ExpectedBounds": {
+        "X": 122,
+        "Y": 92,
+        "Width": 44,
+        "Height": 44
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "jpeg85",
+      "Origin": 11,
+      "ExpectedId": "078a5396-f90d-855f-ddd6-f1d6c63d25be",
+      "ExpectedCode": 2245,
+      "File": "0136-genuine-jpeg85.jpg",
+      "Sha256": "5640E21F8EBBC4C8508709B47FA6AD611AB556552B01708B7F5EB427BBE19F3E",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2245,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "rotation3",
+      "Origin": 11,
+      "ExpectedId": "078a5396-f90d-855f-ddd6-f1d6c63d25be",
+      "ExpectedCode": 2245,
+      "File": "0137-genuine-rotation3.png",
+      "Sha256": "E5F2DE45FD8C302A1C64EBEFC748B2A94AC40E6BC4BA19645080D5486E3F6D81",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2245,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "gray-background",
+      "Origin": 11,
+      "ExpectedId": "078a5396-f90d-855f-ddd6-f1d6c63d25be",
+      "ExpectedCode": 2245,
+      "File": "0138-genuine-gray-background.png",
+      "Sha256": "D899A9A4EABB9A4762534336D8455A624B2E6C66DBE1BBEECF5467560BB65824",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2245,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "horizontal110",
+      "Origin": 11,
+      "ExpectedId": "078a5396-f90d-855f-ddd6-f1d6c63d25be",
+      "ExpectedCode": 2245,
+      "File": "0139-genuine-horizontal110.png",
+      "Sha256": "A83FAFAE934DD78AAD9F727E6E2EB784CFB584361C0A98C296CFB7A0757C290C",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 96,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "horizontal-lines",
+      "Origin": 11,
+      "ExpectedId": null,
+      "ExpectedCode": 2245,
+      "File": "0140-imitation-horizontal-lines.png",
+      "Sha256": "97445B77703D87D0DAED7E1B30FC9764311085EB184BC6BE1704590980470E68",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "copied-geometric-code",
+      "Origin": 11,
+      "ExpectedId": null,
+      "ExpectedCode": 2245,
+      "File": "0141-imitation-copied-geometric-code.png",
+      "Sha256": "EFD154A943B39ACBF462D30998FB1DF9958822DC10B0A652B9DFCD00BFDDADA8",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2245,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "original-bytes",
+      "Origin": 11,
+      "ExpectedId": "078a5396-f90d-855f-ddd6-f1d6c63d25be",
+      "ExpectedCode": 2245,
+      "File": "0142-unauthorized-copy-original-bytes.png",
+      "Sha256": "A774FBCB1E7EBEB40A832D27941420AFDC89F1A02EC48586F597C4FBF7060218",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2245,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "resaved-page",
+      "Origin": 11,
+      "ExpectedId": "078a5396-f90d-855f-ddd6-f1d6c63d25be",
+      "ExpectedCode": 2245,
+      "File": "0143-unauthorized-copy-resaved-page.png",
+      "Sha256": "D7B27C9F96999C94CD47827E602D92CF6833B63D4605A9095929DBBEC9F628A2",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2245,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "original384",
+      "Origin": 12,
+      "ExpectedId": "6a5f110c-cd87-88b7-0a35-616c724ae49a",
+      "ExpectedCode": 128,
+      "File": "0144-genuine-original384.png",
+      "Sha256": "6E036C8D17F2C2CEF179A05913916603AD005E7B0237B5664F62244E78CF7A55",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page96",
+      "Origin": 12,
+      "ExpectedId": "6a5f110c-cd87-88b7-0a35-616c724ae49a",
+      "ExpectedCode": 128,
+      "File": "0145-genuine-page96.png",
+      "Sha256": "F0AEE9976311E395412FDB3D7D2BA19C288631D4A780124AD22FE12B98AB0F11",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 128,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page72",
+      "Origin": 12,
+      "ExpectedId": "6a5f110c-cd87-88b7-0a35-616c724ae49a",
+      "ExpectedCode": 128,
+      "File": "0146-genuine-page72.png",
+      "Sha256": "C7E35CEF1F27B2A572429536BD411C716D37C89D4BF9C49B09E25F0144BE95D2",
+      "ExpectedBounds": {
+        "X": 123,
+        "Y": 93,
+        "Width": 66,
+        "Height": 66
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page48",
+      "Origin": 12,
+      "ExpectedId": "6a5f110c-cd87-88b7-0a35-616c724ae49a",
+      "ExpectedCode": 128,
+      "File": "0147-genuine-page48.png",
+      "Sha256": "5B6C098793B2B74EE1ABFD8FBBA2461DB8EB41523CAE16BE93CAE2CDCDAFE092",
+      "ExpectedBounds": {
+        "X": 122,
+        "Y": 92,
+        "Width": 44,
+        "Height": 44
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "jpeg85",
+      "Origin": 12,
+      "ExpectedId": "6a5f110c-cd87-88b7-0a35-616c724ae49a",
+      "ExpectedCode": 128,
+      "File": "0148-genuine-jpeg85.jpg",
+      "Sha256": "DBB55E49D2EB9C5F1D667D9581DB09E64CB533FAEC4B86889204F3CE63CA93E4",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 128,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "rotation3",
+      "Origin": 12,
+      "ExpectedId": "6a5f110c-cd87-88b7-0a35-616c724ae49a",
+      "ExpectedCode": 128,
+      "File": "0149-genuine-rotation3.png",
+      "Sha256": "A3BBB8857B2736906A95E34980C92CC7819126B0870699045A027F04DC5F578E",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 128,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "gray-background",
+      "Origin": 12,
+      "ExpectedId": "6a5f110c-cd87-88b7-0a35-616c724ae49a",
+      "ExpectedCode": 128,
+      "File": "0150-genuine-gray-background.png",
+      "Sha256": "073DB4C17F6FDE802A85FCBBB873F42A7A83F0EC6A2411A88E33DC58B7E341C8",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 128,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "horizontal110",
+      "Origin": 12,
+      "ExpectedId": "6a5f110c-cd87-88b7-0a35-616c724ae49a",
+      "ExpectedCode": 128,
+      "File": "0151-genuine-horizontal110.png",
+      "Sha256": "1512093C10E7DCB2B629FB64BA5C52498F9B923833DDE2E10CFAF65CC8F877D1",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 96,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "horizontal-lines",
+      "Origin": 12,
+      "ExpectedId": null,
+      "ExpectedCode": 128,
+      "File": "0152-imitation-horizontal-lines.png",
+      "Sha256": "398BD11368533C682669ABAFC34C1C39214582ED4853C155968A8B1BBBCD6739",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "copied-geometric-code",
+      "Origin": 12,
+      "ExpectedId": null,
+      "ExpectedCode": 128,
+      "File": "0153-imitation-copied-geometric-code.png",
+      "Sha256": "B33164CA7362EFFEADC87DCAF72E3F9499960815E4465674922F1E8EA003E69F",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 128,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "original-bytes",
+      "Origin": 12,
+      "ExpectedId": "6a5f110c-cd87-88b7-0a35-616c724ae49a",
+      "ExpectedCode": 128,
+      "File": "0154-unauthorized-copy-original-bytes.png",
+      "Sha256": "6E036C8D17F2C2CEF179A05913916603AD005E7B0237B5664F62244E78CF7A55",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "resaved-page",
+      "Origin": 12,
+      "ExpectedId": "6a5f110c-cd87-88b7-0a35-616c724ae49a",
+      "ExpectedCode": 128,
+      "File": "0155-unauthorized-copy-resaved-page.png",
+      "Sha256": "F0AEE9976311E395412FDB3D7D2BA19C288631D4A780124AD22FE12B98AB0F11",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 128,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "original384",
+      "Origin": 13,
+      "ExpectedId": "0e089a47-2293-e8a0-059e-428a7a659092",
+      "ExpectedCode": 241,
+      "File": "0156-genuine-original384.png",
+      "Sha256": "84315D010B8E0829183FBE4D73E56F22D31A0461955E3B5A0B8BE7FB1B139D09",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 241,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page96",
+      "Origin": 13,
+      "ExpectedId": "0e089a47-2293-e8a0-059e-428a7a659092",
+      "ExpectedCode": 241,
+      "File": "0157-genuine-page96.png",
+      "Sha256": "CF621F1890999AD4030F01847E69E6C32B5B8A05B387A5DD8EE111F06F647BFD",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 241,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page72",
+      "Origin": 13,
+      "ExpectedId": "0e089a47-2293-e8a0-059e-428a7a659092",
+      "ExpectedCode": 241,
+      "File": "0158-genuine-page72.png",
+      "Sha256": "8942BA53347136CC8E7AFC45EDABFAC772F1FB4F541E540D9820FA6B30545669",
+      "ExpectedBounds": {
+        "X": 123,
+        "Y": 93,
+        "Width": 66,
+        "Height": 66
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page48",
+      "Origin": 13,
+      "ExpectedId": "0e089a47-2293-e8a0-059e-428a7a659092",
+      "ExpectedCode": 241,
+      "File": "0159-genuine-page48.png",
+      "Sha256": "3E1297E122CE20D5F0592B833A904F8F1BE863EF0788208CC5C3C40C57F39D5D",
+      "ExpectedBounds": {
+        "X": 122,
+        "Y": 92,
+        "Width": 44,
+        "Height": 44
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "jpeg85",
+      "Origin": 13,
+      "ExpectedId": "0e089a47-2293-e8a0-059e-428a7a659092",
+      "ExpectedCode": 241,
+      "File": "0160-genuine-jpeg85.jpg",
+      "Sha256": "7B71009AAE20A50EC372052846521116EE7BD772906A52AA87A222EB5C3814C4",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 241,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "rotation3",
+      "Origin": 13,
+      "ExpectedId": "0e089a47-2293-e8a0-059e-428a7a659092",
+      "ExpectedCode": 241,
+      "File": "0161-genuine-rotation3.png",
+      "Sha256": "34EEB29E845E8AA27B988CAF8E5C3A1EB7429229F3A3D2FA7ED33DB649AB5A17",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 241,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "gray-background",
+      "Origin": 13,
+      "ExpectedId": "0e089a47-2293-e8a0-059e-428a7a659092",
+      "ExpectedCode": 241,
+      "File": "0162-genuine-gray-background.png",
+      "Sha256": "CDCF42C6ABE73FF760EC49CED30EDABDB1245571D414BC35F2D1E8384C0F5D1F",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 241,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "horizontal110",
+      "Origin": 13,
+      "ExpectedId": "0e089a47-2293-e8a0-059e-428a7a659092",
+      "ExpectedCode": 241,
+      "File": "0163-genuine-horizontal110.png",
+      "Sha256": "E961172027D9FBA581F72A979DA7A4C6A3BA68919F45F0FA6F5BCB7E908E169F",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 96,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "horizontal-lines",
+      "Origin": 13,
+      "ExpectedId": null,
+      "ExpectedCode": 241,
+      "File": "0164-imitation-horizontal-lines.png",
+      "Sha256": "33CC1F27C6EB6D0328A2D4E456B1E870E439AFF2E6F06B36C2E4C514E4759CBE",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "copied-geometric-code",
+      "Origin": 13,
+      "ExpectedId": null,
+      "ExpectedCode": 241,
+      "File": "0165-imitation-copied-geometric-code.png",
+      "Sha256": "5E60EACFB083F0825EFBD051363F960F6E2A8B0C019187345844CB18D720970A",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 241,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "original-bytes",
+      "Origin": 13,
+      "ExpectedId": "0e089a47-2293-e8a0-059e-428a7a659092",
+      "ExpectedCode": 241,
+      "File": "0166-unauthorized-copy-original-bytes.png",
+      "Sha256": "84315D010B8E0829183FBE4D73E56F22D31A0461955E3B5A0B8BE7FB1B139D09",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 241,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "resaved-page",
+      "Origin": 13,
+      "ExpectedId": "0e089a47-2293-e8a0-059e-428a7a659092",
+      "ExpectedCode": 241,
+      "File": "0167-unauthorized-copy-resaved-page.png",
+      "Sha256": "CF621F1890999AD4030F01847E69E6C32B5B8A05B387A5DD8EE111F06F647BFD",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 241,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "original384",
+      "Origin": 14,
+      "ExpectedId": "256c87fd-0beb-5250-3bca-dfa83cc6ff91",
+      "ExpectedCode": 2116,
+      "File": "0168-genuine-original384.png",
+      "Sha256": "DCCA2189536D01A36BA1925A69A754D134EE018180CD191A6A9298A790987095",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2116,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page96",
+      "Origin": 14,
+      "ExpectedId": "256c87fd-0beb-5250-3bca-dfa83cc6ff91",
+      "ExpectedCode": 2116,
+      "File": "0169-genuine-page96.png",
+      "Sha256": "D5BFBDFCFCC1CA2A7CEF2C5F941D551663B6DEAC1CF7B71DD0388C431DCD784A",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2116,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page72",
+      "Origin": 14,
+      "ExpectedId": "256c87fd-0beb-5250-3bca-dfa83cc6ff91",
+      "ExpectedCode": 2116,
+      "File": "0170-genuine-page72.png",
+      "Sha256": "B3764CE72D7D9A2E09EF9E336C6279D791B2BB8B8C320165D6EC65672B4188CF",
+      "ExpectedBounds": {
+        "X": 123,
+        "Y": 93,
+        "Width": 66,
+        "Height": 66
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page48",
+      "Origin": 14,
+      "ExpectedId": "256c87fd-0beb-5250-3bca-dfa83cc6ff91",
+      "ExpectedCode": 2116,
+      "File": "0171-genuine-page48.png",
+      "Sha256": "6C74B8521C812A138897EF21464C0830BF6F6CFF349C9A40A7C37C192E30F0AA",
+      "ExpectedBounds": {
+        "X": 122,
+        "Y": 92,
+        "Width": 44,
+        "Height": 44
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "jpeg85",
+      "Origin": 14,
+      "ExpectedId": "256c87fd-0beb-5250-3bca-dfa83cc6ff91",
+      "ExpectedCode": 2116,
+      "File": "0172-genuine-jpeg85.jpg",
+      "Sha256": "BEFE288CF93094ECE3AD89F6599315077B050AE165B2978C32AD6BDA5AE96573",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2116,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "rotation3",
+      "Origin": 14,
+      "ExpectedId": "256c87fd-0beb-5250-3bca-dfa83cc6ff91",
+      "ExpectedCode": 2116,
+      "File": "0173-genuine-rotation3.png",
+      "Sha256": "3CB6CE3E8D349E93BAA6028EB0BDC2730DC17897A939C125F8A3F61E71244FE6",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2116,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "gray-background",
+      "Origin": 14,
+      "ExpectedId": "256c87fd-0beb-5250-3bca-dfa83cc6ff91",
+      "ExpectedCode": 2116,
+      "File": "0174-genuine-gray-background.png",
+      "Sha256": "B255497B47540DD48B1B30E3F0614078630EE8A2EE1D9B63ED7694E38182C41F",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2116,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "horizontal110",
+      "Origin": 14,
+      "ExpectedId": "256c87fd-0beb-5250-3bca-dfa83cc6ff91",
+      "ExpectedCode": 2116,
+      "File": "0175-genuine-horizontal110.png",
+      "Sha256": "DD1973BF747B9846B45D253431ADB00845D23ABC87DB616CDEEF5074313503F7",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 96,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "horizontal-lines",
+      "Origin": 14,
+      "ExpectedId": null,
+      "ExpectedCode": 2116,
+      "File": "0176-imitation-horizontal-lines.png",
+      "Sha256": "45B756DECF31293B553161BE1AF6384C908C860047774230C7961B9E613597ED",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "copied-geometric-code",
+      "Origin": 14,
+      "ExpectedId": null,
+      "ExpectedCode": 2116,
+      "File": "0177-imitation-copied-geometric-code.png",
+      "Sha256": "80B6A52F786A7ABFBA1FB796EEAF82BBEFAB2C7A1C48EF08702998549D49CE48",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2116,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "original-bytes",
+      "Origin": 14,
+      "ExpectedId": "256c87fd-0beb-5250-3bca-dfa83cc6ff91",
+      "ExpectedCode": 2116,
+      "File": "0178-unauthorized-copy-original-bytes.png",
+      "Sha256": "DCCA2189536D01A36BA1925A69A754D134EE018180CD191A6A9298A790987095",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2116,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "resaved-page",
+      "Origin": 14,
+      "ExpectedId": "256c87fd-0beb-5250-3bca-dfa83cc6ff91",
+      "ExpectedCode": 2116,
+      "File": "0179-unauthorized-copy-resaved-page.png",
+      "Sha256": "D5BFBDFCFCC1CA2A7CEF2C5F941D551663B6DEAC1CF7B71DD0388C431DCD784A",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2116,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "original384",
+      "Origin": 15,
+      "ExpectedId": "3bae87fd-929c-ce09-2d7c-efc0db36ba54",
+      "ExpectedCode": 436,
+      "File": "0180-genuine-original384.png",
+      "Sha256": "CAC4C982A33374B95100931BC1749A760E2E1E64B5D93A142A81E3CAF0E73DFC",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 436,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page96",
+      "Origin": 15,
+      "ExpectedId": "3bae87fd-929c-ce09-2d7c-efc0db36ba54",
+      "ExpectedCode": 436,
+      "File": "0181-genuine-page96.png",
+      "Sha256": "E3CDC01E39EA36BC8D3B00BEA406362F2EE061FD5B37018F5606108E8147BF1D",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 436,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page72",
+      "Origin": 15,
+      "ExpectedId": "3bae87fd-929c-ce09-2d7c-efc0db36ba54",
+      "ExpectedCode": 436,
+      "File": "0182-genuine-page72.png",
+      "Sha256": "0038C7237D8264BFBAE848FD3FC6DC84E61F57F763510D1EB48E27C7C160229A",
+      "ExpectedBounds": {
+        "X": 123,
+        "Y": 93,
+        "Width": 66,
+        "Height": 66
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "page48",
+      "Origin": 15,
+      "ExpectedId": "3bae87fd-929c-ce09-2d7c-efc0db36ba54",
+      "ExpectedCode": 436,
+      "File": "0183-genuine-page48.png",
+      "Sha256": "756810EA6057A23DED422981F972D0CB47E2D8DA91A43AA8EF72C19D078E5EEC",
+      "ExpectedBounds": {
+        "X": 122,
+        "Y": 92,
+        "Width": 44,
+        "Height": 44
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "jpeg85",
+      "Origin": 15,
+      "ExpectedId": "3bae87fd-929c-ce09-2d7c-efc0db36ba54",
+      "ExpectedCode": 436,
+      "File": "0184-genuine-jpeg85.jpg",
+      "Sha256": "184AC37C3C7D9AED1E7A3C932C89678148CD6933D3B4E9656B9E0B4682308190",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 436,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "rotation3",
+      "Origin": 15,
+      "ExpectedId": "3bae87fd-929c-ce09-2d7c-efc0db36ba54",
+      "ExpectedCode": 436,
+      "File": "0185-genuine-rotation3.png",
+      "Sha256": "71601C3F60745A4525C69CC50CFDA44E32AA0C0ABF05A578088418A5C7EFED38",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 436,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "gray-background",
+      "Origin": 15,
+      "ExpectedId": "3bae87fd-929c-ce09-2d7c-efc0db36ba54",
+      "ExpectedCode": 436,
+      "File": "0186-genuine-gray-background.png",
+      "Sha256": "A3B789F53C541D5D9BDEF23503C99E17B878CC77EE39F9CE7477C65BA06801BE",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 436,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "horizontal110",
+      "Origin": 15,
+      "ExpectedId": "3bae87fd-929c-ce09-2d7c-efc0db36ba54",
+      "ExpectedCode": 436,
+      "File": "0187-genuine-horizontal110.png",
+      "Sha256": "342CE582A6AC99CED201E9091CFCB5FE2BB9284E519AC68B240DCD1681FA5D9E",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 96,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "12\u30D3\u30C3\u30C8\u306E\u8AAD\u307F\u53D6\u308A\u306B\u306F\u76F4\u5F8480px\u4EE5\u4E0A\u306E\u5186\u5F62\u9818\u57DF\u304C\u5FC5\u8981\u3067\u3059\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "horizontal-lines",
+      "Origin": 15,
+      "ExpectedId": null,
+      "ExpectedCode": 436,
+      "File": "0188-imitation-horizontal-lines.png",
+      "Sha256": "A7078C455C90AD12CECCD642B042B81AAEC9B004516D8B9288E122C8F4C04275",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  },
+  {
+    "Input": {
+      "Group": "imitation",
+      "Condition": "copied-geometric-code",
+      "Origin": 15,
+      "ExpectedId": null,
+      "ExpectedCode": 436,
+      "File": "0189-imitation-copied-geometric-code.png",
+      "Sha256": "AD03F8C18F2BCE4CEBA53AB4B701C31960140A04CD8EAE1AEE332AF3D5D3792A",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 436,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "original-bytes",
+      "Origin": 15,
+      "ExpectedId": "3bae87fd-929c-ce09-2d7c-efc0db36ba54",
+      "ExpectedCode": 436,
+      "File": "0190-unauthorized-copy-original-bytes.png",
+      "Sha256": "CAC4C982A33374B95100931BC1749A760E2E1E64B5D93A142A81E3CAF0E73DFC",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 436,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "unauthorized-copy",
+      "Condition": "resaved-page",
+      "Origin": 15,
+      "ExpectedId": "3bae87fd-929c-ce09-2d7c-efc0db36ba54",
+      "ExpectedCode": 436,
+      "File": "0191-unauthorized-copy-resaved-page.png",
+      "Sha256": "E3CDC01E39EA36BC8D3B00BEA406362F2EE061FD5B37018F5606108E8147BF1D",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 436,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "powerpoint-export96",
+      "Origin": 0,
+      "ExpectedId": "479129ec-02d5-3377-0da4-97a6d68a9b13",
+      "ExpectedCode": 1911,
+      "File": "0192-genuine-powerpoint-export96.png",
+      "Sha256": "BF3366AF2E7399C41ECAA7711134400950A9D2436ABFA9C9D3B43014339FB25A",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 88,
+        "Height": 88
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1911,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "powerpoint-export96",
+      "Origin": 1,
+      "ExpectedId": "de285c22-2e06-ce62-2101-30ce7b89fa0d",
+      "ExpectedCode": 3881,
+      "File": "0193-genuine-powerpoint-export96.png",
+      "Sha256": "E27722DE834DD3E9A0B1DE9B4D57B7A6D1D1BC705F4A13DFC4669D4AEC9BF29A",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 88,
+        "Height": 88
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3881,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "powerpoint-export96",
+      "Origin": 2,
+      "ExpectedId": "a74ea4b1-e05d-8ecd-26b6-b36a9d5325a3",
+      "ExpectedCode": 4022,
+      "File": "0194-genuine-powerpoint-export96.png",
+      "Sha256": "4E85E33217B76882DC04E412F67E2D97DE1264ED79E3713E8DBA16BB9DC7B3F5",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 88,
+        "Height": 88
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 4022,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "powerpoint-export96",
+      "Origin": 3,
+      "ExpectedId": "4c795e69-701a-ac27-fc3a-f037936f0765",
+      "ExpectedCode": 2533,
+      "File": "0195-genuine-powerpoint-export96.png",
+      "Sha256": "F68CDDFAFC0781D5B227329A76F88F3419D555B78B05A166C4DB61981B652A89",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 88,
+        "Height": 88
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2533,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "powerpoint-export96",
+      "Origin": 4,
+      "ExpectedId": "b5432331-17ae-8fe9-12aa-908ecba4569f",
+      "ExpectedCode": 3603,
+      "File": "0196-genuine-powerpoint-export96.png",
+      "Sha256": "BECB26CC72F261A0D601142E8D4437C890B50CF04BC1D3739EE8821B88FFD933",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 88,
+        "Height": 88
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3603,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "powerpoint-export96",
+      "Origin": 5,
+      "ExpectedId": "c9ee8e15-d5ae-01fd-79d7-854f5ba10961",
+      "ExpectedCode": 3483,
+      "File": "0197-genuine-powerpoint-export96.png",
+      "Sha256": "28836365003A047075EFB99FB21A4D852C8909EDC10718971E5BEB6C33CD40FB",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 88,
+        "Height": 88
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3483,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "powerpoint-export96",
+      "Origin": 6,
+      "ExpectedId": "88719e00-4b26-610a-ba05-36115f25121f",
+      "ExpectedCode": 1424,
+      "File": "0198-genuine-powerpoint-export96.png",
+      "Sha256": "DC97DDBF0E5FEEEA997751491CD64B4E3F091E09098A93616A38833DEBD52D75",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 88,
+        "Height": 88
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1424,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "powerpoint-export96",
+      "Origin": 7,
+      "ExpectedId": "a3b4d1cf-bd37-f517-4fc2-4991621288df",
+      "ExpectedCode": 1678,
+      "File": "0199-genuine-powerpoint-export96.png",
+      "Sha256": "8FCF421C847D1DB4259B48F296CED790881C9640316AC39A473F969048E1CF69",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 88,
+        "Height": 88
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1678,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "powerpoint-export96",
+      "Origin": 8,
+      "ExpectedId": "453a94d7-ba0f-9e8f-c64e-28cf8992f11d",
+      "ExpectedCode": 1846,
+      "File": "0200-genuine-powerpoint-export96.png",
+      "Sha256": "6F2D28B24FD93F3DF965F287024EF2DA2289DEE7915026922ADAA6A9901FEEAC",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 88,
+        "Height": 88
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 1846,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "powerpoint-export96",
+      "Origin": 9,
+      "ExpectedId": "97597074-f00e-3feb-8035-06e6da49a3cd",
+      "ExpectedCode": 2868,
+      "File": "0201-genuine-powerpoint-export96.png",
+      "Sha256": "959DC2ADCEC422AF1113DE9FF6EAC3230D647669D553C02CA56C26E921621A9C",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 88,
+        "Height": 88
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2868,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "powerpoint-export96",
+      "Origin": 10,
+      "ExpectedId": "60452032-d51d-c781-1bb6-3b4f452b8467",
+      "ExpectedCode": 3413,
+      "File": "0202-genuine-powerpoint-export96.png",
+      "Sha256": "4DC172C183575D1C220C36296A48AE1533B4B6171A9C3E133CB179F2906726D9",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 88,
+        "Height": 88
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 3413,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "powerpoint-export96",
+      "Origin": 11,
+      "ExpectedId": "078a5396-f90d-855f-ddd6-f1d6c63d25be",
+      "ExpectedCode": 2245,
+      "File": "0203-genuine-powerpoint-export96.png",
+      "Sha256": "F8C151084B6A06CFD45CC6F18E01D705C6FF0BEDECAF87D4F5F15AAEE06DC8AF",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 88,
+        "Height": 88
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2245,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "powerpoint-export96",
+      "Origin": 12,
+      "ExpectedId": "6a5f110c-cd87-88b7-0a35-616c724ae49a",
+      "ExpectedCode": 128,
+      "File": "0204-genuine-powerpoint-export96.png",
+      "Sha256": "910E3A8D4A49FC5B4BE2FCB9DDAC8DB4FC63CB1184447F56A9E16E400AB7B2BA",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 88,
+        "Height": 88
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 128,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "powerpoint-export96",
+      "Origin": 13,
+      "ExpectedId": "0e089a47-2293-e8a0-059e-428a7a659092",
+      "ExpectedCode": 241,
+      "File": "0205-genuine-powerpoint-export96.png",
+      "Sha256": "365A6B369B590F26E279E3C9EDB57EBE735FE20BDFC7385611C2F52C626C3B83",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 88,
+        "Height": 88
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 241,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "powerpoint-export96",
+      "Origin": 14,
+      "ExpectedId": "256c87fd-0beb-5250-3bca-dfa83cc6ff91",
+      "ExpectedCode": 2116,
+      "File": "0206-genuine-powerpoint-export96.png",
+      "Sha256": "9CAD53B64E0CB651E20BAD38B5F77CE3656BDAA10138F4EB67B9C69BB4D0271B",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 88,
+        "Height": 88
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 2116,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "genuine",
+      "Condition": "powerpoint-export96",
+      "Origin": 15,
+      "ExpectedId": "3bae87fd-929c-ce09-2d7c-efc0db36ba54",
+      "ExpectedCode": 436,
+      "File": "0207-genuine-powerpoint-export96.png",
+      "Sha256": "BAA35D6B5A7D97DCF04A06BF74FC1A8FFE48B6D736D4AF92F4368B52287A9DBF",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 88,
+        "Height": 88
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": 436,
+    "Reason": "12\u30D3\u30C3\u30C8\u5019\u88DC\u3067\u3059\u3002CRC\u306F\u8AA4\u8AAD\u691C\u67FB\u3067\u3042\u308A\u8A8D\u8A3C\u3067\u306F\u3042\u308A\u307E\u305B\u3093\u3002"
+  },
+  {
+    "Input": {
+      "Group": "old-reference",
+      "Condition": "original384",
+      "Origin": 0,
+      "ExpectedId": "0cfa74ff-a62a-797d-56f4-ac922c85b6a0",
+      "ExpectedCode": null,
+      "File": "0208-old-reference-original384.png",
+      "Sha256": "0745586EF17249DF1952CAF43268C640E82C2984CB8A9C330D9417DAD8EFEEA8",
+      "ExpectedBounds": {
+        "X": 18,
+        "Y": 18,
+        "Width": 348,
+        "Height": 348
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  },
+  {
+    "Input": {
+      "Group": "old-reference",
+      "Condition": "outside-latest300",
+      "Origin": 0,
+      "ExpectedId": "0cfa74ff-a62a-797d-56f4-ac922c85b6a0",
+      "ExpectedCode": null,
+      "File": "0209-old-reference-outside-latest300.png",
+      "Sha256": "1D96458A0134E3FA2F58AC9810CC3B47BB8A446C6FFEDB3D1E69984E7FF8A686",
+      "ExpectedBounds": {
+        "X": 124,
+        "Y": 94,
+        "Width": 87,
+        "Height": 87
+      }
+    },
+    "Regions": 1,
+    "SelectedIndex": 0,
+    "Detected": true,
+    "Code": null,
+    "Reason": "\u5186\u5468\u306E\u6B20\u3051\u30FB\u5F62\u5F0F\u30DE\u30FC\u30AB\u30FC\u30FBCRC\u3092\u78BA\u8A8D\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002"
+  }
+]
