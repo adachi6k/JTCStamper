@@ -40,7 +40,7 @@ internal sealed class FullVolume : IDisposable
         long written = 0;
         var buffer = new byte[1024 * 1024];
         // Actual writes allocate space; SetLength alone can leave unallocated ranges.
-        using (var stream = new FileStream(Path.Combine(filler, "data.bin"), FileMode.CreateNew, FileAccess.Write, FileShare.None, 4096, FileOptions.WriteThrough))
+        using (var stream = new FileStream(Path.Combine(filler, "data.bin"), FileMode.CreateNew, FileAccess.Write, FileShare.None, 1, FileOptions.WriteThrough))
         {
             foreach (int size in new[] { buffer.Length, 4096, 512 })
             {
