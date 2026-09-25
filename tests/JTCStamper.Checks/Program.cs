@@ -16,6 +16,54 @@ void Throws(Action action) { try { action(); } catch { return; } throw new Excep
 var stamp = new Stamp("山田", new DateOnly(1900, 1, 1), "確認");
 try
 {
+    Check("portable-backup-roundtrip-randomization-and-authentication", dir =>
+    {
+        const string password = "Synthetic-only phrase 1234";
+        using var journal = new Journal(Path.Combine(dir, "source"), key);
+        var id = new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
+        journal.Annotate(id, "portable annotation");
+        var records = journal.Read().Select(x => x.Signed).ToArray();
+        var path = Path.Combine(dir, "a.jtcportable"); var other = Path.Combine(dir, "b.jtcportable");
+        PortableBackup.Save(path, password, key, records); PortableBackup.Save(other, password, key, records);
+        var encrypted = File.ReadAllBytes(path);
+        Assert(!encrypted.SequenceEqual(File.ReadAllBytes(other)) && !System.Text.Encoding.UTF8.GetString(encrypted).Contains("portable annotation"));
+        using (var archive = PortableBackup.Read(path, password))
+        {
+            Assert(archive.Key.SequenceEqual(key) && archive.Records.SequenceEqual(records));
+            string target = Path.Combine(dir, "restored");
+            HistoryRestore.ToNewDirectory(target, archive.Key, archive.Records, p => File.WriteAllBytes(p, [1]));
+            using var restored = new Journal(Path.Combine(target, "journal"), key);
+            Assert(restored.Read().Count == 4 && new VerificationService(restored).Original(JsonSerializer.Serialize(records[0])).Status == VerificationStatus.Match);
+        }
+        Throws(() => { using var _ = PortableBackup.Read(path, "Different phrase 1234"); });
+        foreach (int index in new[] { 0, 16, 22, 36, encrypted.Length / 2, encrypted.Length - 1 })
+        {
+            var changed = encrypted.ToArray(); changed[index] ^= 1; File.WriteAllBytes(other, changed);
+            Throws(() => { using var _ = PortableBackup.Read(other, password); });
+        }
+        File.WriteAllBytes(other, encrypted[..^1]); Throws(() => { using var _ = PortableBackup.Read(other, password); });
+        File.WriteAllBytes(other, [..encrypted, 0]); Throws(() => { using var _ = PortableBackup.Read(other, password); });
+        var empty = Path.Combine(dir, "empty"); File.WriteAllBytes(empty, []);
+        Throws(() => { using var _ = PortableBackup.Read(empty, password); });
+        Throws(() => PortableBackup.Save(path, "short", key, records));
+        Assert(encrypted.SequenceEqual(File.ReadAllBytes(path)));
+    });
+    Check("portable-backup-rejects-key-substitution-and-preserves-destination", dir =>
+    {
+        const string password = "Synthetic-only phrase 1234";
+        using var journal = new Journal(Path.Combine(dir, "source"), key);
+        new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
+        var path = Path.Combine(dir, "bad.jtcportable"); var wrong = RandomNumberGenerator.GetBytes(32);
+        try { PortableBackup.Save(path, password, wrong, journal.Read().Select(x => x.Signed).ToArray()); }
+        finally { CryptographicOperations.ZeroMemory(wrong); }
+        using var archive = PortableBackup.Read(path, password);
+        var target = Path.Combine(dir, "restored");
+        Throws(() => HistoryRestore.ToNewDirectory(target, archive.Key, archive.Records, p => File.WriteAllBytes(p, [1])));
+        Assert(!Directory.Exists(target) && !Directory.EnumerateDirectories(dir, ".jtc-restore-*").Any());
+        Directory.CreateDirectory(target); File.WriteAllText(Path.Combine(target, "existing"), "preserve");
+        Throws(() => HistoryRestore.ToNewDirectory(target, archive.Key, archive.Records, p => File.WriteAllBytes(p, [1])));
+        Assert(File.ReadAllText(Path.Combine(target, "existing")) == "preserve");
+    });
     Check("disk-full-at-each-copy-record-never-reports-success-and-recovers", dir =>
     {
         foreach (int nativeCode in new[] { 39, 112 })

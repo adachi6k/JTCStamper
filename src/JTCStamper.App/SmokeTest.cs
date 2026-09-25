@@ -676,6 +676,38 @@ internal static class SmokeTest
                     }
                     finally { CryptographicOperations.ZeroMemory(key); }
                 });
+                Check("portable-backup-key-substitution-does-not-replace-archive", () =>
+                {
+                    var source = Path.Combine(root, "portable-key-test");
+                    var key = KeyStore.Load(source);
+                    try
+                    {
+                        using var sourceJournal = new Journal(Path.Combine(source, "journal"), key);
+                        new CopyService(sourceJournal, new FakeClipboard()).GenerateCodedAndCopy(stamp, s => StampRenderer.Png(StampRenderer.Render(s)));
+                        var archive = Path.Combine(root, "portable-key-test.jtcportable");
+                        const string password = "Synthetic portable key test";
+                        HistoryBackup.SavePortable(archive, source, sourceJournal, password);
+                        var before = File.ReadAllBytes(archive);
+                        var target = Path.Combine(root, "portable-restored");
+                        HistoryBackup.RestorePortable(archive, target, password);
+                        var targetKey = KeyStore.Load(target);
+                        try
+                        {
+                            using var restored = new Journal(Path.Combine(target, "journal"), targetKey);
+                            Require(restored.Read().Select(x => x.Signed).SequenceEqual(sourceJournal.Read().Select(x => x.Signed)), "Portable records changed.");
+                        }
+                        finally { CryptographicOperations.ZeroMemory(targetKey); }
+                        var substitute = Path.Combine(root, "portable-other-key");
+                        var wrongKey = KeyStore.Load(substitute);
+                        CryptographicOperations.ZeroMemory(wrongKey);
+                        File.Copy(Path.Combine(substitute, "key.dpapi"), Path.Combine(source, "key.dpapi"), true);
+                        bool refused = false;
+                        try { HistoryBackup.SavePortable(archive, source, sourceJournal, password); }
+                        catch (InvalidDataException) { refused = true; }
+                        Require(refused && File.ReadAllBytes(archive).SequenceEqual(before), "Key substitution replaced existing portable archive.");
+                    }
+                    finally { CryptographicOperations.ZeroMemory(key); }
+                });
                 Check("persistence-failure-prevents-clipboard", () =>
                 {
                     var key = RandomNumberGenerator.GetBytes(32);

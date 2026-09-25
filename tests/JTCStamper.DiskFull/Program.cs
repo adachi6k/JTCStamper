@@ -140,20 +140,36 @@ internal static class Program
                 using var journal = new Journal(Path.Combine(folder, "journal"), key);
                 new CopyService(journal, new Sink()).GenerateCodedAndCopy(Stamp, Render);
                 var original = Path.Combine(folder, "original.jtc"); var backup = Path.Combine(folder, "backup.jtcbackup");
+                var portable = Path.Combine(folder, "backup.jtcportable");
+                const string passphrase = "Synthetic disk full fixture only";
                 void SaveOriginal() => AtomicFile.Write(original, s => s.Write(JsonSerializer.SerializeToUtf8Bytes(journal.Read().First().Signed)));
                 SaveOriginal(); HistoryBackup.Save(backup, folder, journal);
+                HistoryBackup.SavePortable(portable, folder, journal, passphrase);
                 var oldOriginal = File.ReadAllBytes(original); var oldBackup = File.ReadAllBytes(backup);
+                var oldPortable = File.ReadAllBytes(portable);
                 volume.Fill(folder);
                 var originalError = ExpectFull(SaveOriginal);
                 var backupError = ExpectFull(() => HistoryBackup.Save(backup, folder, journal));
+                var portableError = ExpectFull(() => HistoryBackup.SavePortable(portable, folder, journal, passphrase));
+                Require(oldPortable.SequenceEqual(File.ReadAllBytes(portable)), "Failed portable backup overwrite damaged archive.");
                 Require(oldOriginal.SequenceEqual(File.ReadAllBytes(original)) && oldBackup.SequenceEqual(File.ReadAllBytes(backup)), "Failed overwrite damaged existing files.");
                 volume.Release();
                 SaveOriginal(); HistoryBackup.Save(backup, folder, journal);
+                HistoryBackup.SavePortable(portable, folder, journal, passphrase);
                 var restored = Path.Combine(folder, "restored");
                 HistoryBackup.Restore(backup, restored);
                 using var reopened = new Journal(Path.Combine(restored, "journal"), key);
                 Require(reopened.Read().Count == 3 && new VerificationService(reopened).ReadHistory().Generations.Count == 1, "Recovered backup could not be restored.");
-                return Task.FromResult<object>(new { Original = Evidence(originalError), Backup = Evidence(backupError), ExistingFilesPreserved = true, RestoreVerified = true });
+                var migrated = Path.Combine(folder, "migrated");
+                HistoryBackup.RestorePortable(portable, migrated, passphrase);
+                var migratedKey = KeyStore.Load(migrated);
+                try
+                {
+                    using var imported = new Journal(Path.Combine(migrated, "journal"), migratedKey);
+                    Require(imported.Read().Select(x => x.Signed).SequenceEqual(journal.Read().Select(x => x.Signed)), "Recovered portable backup changed records.");
+                }
+                finally { CryptographicOperations.ZeroMemory(migratedKey); }
+                return Task.FromResult<object>(new { Original = Evidence(originalError), Backup = Evidence(backupError), PortableBackup = Evidence(portableError), ExistingFilesPreserved = true, RestoreVerified = true });
             }
             finally { CryptographicOperations.ZeroMemory(key); }
         });

@@ -42,6 +42,33 @@ internal static class HistoryBackup
         }
     }
 
+    internal static void SavePortable(string path, string root, Journal journal, string passphrase)
+    {
+        if (!Path.GetExtension(path).Equals(".jtcportable", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidDataException("移行用バックアップの拡張子は .jtcportable にしてください。");
+        var key = KeyStore.Load(root);
+        try
+        {
+            var records = journal.Read().Select(x => x.Signed).ToArray();
+            foreach (var record in records)
+                if (!CryptographicOperations.FixedTimeEquals(HMACSHA256.HashData(key, Encoding.UTF8.GetBytes(record.EntryJson)), Convert.FromHexString(record.Mac)))
+                    throw new InvalidDataException("保存先の鍵と開いている履歴が一致しません。");
+            _ = new VerificationService(journal).ReadGenerations();
+            PortableBackup.Save(path, passphrase, key, records);
+        }
+        finally { CryptographicOperations.ZeroMemory(key); }
+    }
+
+    internal static void RestorePortable(string path, string destination, string passphrase)
+    {
+        using var archive = PortableBackup.Read(path, passphrase);
+        HistoryRestore.ToNewDirectory(destination, archive.Key, archive.Records, keyPath =>
+        {
+            var protectedKey = ProtectedData.Protect(archive.Key, null, DataProtectionScope.CurrentUser);
+            AtomicFile.Write(keyPath, output => output.Write(protectedKey), false);
+        });
+    }
+
     internal static void Restore(string path, string destination)
     {
         using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);

@@ -40,3 +40,6 @@ appearance-*.tmp
 
 # Private PoC contains a real personal stamp; never reintroduce it.
 /reference/JTC-Stamper-Angle-PoC.zip
+
+# Passphrase-protected migration archives
+*.jtcportable
