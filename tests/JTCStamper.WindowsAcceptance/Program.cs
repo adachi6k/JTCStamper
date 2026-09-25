@@ -18,8 +18,9 @@ internal static partial class Program
     static int Main(string[] args)
     {
         if (args.Length == 2 && args[0] == "--hold-clipboard") return HoldClipboard(args[1]);
-        if (args.Length is not (1 or 2) || (args.Length == 2 && args[1] != "--skip-office")) return 2;
-        bool skipOffice = args.Length == 2;
+        if (args.Length is not (1 or 2) || (args.Length == 2 && args[1] is not ("--skip-office" or "--environment-only"))) return 2;
+        bool skipOffice = args.Length == 2 && args[1] == "--skip-office";
+        bool environmentOnly = args.Length == 2 && args[1] == "--environment-only";
         root = Path.GetFullPath(args[0]);
         if (!File.Exists(Path.Combine(root, ".acceptance-root"))) return 2;
         foreach (var edition in new[] { "standard", "lite" })
@@ -34,6 +35,7 @@ internal static partial class Program
         uint initialClipboardSequence = JTCStamper.App.NativeClipboard.SequenceNumber;
         try
         {
+            if (environmentOnly) { EnvironmentCases(standard, lite, temp); return failed ? 1 : 0; }
             try { saved = CloneClipboard(); clipboardReady = true; }
             catch (Exception ex) { Result("clipboard-preservation", "skipped", ex.GetType().Name); }
             if (clipboardReady) ClipboardContention();
