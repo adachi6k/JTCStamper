@@ -12,7 +12,7 @@
 
 ユーザー承認に基づき、個人の実物印影を含むreference/JTC-Stamper-Angle-PoC.zipを全39コミットから削除してmainを更新した。現在の到達可能な履歴には対象ファイルとblobがない。再追加を.gitignoreで防ぐ。利用者のDownloadsにある元資料は削除しない。
 
-ただし2026-09-25の確認では、GitHubの古いblob APIは対象をまだ返した。履歴の書換えだけではサーバー側の参照・キャッシュの除去を証明できない。Public化を保留し、GitHub側の除去と再確認をIssue #9で追跡する。
+2026-09-25の確認では、GitHubの古いblob APIは対象をまだ返した。履歴の書換えだけではサーバー側の参照・キャッシュの完全消去を証明できない。所有者は「force pushで履歴から消えていたら気にしない」と判断したため、Supportによる残存データ削除は公開の必須条件から外す。2026-09-26にmainと既存の全公開予定タグの到達可能な履歴へ対象ZIP/blobがないことを再確認した。成果物への再混入は引き続き禁止し、その他の試験・公開前レビューが完了するまでPrivateを維持する。
 
 参考: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository
 
