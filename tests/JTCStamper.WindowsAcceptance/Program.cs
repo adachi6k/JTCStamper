@@ -167,8 +167,16 @@ internal static partial class Program
         {
             try { OfficePaste(product, png, prefix); }
             catch (Exception ex) { Result(prefix + product + "-paste-save-reopen", "failed", ex.GetBaseException().Message); }
+            finally
+            {
+                // Release only this runner's no-longer-referenced COM wrappers after
+                // OfficePaste has closed its synthetic document and left its stack.
+                // Quit remains conditional on ownership and an empty document list.
+                GC.Collect(); GC.WaitForPendingFinalizers(); GC.Collect();
+            }
         }
     }
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
     static void OfficePaste(string product, byte[] png, string prefix)
     {
         // Only create and close synthetic documents. Never quit a pre-existing Office process.
