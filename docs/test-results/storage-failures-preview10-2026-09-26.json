@@ -1,0 +1,39 @@
+{
+  "Schema": 1,
+  "CreatedUtc": "2026-09-25T15:18:58.3279353+00:00",
+  "OS": "Microsoft Windows NT 10.0.26100.0",
+  "RunnerSha256": "0BF2E0DEC51C83E73E998DA097355CE8CB63AA83BF0B6FB2407213F7742D50B7",
+  "Scope": "Owned child process termination; synthetic data and clipboard sink; not physical disk exhaustion or power loss. Partial key checkpoint exercises the shared AtomicFile publication helper with DPAPI bytes.",
+  "Results": [
+    {
+      "Name": "partial-key",
+      "Status": "passed",
+      "RetainedRecords": 0,
+      "Error": null
+    },
+    {
+      "Name": "before-generation",
+      "Status": "passed",
+      "RetainedRecords": 0,
+      "Error": null
+    },
+    {
+      "Name": "after-generation",
+      "Status": "passed",
+      "RetainedRecords": 1,
+      "Error": null
+    },
+    {
+      "Name": "during-copy",
+      "Status": "passed",
+      "RetainedRecords": 2,
+      "Error": null
+    },
+    {
+      "Name": "after-copy",
+      "Status": "passed",
+      "RetainedRecords": 3,
+      "Error": null
+    }
+  ]
+}
