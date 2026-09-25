@@ -1,0 +1,66 @@
+{
+  "Os": "Microsoft Windows NT 10.0.26200.0",
+  "Utc": "2026-09-25T12:41:18.7528035+00:00",
+  "Product": "0.1.0-preview.6+4172433f68adf393c93d427ea30fcc147f930201",
+  "WarmFileCache": true,
+  "SamplesPerCase": 1,
+  "Clipboard": "Fake sink; never modifies the user's clipboard",
+  "Results": [
+    {
+      "Generations": 100,
+      "JournalBytes": 4341645,
+      "StartupToRenderMs": 734.8004,
+      "ConstructorBlockedUiMs": 548.9769,
+      "HistorySelectionBlockedUiMs": 2.3188,
+      "HistoryDetailsReadyMs": 99.3591,
+      "HistoryReadUiTicks": 3,
+      "HistoryReadMaxUiGapMs": 31.939499999999995,
+      "RenderAndThreeAppendsFakeClipboardMs": 171.8662,
+      "ExactImageMs": 99.466,
+      "ExactMatches": 2,
+      "WorkingSetBytes": 202129408,
+      "CumulativePeakWorkingSetBytes": 202129408
+    },
+    {
+      "Generations": 1000,
+      "JournalBytes": 42850449,
+      "StartupToRenderMs": 1984.3344,
+      "ConstructorBlockedUiMs": 1868.2529,
+      "HistorySelectionBlockedUiMs": 0.2704,
+      "HistoryDetailsReadyMs": 884.5288,
+      "HistoryReadUiTicks": 28,
+      "HistoryReadMaxUiGapMs": 32.12550000000002,
+      "RenderAndThreeAppendsFakeClipboardMs": 1912.1146,
+      "ExactImageMs": 848.3241,
+      "ExactMatches": 5,
+      "WorkingSetBytes": 444813312,
+      "CumulativePeakWorkingSetBytes": 502951936
+    },
+    {
+      "Generations": 10000,
+      "JournalBytes": 427965455,
+      "StartupToRenderMs": 11617.3747,
+      "ConstructorBlockedUiMs": 11520.6065,
+      "HistorySelectionBlockedUiMs": 0.1595,
+      "HistoryDetailsReadyMs": 6092.3777,
+      "HistoryReadUiTicks": 194,
+      "HistoryReadMaxUiGapMs": 44.556200000000004,
+      "RenderAndThreeAppendsFakeClipboardMs": 11654.7512,
+      "ExactImageMs": 7356.1387,
+      "ExactMatches": 35,
+      "WorkingSetBytes": 2812170240,
+      "CumulativePeakWorkingSetBytes": 3431178240
+    },
+    {
+      "Case": "Rank300Images",
+      "Milliseconds": 289.4078,
+      "Candidates": 8
+    },
+    {
+      "Case": "DenseRed12Megapixels",
+      "Milliseconds": 554.6836,
+      "Regions": 0
+    }
+  ],
+  "HarnessExeSha256": "C0315104AD3800AD3B39BAAAA76DAC290B551DDC854C9125B571A84B4179363C"
+}
