@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 
 namespace JTCStamper.Core;
@@ -47,7 +48,7 @@ public sealed class VerificationService(Journal journal)
 
     public IReadOnlyList<Generation> ReadGenerations() => Generations().Select(x => x.Generation).ToArray();
 
-    // A fresh authenticated snapshot per operation; never cache it across user actions.
+    // A fresh authenticated snapshot per operation; Journal re-reads every file even on cache hits.
     public VerifiedHistory ReadHistory()
     {
         var entries = journal.Read();
@@ -62,8 +63,7 @@ public sealed class VerificationService(Journal journal)
         var generations = new List<Generation>();
         foreach (var record in journal.ReadVerified(cancellationToken))
         {
-            Generation? generation = record.Entry.Kind == "Generated" && IsCurrent(record.Entry)
-                ? Parse(record.Entry) : null;
+            Generation? generation = CurrentGeneration(record.Entry);
             if (record.Entry.EventId != eventId) continue;
             entries.Add(record);
             if (generation is not null) generations.Add(generation);
@@ -72,8 +72,20 @@ public sealed class VerificationService(Journal journal)
     }
 
     List<(Generation Generation, SignedEntry Signed)> Generations() => Generations(journal.Read());
-    static List<(Generation Generation, SignedEntry Signed)> Generations(IReadOnlyList<VerifiedEntry> entries) => entries
-        .Where(x => x.Entry.Kind == "Generated" && IsCurrent(x.Entry)).Select(x => (Parse(x.Entry), x.Signed)).ToList();
+    static List<(Generation Generation, SignedEntry Signed)> Generations(IReadOnlyList<VerifiedEntry> entries)
+    {
+        var result = new List<(Generation, SignedEntry)>();
+        foreach (var record in entries)
+            if (CurrentGeneration(record.Entry) is Generation generation) result.Add((generation, record.Signed));
+        return result;
+    }
+
+    // Entries are immutable and returned only after Journal has checked the current file bytes.
+    // Weak keys keep this semantic cache bounded by live snapshots and Journal's parsing cache.
+    sealed record ParsedGeneration(Generation? Value);
+    static readonly ConditionalWeakTable<Entry, ParsedGeneration> generationCache = new();
+    static Generation? CurrentGeneration(Entry entry) => generationCache.GetValue(entry,
+        e => new(e.Kind == "Generated" && IsCurrent(e) ? Parse(e) : null)).Value;
 
     static bool IsCurrent(Entry entry)
     {

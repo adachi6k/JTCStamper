@@ -16,6 +16,53 @@ void Throws(Action action) { try { action(); } catch { return; } throw new Excep
 var stamp = new Stamp("山田", new DateOnly(1900, 1, 1), "確認");
 try
 {
+    Check("warm-cache-checks-bytes-not-mtime-or-size", dir =>
+    {
+        using var journal = new Journal(dir, key);
+        var id = new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
+        var service = new VerificationService(journal);
+        Assert(service.ReadHistory().Generations.Single().EventId == id);
+        var path = Path.Combine(dir, "000000000003.json");
+        var before = File.ReadAllBytes(path); var modified = File.GetLastWriteTimeUtc(path);
+        var text = File.ReadAllText(path); Assert(text.Contains("PNG"));
+        File.WriteAllText(path, text.Replace("PNG", "BAD")); File.SetLastWriteTimeUtc(path, modified);
+        Assert(new FileInfo(path).Length == before.Length && File.GetLastWriteTimeUtc(path) == modified);
+        Throws(() => service.ReadHistory());
+        Throws(() => journal.Append("AnnotationAdded", id, new { Text = "must fail" }));
+        File.WriteAllBytes(path, before); File.SetLastWriteTimeUtc(path, modified);
+        Assert(service.ReadHistory().Entries.Count == 3);
+        File.Move(path, Path.Combine(dir, "000000000099.json"));
+        Throws(() => service.ReadHistory());
+    });
+    Check("warm-semantic-cache-rechecks-validly-resigned-invalid-image", dir =>
+    {
+        using var journal = new Journal(dir, key);
+        var id = Guid.NewGuid();
+        var g = new Generation(id, DateTimeOffset.UtcNow, stamp with { GeometryCode = RingCode.ForEvent(id) },
+            Convert.ToHexString(SHA256.HashData(new byte[] { 1, 2, 3 })), "AQID");
+        journal.Append("Generated", id, g);
+        var service = new VerificationService(journal); Assert(service.ReadGenerations().Single() == g);
+        var path = Path.Combine(dir, "000000000001.json"); var modified = File.GetLastWriteTimeUtc(path);
+        var entry = journal.Read().Single().Entry with { Payload = JsonSerializer.Serialize(g with { PngBase64 = "BAUG" }) };
+        var json = JsonSerializer.Serialize(entry);
+        var signed = new SignedEntry(json, Convert.ToHexString(HMACSHA256.HashData(key, System.Text.Encoding.UTF8.GetBytes(json))));
+        File.WriteAllText(path, JsonSerializer.Serialize(signed)); File.SetLastWriteTimeUtc(path, modified);
+        Throws(() => service.ReadGenerations());
+        Throws(() => service.ReadEventHistory(Guid.NewGuid()));
+    });
+    Check("warm-cache-concurrent-read-and-disposal", dir =>
+    {
+        var journal = new Journal(dir, key);
+        try
+        {
+            var id = new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
+            Parallel.For(0, 32, _ => Assert(new VerificationService(journal).ReadEventHistory(id).Entries.Count == 3));
+            var signed = journal.Read().First().Signed;
+            journal.Dispose();
+            Throws(() => journal.Read()); Throws(() => journal.Verify(signed));
+        }
+        finally { journal.Dispose(); }
+    });
     Check("portable-backup-roundtrip-randomization-and-authentication", dir =>
     {
         const string password = "Synthetic-only phrase 1234";

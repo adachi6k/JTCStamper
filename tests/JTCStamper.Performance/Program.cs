@@ -18,10 +18,12 @@ internal static class Program
 {
     static readonly List<object> results = [];
     static string root = "";
+    static bool repeatThousand;
     [STAThread]
     static int Main(string[] args)
     {
-        if (args.Length != 1) return 2;
+        if (args.Length != 1 && !(args.Length == 2 && args[1] == "--repeat-1000")) return 2;
+        repeatThousand = args.Length == 2;
         root = Path.GetFullPath(args[0]);
         if (!File.Exists(Path.Combine(root, ".performance-root"))) return 2;
         var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
@@ -49,7 +51,7 @@ internal static class Program
     {
         Os = Environment.OSVersion.VersionString, Utc = DateTimeOffset.UtcNow,
         Product = typeof(MainWindow).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion,
-        WarmFileCache = true, SamplesPerCase = 1, Clipboard = "Fake sink; never modifies the user's clipboard", Results = results
+        WarmFileCache = true, SamplesPerCase = repeatThousand ? 3 : 1, Clipboard = "Fake sink; never modifies the user's clipboard", Results = results
     }, new JsonSerializerOptions { WriteIndented = true }));
     static async Task Run()
     {
@@ -58,7 +60,7 @@ internal static class Program
             var stamp = new Stamp($"TEST{i:000}", new DateOnly(2100, 1, 1).AddDays(i), "CHECK", RingCode.PlainRenderer);
             return (Stamp: stamp, Png: StampRenderer.Png(StampRenderer.Render(stamp)));
         }).ToArray();
-        foreach (int count in new[] { 100, 1000, 10000 })
+        foreach (int count in repeatThousand ? new[] { 1000, 1000, 1000 } : new[] { 100, 1000, 10000 })
         {
             var folder = Path.Combine(root, count + "-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(folder);
             var key = KeyStore.Load(folder); var journalPath = Path.Combine(folder, "journal"); Directory.CreateDirectory(journalPath);
