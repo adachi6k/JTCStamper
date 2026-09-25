@@ -47,6 +47,8 @@ internal static class Program
                     {
                         SourceVersion = typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion,
                         OS = Environment.OSVersion.ToString(), Utc = DateTimeOffset.UtcNow,
+                        AppAssemblySha256 = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(typeof(MainWindow).Assembly.Location))),
+                        CoreAssemblySha256 = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(typeof(Journal).Assembly.Location))),
                         VolumeBytes = volume.TotalBytes, Scope = "Real NTFS exhaustion on a dedicated fixed VHD; synthetic clipboard; no host disk filling or power loss.",
                         Results
                     }, new JsonSerializerOptions { WriteIndented = true }));

@@ -35,7 +35,8 @@ try {
         'exit'
     )
     $commandFile = Join-Path $hostRoot 'create.txt'
-    $commands | Set-Content $commandFile -Encoding unicode
+    if ($vhd -match '[^\x00-\x7F]') { throw 'DiskPart test path must be ASCII; use an ASCII TEMP path.' }
+    $commands | Set-Content $commandFile -Encoding ascii
     diskpart /s $commandFile | Out-File (Join-Path $reportRoot 'setup-diskpart.txt')
     if ($LASTEXITCODE -ne 0) { throw 'Creating or attaching the dedicated VHD failed.' }
     $image = Get-DiskImage -ImagePath $vhd
