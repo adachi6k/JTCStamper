@@ -1,0 +1,18 @@
+{
+  "Status": "passed",
+  "Mode": "import",
+  "OS": "Microsoft Windows NT 10.0.20348.0",
+  "SourceVersion": "0.1.0-preview.11\u002Bacad6e0372fe0cb09091b60c297c8f147417ddf1",
+  "Detail": {
+    "DifferentWindowsIdentity": true,
+    "DifferentMachine": true,
+    "TargetDpapiUnprotect": true,
+    "Records": 12,
+    "Generations": 3,
+    "Notes": 3,
+    "ImagesAndOriginalPreserved": true,
+    "WrongPasswordRejected": true,
+    "CorruptionRejected": true,
+    "ExistingDestinationPreserved": true
+  }
+}

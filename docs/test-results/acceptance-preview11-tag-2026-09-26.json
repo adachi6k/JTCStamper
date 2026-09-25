@@ -1,0 +1,224 @@
+{
+  "Os": "Microsoft Windows NT 10.0.26200.0",
+  "Utc": "2026-09-25T17:28:55.9408194+00:00",
+  "RunnerVersion": "0.1.0-preview.11\u002B04ae72dcccfbe5be20fda9ec9b43ef0797d90b77",
+  "RunnerSha256": "AB6D5EF8A7B1FD974F13DEDE3C97683A99025F073529B0323B4C974B95CEC53D",
+  "IsElevated": false,
+  "OfficeBuild": "16.0.20326.20144",
+  "StandardSha256": "4A7C3F16AC1A43E4BD8BF3B20D9EE8F37C7CBEA973533E25FBA67C937A143AEA",
+  "LiteSha256": "D5C275616359A0E442D12AF6806075F3C723F81C63513E05078E4C13DF7E178E",
+  "Results": [
+    {
+      "Name": "real-clipboard-contention-records-failure-and-recovers",
+      "Status": "passed",
+      "Detail": {
+        "ErrorType": "COMException",
+        "HResult": "0x800401D0",
+        "FailureRecorded": true,
+        "Recovered": true
+      }
+    },
+    {
+      "Name": "standard-self-extraction-unwritable-fails-before-journal",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": -2147450720,
+        "DiagnosticPresent": true,
+        "ExistingFilePreserved": true,
+        "JournalNotStarted": true,
+        "Recovery": true,
+        "Scope": "Unwritable bundle extraction path, not an actual full TEMP volume."
+      }
+    },
+    {
+      "Name": "Standard-long-data-path-with-short-executable",
+      "Status": "passed",
+      "Detail": {
+        "ExecutablePathCharacters": 145,
+        "JournalPathCharacters": 422,
+        "Scope": "Long data paths only. Executable paths over 260 characters failed in the separate probe and are unsupported.",
+        "LongPathsEnabled": 0,
+        "Clipboard": "not requested"
+      }
+    },
+    {
+      "Name": "Standard-previous-version-and-rollback",
+      "Status": "passed",
+      "Detail": {
+        "PreviousSha256": "87D223BC2924F429DE3C70136BB329B993CCF59B467DEE6387C1A63732810A90",
+        "CurrentSha256": "4A7C3F16AC1A43E4BD8BF3B20D9EE8F37C7CBEA973533E25FBA67C937A143AEA",
+        "LockedUpdateRejected": true,
+        "RollbackVerified": true,
+        "Scope": "Same-schema preview upgrade and rollback; no schema migration or new-version-only data."
+      }
+    },
+    {
+      "Name": "Lite-long-data-path-with-short-executable",
+      "Status": "passed",
+      "Detail": {
+        "ExecutablePathCharacters": 141,
+        "JournalPathCharacters": 418,
+        "Scope": "Long data paths only. Executable paths over 260 characters failed in the separate probe and are unsupported.",
+        "LongPathsEnabled": 0,
+        "Clipboard": "not requested"
+      }
+    },
+    {
+      "Name": "Lite-previous-version-and-rollback",
+      "Status": "passed",
+      "Detail": {
+        "PreviousSha256": "5F2C3D056F4FE539613177A26A7B16A301167BFF371E1FF4BDEE5467F75C3838",
+        "CurrentSha256": "D5C275616359A0E442D12AF6806075F3C723F81C63513E05078E4C13DF7E178E",
+        "LockedUpdateRejected": true,
+        "RollbackVerified": true,
+        "Scope": "Same-schema preview upgrade and rollback; no schema migration or new-version-only data."
+      }
+    },
+    {
+      "Name": "lite-runtime-missing-diagnostic",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": -2147450730
+      }
+    },
+    {
+      "Name": "standard-seed",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": false
+      }
+    },
+    {
+      "Name": "standard-restart",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": false
+      }
+    },
+    {
+      "Name": "standard-replacement",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": true
+      }
+    },
+    {
+      "Name": "standard-office-source-matches-history",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "standard-Word-paste-save-reopen",
+      "Status": "passed",
+      "Detail": {
+        "Version": "16.0",
+        "Pictures": 1,
+        "WidthPoints": 72,
+        "HeightPoints": 72,
+        "ExtractedImageShapeScore": 1,
+        "PixelsIncludingAlphaPreserved": true,
+        "PngBytesPreserved": true,
+        "DimensionsPreserved": true,
+        "OriginalTransparentPixels": 129331
+      }
+    },
+    {
+      "Name": "standard-Excel-paste-save-reopen",
+      "Status": "skipped",
+      "Detail": "Existing user application; left untouched."
+    },
+    {
+      "Name": "standard-PowerPoint-paste-save-reopen",
+      "Status": "passed",
+      "Detail": {
+        "Version": "16.0",
+        "Pictures": 1,
+        "WidthPoints": 72.00054931640625,
+        "HeightPoints": 72.00054931640625,
+        "ExtractedImageShapeScore": 1,
+        "PixelsIncludingAlphaPreserved": true,
+        "PngBytesPreserved": true,
+        "DimensionsPreserved": true,
+        "OriginalTransparentPixels": 129331
+      }
+    },
+    {
+      "Name": "lite-seed",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": true
+      }
+    },
+    {
+      "Name": "lite-restart",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": true
+      }
+    },
+    {
+      "Name": "lite-replacement",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": false
+      }
+    },
+    {
+      "Name": "lite-office-source-matches-history",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "lite-Word-paste-save-reopen",
+      "Status": "passed",
+      "Detail": {
+        "Version": "16.0",
+        "Pictures": 1,
+        "WidthPoints": 72,
+        "HeightPoints": 72,
+        "ExtractedImageShapeScore": 1,
+        "PixelsIncludingAlphaPreserved": true,
+        "PngBytesPreserved": true,
+        "DimensionsPreserved": true,
+        "OriginalTransparentPixels": 129190
+      }
+    },
+    {
+      "Name": "lite-Excel-paste-save-reopen",
+      "Status": "skipped",
+      "Detail": "Existing user application; left untouched."
+    },
+    {
+      "Name": "lite-PowerPoint-paste-save-reopen",
+      "Status": "passed",
+      "Detail": {
+        "Version": "16.0",
+        "Pictures": 1,
+        "WidthPoints": 72.00054931640625,
+        "HeightPoints": 72.00054931640625,
+        "ExtractedImageShapeScore": 1,
+        "PixelsIncludingAlphaPreserved": true,
+        "PngBytesPreserved": true,
+        "DimensionsPreserved": true,
+        "OriginalTransparentPixels": 129190
+      }
+    },
+    {
+      "Name": "original-clipboard-restored",
+      "Status": "passed",
+      "Detail": null
+    }
+  ]
+}

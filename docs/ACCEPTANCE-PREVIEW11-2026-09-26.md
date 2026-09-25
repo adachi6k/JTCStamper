@@ -24,3 +24,26 @@ preview.10→preview.11更新、EXEロックによる置換失敗で元バイト
 ## 実際の空き容量ゼロでの自己展開
 
 追加ソース34269e4、CI36165776900の全ジョブが成功。専用256MiB NTFS VHDの実空き容量ゼロで、通常版の初回自己展開が管理コード開始前に失敗し、空き容量を戻した後には管理コードの引数検証へ到達することを確認。満杯化のWin32エラー112、空き0、自己展開ホストの終了コードと復旧終了コードをbundle-full-disk-full-2026-09-26.jsonへ保存。8件の容量不足試験すべて成功、VHD切断・削除も確認。既存PCのディスクは満杯にしていない。試験に使った34269e4ビルドのEXEハッシュも同JSONに記録（上記40dfe09とは異なる成果物）。
+
+## タグ版での最終追加試験
+
+GitHubはPrivate、ReleaseはDraftのままです。
+
+- タグ v0.1.0-preview.11 / acad6e0372fe0cb09091b60c297c8f147417ddf1
+- [タグCI](https://github.com/adachi6k/JTCStamper/actions/runs/36166583336): 全ジョブ成功。Core47、Windows156成功・実クリップボード6はCI省略。実NTFS容量不足8件、保存中断、別Windowsマシン間の移行も成功。
+- 実Windows11 build26200、非管理者、Office16.0.20326.20144: 20成功・2省略・失敗0。両版のExcel貼付は既存プロセス保護のため省略。Word/PPT、実コピー・競合失敗・再起動・注釈・照合・版交換・旧版復帰が成功。
+- 通常版は.NET10のない環境、Liteは専用Desktop Runtime10.0.12で試験。Liteのランタイムなし診断も確認。
+- 400文字超の保存先は成功。260文字超のEXEパスは別試験で失敗したため非対応。短い場所へ展開してください。
+- タグ・ZIP・EXE・CI・容量不足レポート・実機試験のハッシュを照合。ZIPはEXE/README/build.json/LICENSE/NOTICE/THIRD-PARTY-NOTICESの6ファイルのみ。
+
+Standard EXE SHA-256: 4A7C3F16AC1A43E4BD8BF3B20D9EE8F37C7CBEA973533E25FBA67C937A143AEA
+
+Lite EXE SHA-256: D5C275616359A0E442D12AF6806075F3C723F81C63513E05078E4C13DF7E178E
+
+[検証用Releaseドラフト](https://github.com/adachi6k/JTCStamper/releases/tag/untagged-836fb6961c1e2765a5f7)に同じZIPとchecksums.jsonを配置しました。閲覧には所有者のGitHubログインが必要です。
+
+残り: 実ブラウザーからのダウンロード警告と起動、Excel/Paintや形式指定貼付、GUI細目・実スリープ・OneDrive条件、照合説明の理解度と最終配布判断。EMFは初回PNGプレビューに未搭載です。Privateを維持します。
+
+独立画像評価では原寸のコード復号15/16で95%目標未達、小画像で誤最上位もありました。文字・日付とコードによる候補検索の試験機能として扱い、真正性の証明や無断コピーの判定には使いません。
+
+ユーザーの既存アプリ、鍵・履歴は差し替えていません。EXEを試す場合はZIPを専用フォルダーに展開してください。
