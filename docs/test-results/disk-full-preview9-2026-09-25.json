@@ -1,0 +1,122 @@
+{
+  "CiRun": "https://github.com/adachi6k/JTCStamper/actions/runs/36149069853",
+  "Setup": {
+    "FileSystem": "NTFS",
+    "Elevated": true,
+    "VhdBytes": 268435456,
+    "VolumeBytes": 251588608,
+    "HostFreeBytesBefore": 33070473216,
+    "VolumeLabel": "JTCFULL_0e1f4e1b",
+    "Status": "ready"
+  },
+  "Test": {
+    "SourceVersion": "0.1.0-preview.9+127adfa767f5396d5937a529083372ce5da9e5aa",
+    "OS": "Microsoft Windows NT 10.0.26100.0",
+    "Utc": "2026-09-25T14:42:55.2440942+00:00",
+    "AppAssemblySha256": "68A00A92A245DD2A9B5B7B189B41A3260D567E6B445FBD4861943D2F7C435FCD",
+    "CoreAssemblySha256": "99C0AB070DBE4084C21AE3DA3724289BA1CAECFDB380A5CFBDB443776F8E7219",
+    "VolumeBytes": 251588608,
+    "Scope": "Real NTFS exhaustion on a dedicated fixed VHD; synthetic clipboard; no host disk filling or power loss.",
+    "Results": [
+      {
+        "Name": "initial-key-full-no-partial-key-and-recovery",
+        "Status": "passed",
+        "Detail": {
+          "Win32Error": 112,
+          "HResult": "0x80070070",
+          "FreeBytesAtFailure": 0,
+          "RetainedRecords": null,
+          "ClipboardCalls": null,
+          "Recovered": true
+        }
+      },
+      {
+        "Name": "copy-full-at-Generated",
+        "Status": "passed",
+        "Detail": {
+          "Win32Error": 112,
+          "HResult": "0x80070070",
+          "FreeBytesAtFailure": 0,
+          "RetainedRecords": 0,
+          "ClipboardCalls": 0,
+          "Recovered": true
+        }
+      },
+      {
+        "Name": "copy-full-at-CopyRequested",
+        "Status": "passed",
+        "Detail": {
+          "Win32Error": 112,
+          "HResult": "0x80070070",
+          "FreeBytesAtFailure": 0,
+          "RetainedRecords": 1,
+          "ClipboardCalls": 0,
+          "Recovered": true
+        }
+      },
+      {
+        "Name": "copy-full-at-CopyCompleted",
+        "Status": "passed",
+        "Detail": {
+          "Win32Error": 112,
+          "HResult": "0x80070070",
+          "FreeBytesAtFailure": 0,
+          "RetainedRecords": 2,
+          "ClipboardCalls": 1,
+          "Recovered": true
+        }
+      },
+      {
+        "Name": "original-and-backup-full-preserve-existing-and-recover",
+        "Status": "passed",
+        "Detail": {
+          "Original": {
+            "Win32Error": 112,
+            "HResult": "0x80070070",
+            "FreeBytesAtFailure": 0,
+            "RetainedRecords": null,
+            "ClipboardCalls": null,
+            "Recovered": true
+          },
+          "Backup": {
+            "Win32Error": 112,
+            "HResult": "0x80070070",
+            "FreeBytesAtFailure": 0,
+            "RetainedRecords": null,
+            "ClipboardCalls": null,
+            "Recovered": true
+          },
+          "ExistingFilesPreserved": true,
+          "RestoreVerified": true
+        }
+      },
+      {
+        "Name": "window-full-before-copy",
+        "Status": "passed",
+        "Detail": {
+          "FillerWin32Error": 112,
+          "FreeBytesAtFailure": 0,
+          "ClipboardCallsAtFailure": 0,
+          "SuccessReported": false,
+          "Recovered": true
+        }
+      },
+      {
+        "Name": "window-full-after-copy",
+        "Status": "passed",
+        "Detail": {
+          "FillerWin32Error": 112,
+          "FreeBytesAtFailure": 0,
+          "ClipboardCallsAtFailure": 1,
+          "SuccessReported": false,
+          "Recovered": true
+        }
+      }
+    ]
+  },
+  "Cleanup": {
+    "VhdFileRemoved": true,
+    "Detached": true,
+    "TestExitCode": 0
+  }
+}
