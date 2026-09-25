@@ -355,6 +355,50 @@ internal static class SmokeTest
                 finally { storeWindow.Close(); }
             });
 
+            await CheckAsync("delete-screen-cancel-partial-failure-retry-and-regenerate", async () =>
+            {
+                var folder = Path.Combine(root, "delete-screen-" + Guid.NewGuid().ToString("N"));
+                var window = new MainWindow(folder);
+                try
+                {
+                    await window.InitializationPending.WaitAsync(TimeSpan.FromSeconds(30));
+                    var clipboard = new FakeClipboard();
+                    Require(await window.CopyAsync(clipboard) && await window.CopyAsync(clipboard), "Could not prepare history.");
+                    var history = (ListBox)window.FindName("History");
+                    var recent = (ItemsControl)window.FindName("RecentHistory");
+                    var keyPath = Path.Combine(folder, "key.dpapi");
+                    var keyBytes = File.ReadAllBytes(keyPath);
+                    var sentinel = Path.Combine(folder, "unrelated-original.jtc");
+                    File.WriteAllText(sentinel, "preserve unrelated original");
+                    var before = Directory.GetFiles(Path.Combine(folder, "journal"), "*.json")
+                        .ToDictionary(x => x, File.ReadAllBytes);
+                    int confirmations = 0;
+                    Require(await window.DeleteHistoryAsync(count => { confirmations++; Require(count == 2, "Wrong confirmation count."); return false; }), "Cancel operation failed.");
+                    Require(confirmations == 1 && history.Items.Count == 2 && recent.Items.Count == 2 &&
+                        before.All(x => File.ReadAllBytes(x.Key).SequenceEqual(x.Value)), "Cancel changed history.");
+                    using (var locked = new FileStream(Path.Combine(folder, "journal", "000000000002.json"), FileMode.Open, FileAccess.Read, FileShare.Read))
+                    {
+                        Require(!await window.DeleteHistoryAsync(_ => true), "Partial deletion was reported as successful.");
+                        Require(history.Items.Count == 1 && recent.Items.Count == 1 &&
+                            ((TextBlock)window.FindName("Status")).Text.Contains("一部の新しい記録は削除済み"), "Partial deletion did not refresh visible history or explain failure.");
+                    }
+                    Require(await window.DeleteHistoryAsync(_ => true), "Delete retry failed.");
+                    Require(history.Items.Count == 0 && recent.Items.Count == 0 &&
+                        ((TextBox)window.FindName("Details")).Text.Length == 0, "Deleted history remained visible.");
+                    Require(File.ReadAllBytes(keyPath).SequenceEqual(keyBytes) && File.ReadAllText(sentinel) == "preserve unrelated original", "Delete changed key or unrelated original.");
+                    Require(await window.CopyAsync(clipboard) && clipboard.Calls == 3 && history.Items.Count == 1, "Could not generate after deletion.");
+                }
+                finally { window.ClearNoteDrafts(); window.Close(); }
+                var key = KeyStore.Load(folder);
+                try
+                {
+                    using var reopened = new Journal(Path.Combine(folder, "journal"), key);
+                    var entries = reopened.Read();
+                    Require(entries.Count == 3 && entries[0].Entry.Sequence == 1 && entries[^1].Entry.Kind == "CopyCompleted", "Regenerated history failed authentication or sequence restart.");
+                }
+                finally { CryptographicOperations.ZeroMemory(key); }
+            });
+
             Check("render-png-date-and-transparent-margin", () =>
             {
                 var bitmap = StampRenderer.Render(stamp);

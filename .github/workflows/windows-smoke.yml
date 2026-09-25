@@ -25,6 +25,18 @@ jobs:
           New-Item -ItemType Directory -Force test-results/core | Out-Null
           dotnet run --project tests/JTCStamper.Checks -c Release 2>&1 | Tee-Object test-results/core/checks.txt
           if ($LASTEXITCODE -ne 0) { throw 'Core checks failed.' }
+      - name: Storage interruption recovery (owned test processes)
+        shell: pwsh
+        run: |
+          $root = Join-Path $env:TEMP ('jtc-storage-' + [guid]::NewGuid().ToString('N'))
+          New-Item -ItemType Directory $root | Out-Null
+          Set-Content (Join-Path $root '.storage-failure-root') 'JTCStamper isolated storage interruption data v1'
+          dotnet run --project tests/JTCStamper.StorageFailures -c Release -- --run $root
+          $testExit = $LASTEXITCODE
+          New-Item -ItemType Directory -Force test-results/storage | Out-Null
+          $report = Join-Path $root 'storage-failures.json'
+          if (Test-Path $report) { Copy-Item $report test-results/storage/ }
+          if ($testExit -ne 0) { throw 'Storage interruption checks failed.' }
       - name: Build versioned distribution packages
         shell: pwsh
         run: ./scripts/New-ReleasePackages.ps1
@@ -38,6 +50,7 @@ jobs:
           name: windows-smoke-${{ github.sha }}
           path: |
             test-results/core/
+            test-results/storage/
             test-results/windows-smoke/
           if-no-files-found: warn
           retention-days: 14

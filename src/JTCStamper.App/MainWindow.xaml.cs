@@ -41,21 +41,21 @@ public partial class MainWindow : Window
         if (journal is null) { Status.Text = "照合する履歴の保存先を開いてください。"; return; }
         MainTabs.SelectedItem = VerificationTab;
     }
-    async void DeleteHistoryClick(object sender, RoutedEventArgs e)
+    async void DeleteHistoryClick(object sender, RoutedEventArgs e) => await DeleteHistoryAsync(count =>
+        MessageBox.Show(this,
+            $"現在の保存先の生成履歴{count}件と、コピー記録・注釈をすべて削除します。\n\n保存先：{storageRoot}\n\n元に戻せません。削除した記録は照合に使えなくなります。別途保存した画像・原本、鍵、印面設定は削除しません。\n\n削除しますか？",
+            "生成履歴をすべて削除", MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.Cancel) == MessageBoxResult.OK);
+
+    internal Task<bool> DeleteHistoryAsync(Func<int, bool> confirm)
     {
-        if (journal is null) { Status.Text = "履歴の保存先を開いてください。"; return; }
-        await RunStoreOperationAsync("削除する履歴を確認しています…", "履歴の削除処理に失敗しました：", async () =>
+        if (journal is null) { Status.Text = "履歴の保存先を開いてください。"; return Task.FromResult(false); }
+        return RunStoreOperationAsync("削除する履歴を確認しています…", "履歴の削除処理に失敗しました：", async () =>
         {
             var source = journal;
             var counts = await Task.Run(() => { var records = source.Read(); return (Total: records.Count, Generated: records.Count(x => x.Entry.Kind == "Generated")); });
             if (counts.Total == 0) { Status.Text = "削除する履歴はありません。"; return; }
-            var count = counts.Generated;
-            // A close request during the preliminary read must never open a destructive confirmation.
             if (closeAfterStoreOperation) return;
-            var answer = MessageBox.Show(this,
-                $"現在の保存先の生成履歴{count}件と、コピー記録・注釈をすべて削除します。\n\n保存先：{storageRoot}\n\n元に戻せません。削除した記録は照合に使えなくなります。別途保存した画像・原本、鍵、印面設定は削除しません。\n\n削除しますか？",
-                "生成履歴をすべて削除", MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.Cancel);
-            if (answer != MessageBoxResult.OK) { Status.Text = "履歴の削除を取り消しました。"; return; }
+            if (!confirm(counts.Generated)) { Status.Text = "履歴の削除を取り消しました。"; return; }
             Exception? failure = null;
             try { await Task.Run(source.DeleteAllHistory); }
             catch (Exception ex) { failure = ex; }

@@ -59,16 +59,7 @@ public sealed class Journal : IDisposable
         var json = JsonSerializer.Serialize(entry);
         var signed = new SignedEntry(json, Convert.ToHexString(HMACSHA256.HashData(key, Encoding.UTF8.GetBytes(json))));
         string target = Path.Combine(directory, $"{entry.Sequence:D12}.json");
-        string temp = Path.Combine(directory, Guid.NewGuid() + ".tmp");
-        try
-        {
-            using (var stream = new FileStream(temp, FileMode.CreateNew, FileAccess.Write, FileShare.None))
-            {
-                stream.Write(JsonSerializer.SerializeToUtf8Bytes(signed)); stream.Flush(true);
-            }
-            File.Move(temp, target, false);
-        }
-        finally { if (File.Exists(temp)) File.Delete(temp); }
+        AtomicFile.Write(target, stream => stream.Write(JsonSerializer.SerializeToUtf8Bytes(signed)), overwrite: false);
         return signed;
     }
     // Delete newest first: an interrupted deletion leaves a valid prefix, never a broken chain.
