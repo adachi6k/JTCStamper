@@ -96,7 +96,23 @@ public partial class MainWindow
     internal Task<bool> SwitchJournalAsync(string root)
     {
         if (!CanStartStoreOperation()) return Task.FromResult(false);
-        if (journal is not null && Path.GetFullPath(root) == Path.GetFullPath(storageRoot)) return Task.FromResult(true);
+        try
+        {
+            root = Path.TrimEndingDirectorySeparator(Path.GetFullPath(root));
+            if (journal is not null && string.Equals(root, Path.TrimEndingDirectorySeparator(Path.GetFullPath(storageRoot)), StringComparison.OrdinalIgnoreCase))
+                return Task.FromResult(true);
+        }
+        catch (Exception ex)
+        {
+            Status.Text = "保存先を開けません: " + ex.Message;
+            if (journal is null)
+            {
+                RecentHistoryMessage.Text = "履歴の保存先を開けません。［履歴］メニューから保存先を選択してください。";
+                RecentHistoryMessage.Visibility = Visibility.Visible;
+            }
+            UpdateStoreControls();
+            return Task.FromResult(false);
+        }
         if (journal is not null && !ConfirmDiscard(false, true, "保存先を変更")) return Task.FromResult(false);
         return RunStoreOperationAsync("履歴を読み込み、保存先を確認しています…", "保存先を開けません: ", async () =>
         {

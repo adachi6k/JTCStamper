@@ -246,6 +246,24 @@ internal static class SmokeTest
                 finally { startupWindow.Close(); }
             });
 
+            await CheckAsync("async-startup-failure-retains-error-and-disabled-copy", async () =>
+            {
+                var invalid = Path.Combine(root, "initial-store-is-file-" + Guid.NewGuid().ToString("N"));
+                File.WriteAllText(invalid, "synthetic obstruction");
+                var startupWindow = new MainWindow(invalid);
+                try
+                {
+                    startupWindow.Show(); startupWindow.Close();
+                    await startupWindow.InitializationPending.WaitAsync(TimeSpan.FromSeconds(30));
+                    Require(startupWindow.IsVisible && !startupWindow.IsStoreBusy &&
+                        !((Button)startupWindow.FindName("CopyButton")).IsEnabled &&
+                        ((TextBlock)startupWindow.FindName("Status")).Text.Contains("保存先を開けません"),
+                        "Failed startup hid its error or enabled copy.");
+                    Require(!await startupWindow.SwitchJournalAsync("invalid\0path"), "Malformed path was accepted.");
+                }
+                finally { startupWindow.Close(); }
+            });
+
             await CheckAsync("async-copy-rejects-reentry-switch-and-defers-close-until-recorded", async () =>
             {
                 var folder = Path.Combine(root, "async-copy-" + Guid.NewGuid().ToString("N"));
@@ -264,6 +282,10 @@ internal static class SmokeTest
                         var change = copyWindow.SwitchJournalAsync(otherFolder);
                         Require(again.IsCompletedSuccessfully && !again.Result && change.IsCompletedSuccessfully && !change.Result,
                             "Concurrent copy or store switch was accepted.");
+                        var tabs = (TabControl)copyWindow.FindName("MainTabs");
+                        tabs.SelectedItem = (TabItem)copyWindow.FindName("HistoryTab");
+                        tabs.SelectedItem = (TabItem)copyWindow.FindName("CreateTab");
+                        Require(!((ContentControl)copyWindow.FindName("VerificationHost")).IsEnabled, "Verification could race the store operation.");
                         copyWindow.Close(); Require(copyWindow.IsVisible, "Copy closed before the completion record.");
                     });
                     Require(await copyWindow.CopyAsync(clipboard).WaitAsync(TimeSpan.FromSeconds(30)), "Copy operation failed.");
@@ -534,8 +556,20 @@ internal static class SmokeTest
                     try { (settings with { Name = "" }).Save(path); } catch (InvalidDataException) { rejected = true; }
                     Require(rejected && StampSettings.Load(path) == settings, "Invalid save changed settings.");
                 });
-                Check("dpapi-journal-annotation-reopen", () =>
+                await CheckAsync("dpapi-journal-annotation-reopen", async () =>
                 {
+                    var copyWindow = new MainWindow(root);
+                    try
+                    {
+                        copyWindow.Show(); await copyWindow.InitializationPending.WaitAsync(TimeSpan.FromSeconds(30));
+                        ((Button)copyWindow.FindName("DateModeButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        var date = (DatePicker)copyWindow.FindName("DateInput");
+                        date.SelectedDate = stamp.DisplayDate.ToDateTime(TimeOnly.MinValue); date.IsDropDownOpen = false;
+                        await copyWindow.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.ApplicationIdle);
+                        Require(await copyWindow.CopyAsync(clipboard ? new WindowsClipboard() : new FakeClipboard()).WaitAsync(TimeSpan.FromSeconds(30)),
+                            "MainWindow copy failed: " + ((TextBlock)copyWindow.FindName("Status")).Text);
+                    }
+                    finally { copyWindow.Close(); }
                     var key = KeyStore.Load(root);
                     try
                     {
@@ -546,7 +580,7 @@ internal static class SmokeTest
                         using (var journal = new Journal(Path.Combine(root, "journal"), key))
                         {
                             Require(png is not null, "Rendering prerequisite failed.");
-                            id = new CopyService(journal, clipboard ? new WindowsClipboard() : new FakeClipboard()).GenerateCodedAndCopy(stamp, coded => StampRenderer.Png(StampRenderer.Render(coded)));
+                            id = journal.Read().Single(x => x.Entry.Kind == "Generated").Entry.EventId;
                             var original = journal.Read()[0].Signed;
                             journal.Annotate(id, "Isolated smoke test; no paste observed");
                             Require(journal.Read()[0].Signed == original, "Annotation modified generation.");
