@@ -30,3 +30,7 @@ WindowsのNTFSが容量不足を返す条件の検査です。物理ディスク
 参考：[Windowsの容量不足エラー](https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-)、
 [NTFSのMFTと容量](https://learn.microsoft.com/en-us/troubleshoot/windows-server/backup-and-storage/ntfs-reserves-space-for-mft)、
 [VHDの接続](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/attach-vdisk)。
+
+## 通常版の自己展開先が満杯の場合
+
+34269e4のCI36165776900で、配布パッケージのStandard EXEに空き容量ゼロの専用NTFS VHDを自己展開先として渡す試験を追加。ホスト起動失敗と容量解放後の復旧が成功。配布パッケージを先にビルドしてからInvoke-DiskFull.ps1を実行する。ホスト障害コードと、VHDを満杯にしたWin32 112は別々に記録。既存の保存失敗7件も含む8件が成功し、専用VHDの切断と削除を確認した。

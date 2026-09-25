@@ -1,0 +1,69 @@
+{
+  "Os": "Microsoft Windows NT 10.0.26200.0",
+  "Utc": "2026-09-25T17:16:00.7589932+00:00",
+  "RunnerVersion": "0.1.0-preview.11+34269e403b95cc6b2f04273a5af37f2e21669c57",
+  "RunnerSha256": "FF988B39898268824A7B377739EA938F43EDC517DE5AF60F67D719C919C3CE5E",
+  "IsElevated": false,
+  "OfficeBuild": "16.0.20326.20144",
+  "StandardSha256": "9E55B6DCB4148EFCD7675438682FF9DF453047859982F83227C28BC44C4E5314",
+  "LiteSha256": "CEF781380768CC43742B48BDB0E1C61F18A284FD3A8330967914ECD5E5173368",
+  "Results": [
+    {
+      "Name": "standard-self-extraction-unwritable-fails-before-journal",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": -2147450720,
+        "DiagnosticPresent": true,
+        "ExistingFilePreserved": true,
+        "JournalNotStarted": true,
+        "Recovery": true,
+        "Scope": "Unwritable bundle extraction path, not an actual full TEMP volume."
+      }
+    },
+    {
+      "Name": "Standard-long-data-path-with-short-executable",
+      "Status": "passed",
+      "Detail": {
+        "ExecutablePathCharacters": 150,
+        "JournalPathCharacters": 427,
+        "Scope": "Long data paths only. Executable paths over 260 characters failed in the separate probe and are unsupported.",
+        "LongPathsEnabled": 0,
+        "Clipboard": "not requested"
+      }
+    },
+    {
+      "Name": "Standard-previous-version-and-rollback",
+      "Status": "passed",
+      "Detail": {
+        "PreviousSha256": "87D223BC2924F429DE3C70136BB329B993CCF59B467DEE6387C1A63732810A90",
+        "CurrentSha256": "9E55B6DCB4148EFCD7675438682FF9DF453047859982F83227C28BC44C4E5314",
+        "LockedUpdateRejected": true,
+        "RollbackVerified": true,
+        "Scope": "Same-schema preview upgrade and rollback; no schema migration or new-version-only data."
+      }
+    },
+    {
+      "Name": "Lite-long-data-path-with-short-executable",
+      "Status": "passed",
+      "Detail": {
+        "ExecutablePathCharacters": 146,
+        "JournalPathCharacters": 423,
+        "Scope": "Long data paths only. Executable paths over 260 characters failed in the separate probe and are unsupported.",
+        "LongPathsEnabled": 0,
+        "Clipboard": "not requested"
+      }
+    },
+    {
+      "Name": "Lite-previous-version-and-rollback",
+      "Status": "passed",
+      "Detail": {
+        "PreviousSha256": "5F2C3D056F4FE539613177A26A7B16A301167BFF371E1FF4BDEE5467F75C3838",
+        "CurrentSha256": "CEF781380768CC43742B48BDB0E1C61F18A284FD3A8330967914ECD5E5173368",
+        "LockedUpdateRejected": true,
+        "RollbackVerified": true,
+        "Scope": "Same-schema preview upgrade and rollback; no schema migration or new-version-only data."
+      }
+    }
+  ],
+  "RunnerSourceNote": "Built from 34269e4 plus the exact changes committed as f5e4d95; informational version predates that commit."
+}

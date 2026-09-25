@@ -1,0 +1,127 @@
+{
+  "SourceVersion": "0.1.0-preview.11\u002B34269e403b95cc6b2f04273a5af37f2e21669c57",
+  "OS": "Microsoft Windows NT 10.0.26100.0",
+  "Utc": "2026-09-25T17:16:39.8223394+00:00",
+  "AppAssemblySha256": "4D68C651884DBD3BECED0CA499BA85900891B40AD9976F20696DA43BDE631001",
+  "CoreAssemblySha256": "AE92D8535F239E88F63A4DCC0209440B9DCB7EA5ADE70E210DEFB2C06F9EAE59",
+  "StandardSha256": "A8C7C0D74911DBBBBFD6867191C20B914A1E0D9FE442E692CF36098AB0CA8D69",
+  "VolumeBytes": 251588608,
+  "Scope": "Real NTFS exhaustion on a dedicated fixed VHD; synthetic clipboard; no host disk filling or power loss.",
+  "Results": [
+    {
+      "Name": "standard-bundle-extraction-full-and-recovery",
+      "Status": "passed",
+      "Detail": {
+        "FillerWin32Error": 112,
+        "FreeBytesAtFailure": 0,
+        "HostExitCode": -2147450720,
+        "Diagnostic": true,
+        "RecoveryExitCode": 2,
+        "Recovered": true,
+        "Scope": "Fresh Standard bundle extraction on a full isolated NTFS volume; no journal started."
+      }
+    },
+    {
+      "Name": "initial-key-full-no-partial-key-and-recovery",
+      "Status": "passed",
+      "Detail": {
+        "Win32Error": 112,
+        "HResult": "0x80070070",
+        "FreeBytesAtFailure": 0,
+        "RetainedRecords": null,
+        "ClipboardCalls": null,
+        "Recovered": true
+      }
+    },
+    {
+      "Name": "copy-full-at-Generated",
+      "Status": "passed",
+      "Detail": {
+        "Win32Error": 112,
+        "HResult": "0x80070070",
+        "FreeBytesAtFailure": 0,
+        "RetainedRecords": 0,
+        "ClipboardCalls": 0,
+        "Recovered": true
+      }
+    },
+    {
+      "Name": "copy-full-at-CopyRequested",
+      "Status": "passed",
+      "Detail": {
+        "Win32Error": 112,
+        "HResult": "0x80070070",
+        "FreeBytesAtFailure": 0,
+        "RetainedRecords": 1,
+        "ClipboardCalls": 0,
+        "Recovered": true
+      }
+    },
+    {
+      "Name": "copy-full-at-CopyCompleted",
+      "Status": "passed",
+      "Detail": {
+        "Win32Error": 112,
+        "HResult": "0x80070070",
+        "FreeBytesAtFailure": 0,
+        "RetainedRecords": 2,
+        "ClipboardCalls": 1,
+        "Recovered": true
+      }
+    },
+    {
+      "Name": "original-and-backup-full-preserve-existing-and-recover",
+      "Status": "passed",
+      "Detail": {
+        "Original": {
+          "Win32Error": 112,
+          "HResult": "0x80070070",
+          "FreeBytesAtFailure": 0,
+          "RetainedRecords": null,
+          "ClipboardCalls": null,
+          "Recovered": true
+        },
+        "Backup": {
+          "Win32Error": 112,
+          "HResult": "0x80070070",
+          "FreeBytesAtFailure": 0,
+          "RetainedRecords": null,
+          "ClipboardCalls": null,
+          "Recovered": true
+        },
+        "PortableBackup": {
+          "Win32Error": 112,
+          "HResult": "0x80070070",
+          "FreeBytesAtFailure": 0,
+          "RetainedRecords": null,
+          "ClipboardCalls": null,
+          "Recovered": true
+        },
+        "ExistingFilesPreserved": true,
+        "RestoreVerified": true
+      }
+    },
+    {
+      "Name": "window-full-before-copy",
+      "Status": "passed",
+      "Detail": {
+        "FillerWin32Error": 112,
+        "FreeBytesAtFailure": 0,
+        "ClipboardCallsAtFailure": 0,
+        "SuccessReported": false,
+        "Recovered": true
+      }
+    },
+    {
+      "Name": "window-full-after-copy",
+      "Status": "passed",
+      "Detail": {
+        "FillerWin32Error": 112,
+        "FreeBytesAtFailure": 0,
+        "ClipboardCallsAtFailure": 1,
+        "SuccessReported": false,
+        "Recovered": true
+      }
+    }
+  ]
+}

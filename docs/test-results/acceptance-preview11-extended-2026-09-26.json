@@ -1,0 +1,229 @@
+{
+  "Os": "Microsoft Windows NT 10.0.26200.0",
+  "Utc": "2026-09-25T17:13:24.7515629+00:00",
+  "RunnerVersion": "0.1.0-preview.11+f54ad1d94dd5e80985f6be7c71cd9a1337836fb5",
+  "RunnerSha256": "703F2226CE16CA0F6CF2A583D20769EB8A41B5138AD8E7EDC948519F710816CF",
+  "IsElevated": false,
+  "OfficeBuild": "16.0.20326.20144",
+  "StandardSha256": "9E55B6DCB4148EFCD7675438682FF9DF453047859982F83227C28BC44C4E5314",
+  "LiteSha256": "CEF781380768CC43742B48BDB0E1C61F18A284FD3A8330967914ECD5E5173368",
+  "Results": [
+    {
+      "Name": "real-clipboard-contention-records-failure-and-recovers",
+      "Status": "passed",
+      "Detail": {
+        "ErrorType": "COMException",
+        "HResult": "0x800401D0",
+        "FailureRecorded": true,
+        "Recovered": true
+      }
+    },
+    {
+      "Name": "standard-self-extraction-unwritable-fails-before-journal",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": -2147450720,
+        "DiagnosticPresent": true,
+        "ExistingFilePreserved": true,
+        "JournalNotStarted": true,
+        "Recovery": true,
+        "Scope": "Unwritable bundle extraction path, not an actual full TEMP volume."
+      }
+    },
+    {
+      "Name": "Standard-long-path",
+      "Status": "failed",
+      "Detail": {
+        "Type": "Win32Exception",
+        "Message": "An error occurred trying to start process '<owned-test-path>' with working directory '<owned-test-path>'. 指定されたファイルが見つかりません。"
+      }
+    },
+    {
+      "Name": "Standard-previous-version-and-rollback",
+      "Status": "passed",
+      "Detail": {
+        "PreviousSha256": "87D223BC2924F429DE3C70136BB329B993CCF59B467DEE6387C1A63732810A90",
+        "CurrentSha256": "9E55B6DCB4148EFCD7675438682FF9DF453047859982F83227C28BC44C4E5314",
+        "LockedUpdateRejected": true,
+        "RollbackVerified": true,
+        "Scope": "Same-schema preview upgrade and rollback; no schema migration or new-version-only data."
+      }
+    },
+    {
+      "Name": "Lite-long-path",
+      "Status": "failed",
+      "Detail": {
+        "Type": "Win32Exception",
+        "Message": "An error occurred trying to start process '<owned-test-path>' with working directory '<owned-test-path>'. 指定されたファイルが見つかりません。"
+      }
+    },
+    {
+      "Name": "Lite-previous-version-and-rollback",
+      "Status": "passed",
+      "Detail": {
+        "PreviousSha256": "5F2C3D056F4FE539613177A26A7B16A301167BFF371E1FF4BDEE5467F75C3838",
+        "CurrentSha256": "CEF781380768CC43742B48BDB0E1C61F18A284FD3A8330967914ECD5E5173368",
+        "LockedUpdateRejected": true,
+        "RollbackVerified": true,
+        "Scope": "Same-schema preview upgrade and rollback; no schema migration or new-version-only data."
+      }
+    },
+    {
+      "Name": "lite-runtime-missing-diagnostic",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": -2147450730
+      }
+    },
+    {
+      "Name": "standard-seed",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": false
+      }
+    },
+    {
+      "Name": "standard-restart",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": false
+      }
+    },
+    {
+      "Name": "standard-replacement",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": true
+      }
+    },
+    {
+      "Name": "standard-office-source-matches-history",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "standard-Word-paste-save-reopen",
+      "Status": "passed",
+      "Detail": {
+        "Version": "16.0",
+        "Pictures": 1,
+        "WidthPoints": 72,
+        "HeightPoints": 72,
+        "ExtractedImageShapeScore": 1,
+        "PixelsIncludingAlphaPreserved": true,
+        "PngBytesPreserved": true,
+        "DimensionsPreserved": true,
+        "OriginalTransparentPixels": 128977
+      }
+    },
+    {
+      "Name": "standard-Excel-paste-save-reopen",
+      "Status": "passed",
+      "Detail": {
+        "Version": "16.0",
+        "Pictures": 1,
+        "WidthPoints": 72.00054931640625,
+        "HeightPoints": 72.00054931640625,
+        "ExtractedImageShapeScore": 1,
+        "PixelsIncludingAlphaPreserved": true,
+        "PngBytesPreserved": true,
+        "DimensionsPreserved": true,
+        "OriginalTransparentPixels": 128977
+      }
+    },
+    {
+      "Name": "standard-PowerPoint-paste-save-reopen",
+      "Status": "passed",
+      "Detail": {
+        "Version": "16.0",
+        "Pictures": 1,
+        "WidthPoints": 72.00054931640625,
+        "HeightPoints": 72.00054931640625,
+        "ExtractedImageShapeScore": 1,
+        "PixelsIncludingAlphaPreserved": true,
+        "PngBytesPreserved": true,
+        "DimensionsPreserved": true,
+        "OriginalTransparentPixels": 128977
+      }
+    },
+    {
+      "Name": "lite-seed",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": true
+      }
+    },
+    {
+      "Name": "lite-restart",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": true
+      }
+    },
+    {
+      "Name": "lite-replacement",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": false
+      }
+    },
+    {
+      "Name": "lite-office-source-matches-history",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "lite-Word-paste-save-reopen",
+      "Status": "passed",
+      "Detail": {
+        "Version": "16.0",
+        "Pictures": 1,
+        "WidthPoints": 72,
+        "HeightPoints": 72,
+        "ExtractedImageShapeScore": 1,
+        "PixelsIncludingAlphaPreserved": true,
+        "PngBytesPreserved": true,
+        "DimensionsPreserved": true,
+        "OriginalTransparentPixels": 129231
+      }
+    },
+    {
+      "Name": "lite-Excel-paste-save-reopen",
+      "Status": "skipped",
+      "Detail": "Existing user application; left untouched."
+    },
+    {
+      "Name": "lite-PowerPoint-paste-save-reopen",
+      "Status": "passed",
+      "Detail": {
+        "Version": "16.0",
+        "Pictures": 1,
+        "WidthPoints": 72.00054931640625,
+        "HeightPoints": 72.00054931640625,
+        "ExtractedImageShapeScore": 1,
+        "PixelsIncludingAlphaPreserved": true,
+        "PngBytesPreserved": true,
+        "DimensionsPreserved": true,
+        "OriginalTransparentPixels": 129231
+      }
+    },
+    {
+      "Name": "original-clipboard-restored",
+      "Status": "passed",
+      "Detail": null
+    }
+  ],
+  "Redaction": "Only owned absolute test paths in error messages were replaced. Status and error type retained."
+}
