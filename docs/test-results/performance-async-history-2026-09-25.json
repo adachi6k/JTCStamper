@@ -1,0 +1,68 @@
+{
+  "Os": "Microsoft Windows NT 10.0.26200.0",
+  "Utc": "2026-09-25T12:33:21.2916427+00:00",
+  "Product": "0.1.0-preview.4+80a87c149f351ecafb1074e4f6d1192fbaa835be",
+  "WarmFileCache": true,
+  "SamplesPerCase": 1,
+  "Clipboard": "Fake sink; never modifies the user's clipboard",
+  "Results": [
+    {
+      "Generations": 100,
+      "JournalBytes": 4341646,
+      "StartupToRenderMs": 1173.4519,
+      "ConstructorBlockedUiMs": 771.8231,
+      "HistorySelectionBlockedUiMs": 3.8632,
+      "HistoryDetailsReadyMs": 103.0125,
+      "HistoryReadUiTicks": 3,
+      "HistoryReadMaxUiGapMs": 35.4163,
+      "RenderAndThreeAppendsFakeClipboardMs": 246.8417,
+      "ExactImageMs": 128.6762,
+      "ExactMatches": 2,
+      "WorkingSetBytes": 194768896,
+      "CumulativePeakWorkingSetBytes": 195796992
+    },
+    {
+      "Generations": 1000,
+      "JournalBytes": 42850451,
+      "StartupToRenderMs": 1856.5388,
+      "ConstructorBlockedUiMs": 1731.4987,
+      "HistorySelectionBlockedUiMs": 0.4242,
+      "HistoryDetailsReadyMs": 682.4911,
+      "HistoryReadUiTicks": 21,
+      "HistoryReadMaxUiGapMs": 32.53590000000003,
+      "RenderAndThreeAppendsFakeClipboardMs": 2925.2742,
+      "ExactImageMs": 837.203,
+      "ExactMatches": 5,
+      "WorkingSetBytes": 446128128,
+      "CumulativePeakWorkingSetBytes": 498757632
+    },
+    {
+      "Generations": 10000,
+      "JournalBytes": 427965454,
+      "StartupToRenderMs": 12910.7571,
+      "ConstructorBlockedUiMs": 12818.0588,
+      "HistorySelectionBlockedUiMs": 0.1483,
+      "HistoryDetailsReadyMs": 4461.8524,
+      "HistoryReadUiTicks": 141,
+      "HistoryReadMaxUiGapMs": 47.317699999999604,
+      "RenderAndThreeAppendsFakeClipboardMs": 12912.1057,
+      "ExactImageMs": 7130.6957,
+      "ExactMatches": 35,
+      "WorkingSetBytes": 2810642432,
+      "CumulativePeakWorkingSetBytes": 3425632256
+    },
+    {
+      "Case": "Rank300Images",
+      "Milliseconds": 308.5542,
+      "Candidates": 8
+    },
+    {
+      "Case": "DenseRed12Megapixels",
+      "Milliseconds": 567.0423,
+      "Regions": 0
+    }
+  ],
+  "TestedSourceCommit": "de55c095604119730820104b608ba45a69ed3e89",
+  "BuildNote": "Built from the de55c09 changes immediately before committing them; embedded informational version still names parent 80a87c1. Not a release package.",
+  "HarnessExeSha256": "E8CD46030230A0B42C9497607D25C499752D5FBD25B6BCF7319A5C9DD927693E"
+}

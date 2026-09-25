@@ -1,0 +1,116 @@
+{
+  "SchemaVersion": 1,
+  "Phase": "seed",
+  "StartedUtc": "2026-09-25T12:33:41.6559459+00:00",
+  "FinishedUtc": "2026-09-25T12:33:44.9189296+00:00",
+  "Framework": ".NET 10.0.12",
+  "Passed": true,
+  "ClipboardRequested": false,
+  "Checks": [
+    {
+      "Name": "main-tabs-preserve-view-and-inputs",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "integrated-title-menu-native-hit-testing",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "sidebar-and-theme-persistence-with-unchanged-stamp",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "today-default-and-explicit-date-button",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "real-window-startup-preview-and-icon",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "async-history-selection-integrity-and-note-drafts",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "render-png-date-and-transparent-margin",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "plain-rendering-and-stored-history-image",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "image-search-rendered-document-and-jpeg",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "same-stamp-font-change-keeps-old-jpeg-candidates",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "windows-delete-failure-leaves-valid-prefix-and-can-retry",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "missing-and-damaged-key-never-recreated",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "ring12-rendered-decoding-and-controls",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "settings-file-save-reload-and-validation",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "dpapi-journal-annotation-reopen",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "same-user-backup-restores-images-notes-and-original",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "persistence-failure-prevents-clipboard",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "hmac-tamper-detection",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "clipboard-data-object-keeps-png-stream-readable",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "windows-clipboard-png-roundtrip",
+      "Status": "skipped",
+      "Detail": "Not requested; use -IncludeClipboard."
+    },
+    {
+      "Name": "write-restart-baseline",
+      "Status": "passed",
+      "Detail": null
+    }
+  ]
+}
