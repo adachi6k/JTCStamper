@@ -16,6 +16,26 @@ void Throws(Action action) { try { action(); } catch { return; } throw new Excep
 var stamp = new Stamp("山田", new DateOnly(1900, 1, 1), "確認");
 try
 {
+    Check("disk-full-at-each-copy-record-never-reports-success-and-recovers", dir =>
+    {
+        foreach (int nativeCode in new[] { 39, 112 })
+        foreach (string boundary in new[] { "Generated", "CopyRequested", "CopyCompleted" })
+        {
+            using var journal = new Journal(Path.Combine(dir, nativeCode + boundary), key);
+            var clipboard = new FakeClipboard();
+            var writer = new FullDiskWriter(journal, boundary, nativeCode);
+            bool failed = false;
+            try { new CopyService(writer, clipboard).GenerateCodedAndCopy(stamp, _ => [1, 2, 3]); }
+            catch (IOException ex) { failed = (ex.HResult & 0xffff) == nativeCode; }
+            int retained = boundary == "Generated" ? 0 : boundary == "CopyRequested" ? 1 : 2;
+            Assert(failed && clipboard.Calls == (retained == 2 ? 1 : 0));
+            var before = journal.Read();
+            Assert(before.Count == retained && !before.Any(x => x.Entry.Kind == "CopyCompleted"));
+            new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
+            var after = journal.Read();
+            Assert(after.Count == retained + 3 && before.Select(x => x.Signed.Mac).SequenceEqual(after.Take(retained).Select(x => x.Signed.Mac)));
+        }
+    });
     Check("history-snapshot-is-fresh-and-detects-later-tampering", dir =>
     {
         using var journal = new Journal(dir, key);
@@ -630,4 +650,11 @@ sealed class FakeClipboard : IClipboard
     public int Calls { get; private set; }
     public Action? Action { get; init; }
     public void Copy(byte[] png) { Calls++; Action?.Invoke(); }
+}
+
+sealed class FullDiskWriter(Journal journal, string boundary, int nativeCode) : IJournalWriter
+{
+    public SignedEntry Append(string kind, Guid eventId, object payload) => kind == boundary
+        ? throw new IOException("Injected disk-full error", unchecked((int)0x80070000) | nativeCode)
+        : journal.Append(kind, eventId, payload);
 }

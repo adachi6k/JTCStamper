@@ -11,8 +11,14 @@ public sealed record Entry(int Version, long Sequence, string PreviousMac, strin
 public sealed record SignedEntry(string EntryJson, string Mac);
 public sealed record VerifiedEntry(Entry Entry, SignedEntry Signed);
 
+// Append-only boundary used by the copy workflow; Journal remains the authenticated implementation.
+public interface IJournalWriter
+{
+    SignedEntry Append(string kind, Guid eventId, object payload);
+}
+
 // One process owns a journal for its lifetime. Entries are immutable, flushed then atomically renamed.
-public sealed class Journal : IDisposable
+public sealed class Journal : IDisposable, IJournalWriter
 {
     readonly string directory;
     readonly byte[] key;
@@ -80,7 +86,7 @@ public sealed class Journal : IDisposable
 }
 
 public interface IClipboard { void Copy(byte[] png); }
-public sealed class CopyService(Journal journal, IClipboard clipboard)
+public sealed class CopyService(IJournalWriter journal, IClipboard clipboard)
 {
     public Guid GenerateCodedAndCopy(Stamp stamp, Func<Stamp, byte[]> render)
     {

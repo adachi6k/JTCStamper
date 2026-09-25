@@ -37,6 +37,9 @@ jobs:
           $report = Join-Path $root 'storage-failures.json'
           if (Test-Path $report) { Copy-Item $report test-results/storage/ }
           if ($testExit -ne 0) { throw 'Storage interruption checks failed.' }
+      - name: Real disk-full recovery on a disposable 256 MiB VHD
+        shell: pwsh
+        run: ./scripts/Invoke-DiskFull.ps1
       - name: Build versioned distribution packages
         shell: pwsh
         run: ./scripts/New-ReleasePackages.ps1
@@ -51,6 +54,7 @@ jobs:
           path: |
             test-results/core/
             test-results/storage/
+            test-results/disk-full/
             test-results/windows-smoke/
           if-no-files-found: warn
           retention-days: 14
