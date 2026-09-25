@@ -1,0 +1,176 @@
+{
+  "Os": "Microsoft Windows NT 10.0.26200.0",
+  "Utc": "2026-09-25T14:08:55.2764223+00:00",
+  "IsElevated": false,
+  "OfficeBuild": "16.0.20326.20144",
+  "StandardSha256": "BB6801AB1DDEDAEE9E97B97EDC03A1202F008B5C4697E04DCD7DBCBE7F6BFC0D",
+  "LiteSha256": "C8CEAF5CC533CA9E1851CB494ABB5FFBEFFEB3565CA69206D826598DF6C9663C",
+  "Results": [
+    {
+      "Name": "lite-runtime-missing-diagnostic",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": -2147450730
+      }
+    },
+    {
+      "Name": "standard-seed",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": false
+      }
+    },
+    {
+      "Name": "standard-restart",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": false
+      }
+    },
+    {
+      "Name": "standard-replacement",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": true
+      }
+    },
+    {
+      "Name": "standard-office-source-matches-history",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "standard-Word-paste-save-reopen",
+      "Status": "passed",
+      "Detail": {
+        "Version": "16.0",
+        "Pictures": 1,
+        "WidthPoints": 72,
+        "HeightPoints": 72,
+        "ExtractedImageShapeScore": 1,
+        "PixelsIncludingAlphaPreserved": true,
+        "PngBytesPreserved": true,
+        "DimensionsPreserved": true,
+        "OriginalTransparentPixels": 129396
+      }
+    },
+    {
+      "Name": "standard-Excel-paste-save-reopen",
+      "Status": "passed",
+      "Detail": {
+        "Version": "16.0",
+        "Pictures": 1,
+        "WidthPoints": 72.00054931640625,
+        "HeightPoints": 72.00054931640625,
+        "ExtractedImageShapeScore": 1,
+        "PixelsIncludingAlphaPreserved": true,
+        "PngBytesPreserved": true,
+        "DimensionsPreserved": true,
+        "OriginalTransparentPixels": 129396
+      }
+    },
+    {
+      "Name": "standard-PowerPoint-paste-save-reopen",
+      "Status": "passed",
+      "Detail": {
+        "Version": "16.0",
+        "Pictures": 1,
+        "WidthPoints": 72.00054931640625,
+        "HeightPoints": 72.00054931640625,
+        "ExtractedImageShapeScore": 1,
+        "PixelsIncludingAlphaPreserved": true,
+        "PngBytesPreserved": true,
+        "DimensionsPreserved": true,
+        "OriginalTransparentPixels": 129396
+      }
+    },
+    {
+      "Name": "lite-seed",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": true
+      }
+    },
+    {
+      "Name": "lite-restart",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": true
+      }
+    },
+    {
+      "Name": "lite-replacement",
+      "Status": "passed",
+      "Detail": {
+        "ExitCode": 0,
+        "Clipboard": true,
+        "PrivateRuntime": false
+      }
+    },
+    {
+      "Name": "lite-office-source-matches-history",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "lite-Word-paste-save-reopen",
+      "Status": "passed",
+      "Detail": {
+        "Version": "16.0",
+        "Pictures": 1,
+        "WidthPoints": 72,
+        "HeightPoints": 72,
+        "ExtractedImageShapeScore": 1,
+        "PixelsIncludingAlphaPreserved": true,
+        "PngBytesPreserved": true,
+        "DimensionsPreserved": true,
+        "OriginalTransparentPixels": 129184
+      }
+    },
+    {
+      "Name": "lite-Excel-paste-save-reopen",
+      "Status": "passed",
+      "Detail": {
+        "Version": "16.0",
+        "Pictures": 1,
+        "WidthPoints": 72.00054931640625,
+        "HeightPoints": 72.00054931640625,
+        "ExtractedImageShapeScore": 1,
+        "PixelsIncludingAlphaPreserved": true,
+        "PngBytesPreserved": true,
+        "DimensionsPreserved": true,
+        "OriginalTransparentPixels": 129184
+      }
+    },
+    {
+      "Name": "lite-PowerPoint-paste-save-reopen",
+      "Status": "passed",
+      "Detail": {
+        "Version": "16.0",
+        "Pictures": 1,
+        "WidthPoints": 72.00054931640625,
+        "HeightPoints": 72.00054931640625,
+        "ExtractedImageShapeScore": 1,
+        "PixelsIncludingAlphaPreserved": true,
+        "PngBytesPreserved": true,
+        "DimensionsPreserved": true,
+        "OriginalTransparentPixels": 129184
+      }
+    },
+    {
+      "Name": "original-clipboard-restored",
+      "Status": "passed",
+      "Detail": null
+    }
+  ]
+}
