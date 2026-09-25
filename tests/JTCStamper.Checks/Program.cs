@@ -16,6 +16,32 @@ void Throws(Action action) { try { action(); } catch { return; } throw new Excep
 var stamp = new Stamp("山田", new DateOnly(1900, 1, 1), "確認");
 try
 {
+    Check("large-history-parallel-read-keeps-chain-and-error-semantics", dir =>
+    {
+        using var journal = new Journal(dir, key);
+        var clipboard = new FakeClipboard();
+        var id = new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
+        for (int i = 0; i < 130; i++) journal.Append("AnnotationAdded", id, new { Text = "original", Index = i });
+        var service = new VerificationService(journal);
+        Parallel.For(0, 8, _ => Assert(service.ReadHistory().Entries.Select(r => r.Entry.Sequence)
+            .SequenceEqual(Enumerable.Range(1, 133).Select(i => (long)i))));
+        var paths = new[] { Path.Combine(dir, "000000000020.json"), Path.Combine(dir, "000000000130.json") };
+        var originals = paths.Select(File.ReadAllBytes).ToArray();
+        for (int i = 0; i < paths.Length; i++)
+        {
+            var time = File.GetLastWriteTimeUtc(paths[i]);
+            File.WriteAllText(paths[i], File.ReadAllText(paths[i]).Replace("original", "modified"));
+            File.SetLastWriteTimeUtc(paths[i], time);
+            Assert(new FileInfo(paths[i]).Length == originals[i].Length);
+        }
+        Assert(service.Image([1, 2, 3]).Status == VerificationStatus.Indeterminate);
+        Throws(() => new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, _ => [1, 2, 3]));
+        Assert(clipboard.Calls == 1 && Directory.GetFiles(dir, "*.json").Length == 133);
+        for (int i = 0; i < paths.Length; i++) File.WriteAllBytes(paths[i], originals[i]);
+        Assert(service.Image([1, 2, 3]).Status == VerificationStatus.Match);
+        File.Move(paths[0], Path.Combine(dir, "000000000999.json"));
+        Assert(service.Image([1, 2, 3]).Status == VerificationStatus.Indeterminate);
+    });
     Check("copy-completion-snapshot-is-fresh-and-never-survives-failure", dir =>
     {
         using var journal = new Journal(dir, key);

@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Text.Json;
 
@@ -81,13 +82,36 @@ public sealed class Journal : IDisposable, IJournalWriter
         long sequence = 0;
         string previous = "GENESIS";
         var paths = Directory.GetFiles(directory, "*.json");
+        Array.Sort(paths, StringComparer.Ordinal);
         bool useCache = paths.Length <= MaxCachedRecords;
         if (!useCache) lock (cacheGate) { parsed.Clear(); cacheBytes = 0; }
-        foreach (var path in paths.Order(StringComparer.Ordinal))
+        VerifiedEntry[]? loaded = null;
+        if (useCache && paths.Length >= 128)
         {
+            // Bounded parallel I/O, not skipped verification. Read/hash all current files,
+            // then check their names and HMAC chain in deterministic sequence order.
+            loaded = new VerifiedEntry[paths.Length];
+            try
+            {
+                Parallel.For(0, paths.Length, new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = 4, CancellationToken = cancellationToken
+                }, i => loaded[i] = ReadRecord(paths[i], useCache: true));
+            }
+            catch (AggregateException ex)
+            {
+                // Preserve the existing public error categories (e.g. invalid JSON/HMAC
+                // becomes Indeterminate), rather than leaking a Parallel.For wrapper.
+                ExceptionDispatchInfo.Capture(ex.Flatten().InnerExceptions[0]).Throw();
+                throw;
+            }
+        }
+        for (int i = 0; i < paths.Length; i++)
+        {
+            var path = paths[i];
             cancellationToken.ThrowIfCancellationRequested();
             ObjectDisposedException.ThrowIf(Volatile.Read(ref disposed), this);
-            var record = ReadRecord(path, useCache);
+            var record = loaded is null ? ReadRecord(path, useCache) : loaded[i];
             var signed = record.Signed; var entry = record.Entry;
             if (entry.Version != 1 || entry.Sequence != ++sequence || entry.PreviousMac != previous ||
                 Path.GetFileName(path) != $"{entry.Sequence:D12}.json") throw new InvalidDataException("履歴の順序または連鎖が不正です。");
