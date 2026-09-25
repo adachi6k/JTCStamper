@@ -54,6 +54,23 @@ public sealed class VerificationService(Journal journal)
         return new(entries, Generations(entries).Select(x => x.Generation).ToArray());
     }
 
+    // Same semantic validation as ReadHistory, including other current-format generations,
+    // without retaining their embedded images. Publish only after the entire scan succeeds.
+    public VerifiedHistory ReadEventHistory(Guid eventId, CancellationToken cancellationToken = default)
+    {
+        var entries = new List<VerifiedEntry>();
+        var generations = new List<Generation>();
+        foreach (var record in journal.ReadVerified(cancellationToken))
+        {
+            Generation? generation = record.Entry.Kind == "Generated" && IsCurrent(record.Entry)
+                ? Parse(record.Entry) : null;
+            if (record.Entry.EventId != eventId) continue;
+            entries.Add(record);
+            if (generation is not null) generations.Add(generation);
+        }
+        return new(entries, generations);
+    }
+
     List<(Generation Generation, SignedEntry Signed)> Generations() => Generations(journal.Read());
     static List<(Generation Generation, SignedEntry Signed)> Generations(IReadOnlyList<VerifiedEntry> entries) => entries
         .Where(x => x.Entry.Kind == "Generated" && IsCurrent(x.Entry)).Select(x => (Parse(x.Entry), x.Signed)).ToList();

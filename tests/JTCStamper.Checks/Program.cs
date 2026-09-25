@@ -37,16 +37,33 @@ try
         var selected = copy.GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
         var other = copy.GenerateCodedAndCopy(stamp, _ => [4, 5, 6]);
         journal.Annotate(selected, "selected note");
-        Assert(journal.ReadEvent(selected).Count == 4);
-        Assert(journal.ReadEvent(selected).All(x => x.Entry.EventId == selected));
-        Assert(journal.ReadEvent(Guid.NewGuid()).Count == 0);
+        Assert(new VerificationService(journal).ReadEventHistory(selected).Entries.Count == 4);
+        Assert(new VerificationService(journal).ReadEventHistory(selected).Entries.All(x => x.Entry.EventId == selected));
+        Assert(new VerificationService(journal).ReadEventHistory(Guid.NewGuid()).Entries.Count == 0);
         using var cancelled = new CancellationTokenSource(); cancelled.Cancel();
-        try { journal.ReadEvent(selected, cancelled.Token); throw new Exception("Cancellation ignored"); }
+        try { new VerificationService(journal).ReadEventHistory(selected, cancelled.Token); throw new Exception("Cancellation ignored"); }
         catch (OperationCanceledException) { }
         var path = Path.Combine(dir, "000000000006.json");
         File.WriteAllText(path, File.ReadAllText(path).Replace("PNG", "BAD"));
-        Throws(() => journal.ReadEvent(selected));
-        Throws(() => journal.ReadEvent(Guid.NewGuid()));
+        Throws(() => new VerificationService(journal).ReadEventHistory(selected));
+        Throws(() => new VerificationService(journal).ReadEventHistory(Guid.NewGuid()));
+    });
+    Check("event-history-rejects-signed-but-invalid-other-generations", dir =>
+    {
+        foreach (var fault in new[] { "event", "code", "image" })
+        {
+            using var journal = new Journal(Path.Combine(dir, fault), key);
+            var selected = new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
+            var service = new VerificationService(journal);
+            Assert(service.ReadEventHistory(selected).Generations.Single().EventId == selected);
+            var id = Guid.NewGuid();
+            var bad = new Generation(fault == "event" ? Guid.NewGuid() : id, DateTimeOffset.UtcNow,
+                stamp with { GeometryCode = fault == "code" ? RingCode.ForEvent(id) ^ 1 : RingCode.ForEvent(id) },
+                Convert.ToHexString(SHA256.HashData(new byte[] { 1, 2, 3 })), fault == "image" ? "BAUG" : "AQID");
+            journal.Append("Generated", id, bad); // Valid MAC; invalid semantics in an unrelated event.
+            Throws(() => service.ReadHistory());
+            Throws(() => service.ReadEventHistory(selected));
+        }
     });
     Check("restore-retains-authenticated-images-notes-and-original", dir =>
     {

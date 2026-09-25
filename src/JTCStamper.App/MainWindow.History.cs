@@ -1,5 +1,3 @@
-using System.IO;
-using System.Text.Json;
 using JTCStamper.Core;
 
 namespace JTCStamper.App;
@@ -21,11 +19,10 @@ public partial class MainWindow
             ReferenceEquals(journal, source) && History.SelectedItem is HistoryRow current && current.Id == row.Id;
         try
         {
-            var records = await Task.Run(() => source.ReadEvent(row.Id, cancellation.Token), cancellation.Token);
+            var snapshot = await Task.Run(() => new VerificationService(source).ReadEventHistory(row.Id, cancellation.Token), cancellation.Token);
             if (!IsCurrent()) return;
-            var entry = records.Single(x => x.Entry.Kind == "Generated");
-            var generation = JsonSerializer.Deserialize<Generation>(entry.Entry.Payload)
-                ?? throw new InvalidDataException("生成記録を読めません。");
+            var records = snapshot.Entries;
+            var generation = snapshot.Generations.Single();
             var image = HistoryImage.Load(generation);
             HistoryPreview.Source = image.Image;
             HistoryImageDescription.Text = image.Description;
