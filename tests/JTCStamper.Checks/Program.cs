@@ -16,6 +16,33 @@ void Throws(Action action) { try { action(); } catch { return; } throw new Excep
 var stamp = new Stamp("山田", new DateOnly(1900, 1, 1), "確認");
 try
 {
+    Check("copy-completion-snapshot-is-fresh-and-never-survives-failure", dir =>
+    {
+        using var journal = new Journal(dir, key);
+        var clipboard = new FakeClipboard(); var copy = new CopyService(journal, clipboard);
+        var id = copy.GenerateCodedAndCopy(stamp, _ => [1, 2, 3], captureHistory: true);
+        var snapshot = copy.CompletedHistory!;
+        Assert(snapshot.Entries.Count == 3 && snapshot.Generations.Single().EventId == id && snapshot.Entries.Last().Entry.Kind == "CopyCompleted");
+        journal.Annotate(id, "later");
+        copy.GenerateCodedAndCopy(stamp, _ => [4, 5, 6], captureHistory: true);
+        Assert(copy.CompletedHistory!.Entries.Count == 7 && snapshot.Entries.Count == 3);
+        var path = Path.Combine(dir, "000000000004.json");
+        File.WriteAllText(path, File.ReadAllText(path).Replace("later", "other"));
+        Throws(() => copy.GenerateCodedAndCopy(stamp, _ => [1, 2, 3], captureHistory: true));
+        Assert(copy.CompletedHistory is null && clipboard.Calls == 2);
+    });
+    Check("completion-snapshot-rejects-tampering-during-clipboard", dir =>
+    {
+        using var journal = new Journal(dir, key);
+        var clipboard = new FakeClipboard { Action = () =>
+        {
+            var path = Path.Combine(dir, "000000000002.json");
+            File.WriteAllText(path, File.ReadAllText(path).Replace("PNG", "BAD"));
+        } };
+        var copy = new CopyService(journal, clipboard);
+        Throws(() => copy.GenerateCodedAndCopy(stamp, _ => [1, 2, 3], captureHistory: true));
+        Assert(copy.CompletedHistory is null && clipboard.Calls == 1 && !File.Exists(Path.Combine(dir, "000000000003.json")));
+    });
     Check("image-and-history-pipelines-observe-cancellation", dir =>
     {
         using var journal = new Journal(dir, key);

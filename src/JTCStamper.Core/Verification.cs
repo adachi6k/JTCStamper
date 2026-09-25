@@ -53,8 +53,12 @@ public sealed class VerificationService(Journal journal)
     public VerifiedHistory ReadHistory()
     {
         var entries = journal.Read();
-        return new(entries, Generations(entries).Select(x => x.Generation).ToArray());
+        return FromVerifiedEntries(entries);
     }
+
+    // Only Journal / this service supplies entries already authenticated in this operation.
+    internal static VerifiedHistory FromVerifiedEntries(IReadOnlyList<VerifiedEntry> entries) =>
+        new(entries, Generations(entries).Select(x => x.Generation).ToArray());
 
     // Same semantic validation as ReadHistory, including other current-format generations,
     // without retaining their embedded images. Publish only after the entire scan succeeds.

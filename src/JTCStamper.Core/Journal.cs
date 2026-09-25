@@ -108,13 +108,25 @@ public sealed class Journal : IDisposable, IJournalWriter
     {
         // Verify every record, but retain only the chain tail when appending.
         var last = ReadVerified().LastOrDefault();
+        return WriteAfter(last, kind, eventId, payload).Signed;
+    }
+    // One operation's completion snapshot: never reused for a later user action.
+    // The same full byte/chain verification runs before writing CopyCompleted.
+    internal VerifiedHistory CompleteCopyAndCapture(Guid eventId, object payload)
+    {
+        var records = ReadVerified().ToList();
+        records.Add(WriteAfter(records.LastOrDefault(), "CopyCompleted", eventId, payload));
+        return VerificationService.FromVerifiedEntries(records);
+    }
+    VerifiedEntry WriteAfter(VerifiedEntry? last, string kind, Guid eventId, object payload)
+    {
         var entry = new Entry(1, (last?.Entry.Sequence ?? 0) + 1, last?.Signed.Mac ?? "GENESIS",
             kind, eventId, DateTimeOffset.UtcNow, JsonSerializer.Serialize(payload));
         var json = JsonSerializer.Serialize(entry);
         var signed = new SignedEntry(json, Convert.ToHexString(HMACSHA256.HashData(key, Encoding.UTF8.GetBytes(json))));
         string target = Path.Combine(directory, $"{entry.Sequence:D12}.json");
         AtomicFile.Write(target, stream => stream.Write(JsonSerializer.SerializeToUtf8Bytes(signed)), overwrite: false);
-        return signed;
+        return new(entry, signed);
     }
     // Delete newest first: an interrupted deletion leaves a valid prefix, never a broken chain.
     // Keep the owner lock and key; unrelated files are never removed.
@@ -146,16 +158,18 @@ public sealed class Journal : IDisposable, IJournalWriter
 public interface IClipboard { void Copy(byte[] png); }
 public sealed class CopyService(IJournalWriter journal, IClipboard clipboard)
 {
-    public Guid GenerateCodedAndCopy(Stamp stamp, Func<Stamp, byte[]> render)
+    public VerifiedHistory? CompletedHistory { get; private set; }
+    public Guid GenerateCodedAndCopy(Stamp stamp, Func<Stamp, byte[]> render, bool captureHistory = false)
     {
+        CompletedHistory = null;
         var id = Guid.NewGuid();
         if (stamp.Renderer != RingCode.Renderer && stamp.Renderer != RingCode.PlainRenderer) throw new NotSupportedException("対応していない印影形式です。");
         var coded = stamp with { GeometryCode = stamp.Renderer == RingCode.PlainRenderer ? null : RingCode.ForEvent(id) };
         RingCode.Validate(coded);
         var png = render(coded);
-        return SaveAndCopy(id, coded, png);
+        return SaveAndCopy(id, coded, png, captureHistory);
     }
-    Guid SaveAndCopy(Guid id, Stamp stamp, byte[] png)
+    Guid SaveAndCopy(Guid id, Stamp stamp, byte[] png, bool captureHistory)
     {
         var generation = new Generation(id, DateTimeOffset.UtcNow, stamp, Convert.ToHexString(SHA256.HashData(png)), Convert.ToBase64String(png));
         journal.Append("Generated", id, generation);
@@ -167,7 +181,9 @@ public sealed class CopyService(IJournalWriter journal, IClipboard clipboard)
             throw;
         }
         // If this fails, the caller must show failure/unknown, even though clipboard may contain the image.
-        journal.Append("CopyCompleted", id, new { Format = "PNG", Meaning = "Clipboard API completed; paste unobserved" });
+        var completed = new { Format = "PNG", Meaning = "Clipboard API completed; paste unobserved" };
+        if (captureHistory && journal is Journal owned) CompletedHistory = owned.CompleteCopyAndCapture(id, completed);
+        else journal.Append("CopyCompleted", id, completed);
         return id;
     }
 }

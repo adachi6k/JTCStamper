@@ -157,23 +157,29 @@ public partial class MainWindow
         var source = journal;
         return RunStoreOperationAsync("生成・コピーの記録を保存しています…", "成功扱いにしていません。クリップボードに画像が残っている可能性があります。 ", async () =>
         {
-            Guid id;
+            (Guid Id, HistoryRows Rows) completed;
             try
             {
-                id = await Task.Run(() => new CopyService(source, new DispatcherClipboard(clipboard, Dispatcher))
-                    .GenerateCodedAndCopy(stamp, coded => Dispatcher.Invoke(() =>
+                completed = await Task.Run(() =>
+                {
+                    var copy = new CopyService(source, new DispatcherClipboard(clipboard, Dispatcher));
+                    var id = copy.GenerateCodedAndCopy(stamp, coded => Dispatcher.Invoke(() =>
                     {
                         var bitmap = StampRenderer.Render(coded); Preview.Source = bitmap;
                         return StampRenderer.Png(bitmap);
-                    })));
+                    }), captureHistory: true);
+                    // Use only this operation's just-authenticated completion snapshot.
+                    // Later selections, copies and verifications re-read the current files.
+                    return (id, copy.CompletedHistory is { } snapshot ? BuildHistoryRows(snapshot) : ReadHistoryRows(source));
+                });
             }
             catch
             {
                 try { await RefreshHistoryAsync(); } catch { historyReady = false; }
                 throw;
             }
-            await RefreshHistoryAsync(id);
-            Status.Text = $"PNGコピーと記録が完了しました。貼付は未確認です。イベントID: {id}";
+            ApplyHistoryRows(completed.Rows, completed.Id); historyReady = true;
+            Status.Text = $"PNGコピーと記録が完了しました。貼付は未確認です。イベントID: {completed.Id}";
         });
     }
 
@@ -190,9 +196,9 @@ public partial class MainWindow
     });
 
     sealed record HistoryRows(List<HistoryRow> Rows, Generation[] Recent);
-    static HistoryRows ReadHistoryRows(Journal source)
+    static HistoryRows ReadHistoryRows(Journal source) => BuildHistoryRows(new VerificationService(source).ReadHistory());
+    static HistoryRows BuildHistoryRows(VerifiedHistory snapshot)
     {
-        var snapshot = new VerificationService(source).ReadHistory();
         var completed = snapshot.Entries.Where(r => r.Entry.Kind == "CopyCompleted").Select(r => r.Entry.EventId).ToHashSet();
         var generations = snapshot.Generations.Reverse().ToArray();
         var rows = generations.Select(g =>
