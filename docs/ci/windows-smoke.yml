@@ -37,12 +37,12 @@ jobs:
           $report = Join-Path $root 'storage-failures.json'
           if (Test-Path $report) { Copy-Item $report test-results/storage/ }
           if ($testExit -ne 0) { throw 'Storage interruption checks failed.' }
-      - name: Real disk-full recovery on a disposable 256 MiB VHD
-        shell: pwsh
-        run: ./scripts/Invoke-DiskFull.ps1
       - name: Build versioned distribution packages
         shell: pwsh
         run: ./scripts/New-ReleasePackages.ps1
+      - name: Real disk-full recovery on a disposable 256 MiB VHD
+        shell: pwsh
+        run: ./scripts/Invoke-DiskFull.ps1
       - name: Windows smoke (clipboard explicitly skipped)
         shell: pwsh
         run: ./scripts/Invoke-WindowsSmoke.ps1

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -16,7 +17,7 @@ internal static class Program
     static readonly Stamp Stamp = new("TEST", new DateOnly(2100, 1, 1), "CHECK");
     static readonly List<object> Results = [];
     static FullVolume volume = null!;
-    static string root = "", reportRoot = "";
+    static string root = "", reportRoot = "", standardExe = "";
     static byte[] Render(Stamp stamp) => StampRenderer.Png(StampRenderer.Render(stamp));
 
     [STAThread]
@@ -24,9 +25,11 @@ internal static class Program
     {
         try
         {
-            Require(args.Length == 3 && Guid.TryParseExact(args[2], "N", out _), "Expected volume root, report root and token.");
+            Require(args.Length == 4 && Guid.TryParseExact(args[2], "N", out _), "Expected volume root, report root, token and published Standard EXE.");
             root = Path.GetFullPath(args[0]); reportRoot = Path.GetFullPath(args[1]);
             Require(Path.GetPathRoot(root) != Path.GetPathRoot(reportRoot) && Directory.Exists(reportRoot), "Reports must use an existing folder outside the full volume.");
+            standardExe = Path.GetFullPath(args[3]);
+            Require(File.Exists(standardExe) && Path.GetPathRoot(standardExe) != Path.GetPathRoot(root), "Standard EXE must exist outside the full volume.");
             using var full = new FullVolume(root, args[2]); volume = full;
             var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
             using (var stream = typeof(Program).Assembly.GetManifestResourceStream("ApplicationXamlSource")!)
@@ -49,6 +52,7 @@ internal static class Program
                         OS = Environment.OSVersion.ToString(), Utc = DateTimeOffset.UtcNow,
                         AppAssemblySha256 = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(typeof(MainWindow).Assembly.Location))),
                         CoreAssemblySha256 = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(typeof(Journal).Assembly.Location))),
+                        StandardSha256 = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(standardExe))),
                         VolumeBytes = volume.TotalBytes, Scope = "Real NTFS exhaustion on a dedicated fixed VHD; synthetic clipboard; no host disk filling or power loss.",
                         Results
                     }, new JsonSerializerOptions { WriteIndented = true }));
@@ -90,6 +94,41 @@ internal static class Program
     }
     static async Task Run()
     {
+        await Check("standard-bundle-extraction-full-and-recovery", async () =>
+        {
+            var folder = CaseFolder();
+            volume.Fill(folder);
+            var fullError = volume.LastError; var freeBytes = volume.FreeBytesAtFailure;
+            async Task<(int ExitCode, bool Diagnostic)> Launch()
+            {
+                var info = new ProcessStartInfo(standardExe)
+                {
+                    UseShellExecute = false, RedirectStandardError = true, RedirectStandardOutput = true
+                };
+                // Deliberately incomplete smoke arguments return 2 only after the bundle loads.
+                // No application journal or interactive window can be opened by this command.
+                info.ArgumentList.Add("--smoke-test");
+                info.Environment["DOTNET_BUNDLE_EXTRACT_BASE_DIR"] = folder;
+                info.Environment["DOTNET_DISABLE_GUI_ERRORS"] = "1";
+                using var child = Process.Start(info) ?? throw new IOException("Cannot start owned extraction test.");
+                var error = child.StandardError.ReadToEndAsync(); var output = child.StandardOutput.ReadToEndAsync();
+                using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+                try { await child.WaitForExitAsync(timeout.Token); }
+                catch (OperationCanceledException) { child.Kill(true); await child.WaitForExitAsync(); throw new TimeoutException("Bundle extraction timed out."); }
+                await output;
+                return (child.ExitCode, !string.IsNullOrWhiteSpace(await error));
+            }
+            var failure = await Launch();
+            Require(failure.ExitCode != 0 && failure.ExitCode != 2 && failure.Diagnostic,
+                "Expected host extraction failure before managed argument validation.");
+            volume.Release();
+            var recovery = await Launch();
+            Require(recovery.ExitCode == 2, "Bundle did not reach managed argument validation after freeing space.");
+            return new { FillerWin32Error = fullError, FreeBytesAtFailure = freeBytes,
+                HostExitCode = failure.ExitCode, failure.Diagnostic, RecoveryExitCode = recovery.ExitCode,
+                Recovered = true, Scope = "Fresh Standard bundle extraction on a full isolated NTFS volume; no journal started." };
+        });
+
         await Check("initial-key-full-no-partial-key-and-recovery", () =>
         {
             var folder = CaseFolder();

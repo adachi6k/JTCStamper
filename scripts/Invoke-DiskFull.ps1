@@ -4,6 +4,8 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $repo = Split-Path $PSScriptRoot -Parent
 $reportRoot = Join-Path $repo 'test-results/disk-full'
+$standardExe = Join-Path $repo 'dist/win-x64/JTCStamper.App.exe'
+if (-not (Test-Path -LiteralPath $standardExe)) { throw 'Build distribution packages before the disk-full test.' }
 New-Item -ItemType Directory -Force $reportRoot | Out-Null
 $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
 $isAdmin = ([Security.Principal.WindowsPrincipal]::new($identity)).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -58,7 +60,7 @@ try {
     @{ Status = 'ready'; VhdBytes = 256MB; VolumeBytes = $volume.Size; FileSystem = $volume.FileSystem;
         VolumeLabel = $label; HostFreeBytesBefore = $hostDrive.AvailableFreeSpace; Elevated = $isAdmin } |
         ConvertTo-Json | Set-Content (Join-Path $reportRoot 'setup.json') -Encoding utf8
-    dotnet run --project tests/JTCStamper.DiskFull -c Release --no-build -- $driveRoot $reportRoot $token
+    dotnet run --project tests/JTCStamper.DiskFull -c Release --no-build -- $driveRoot $reportRoot $token $standardExe
     $testExit = $LASTEXITCODE
     if ($testExit -ne 0) { throw "Disk-full checks failed: exit $testExit" }
 }
