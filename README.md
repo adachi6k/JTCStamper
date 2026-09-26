@@ -4,6 +4,8 @@
 
 現在はリリース準備中です。[残作業と受入条件](https://github.com/adachi6k/JTCStamper/issues/1)、[リリース前レビュー](https://github.com/adachi6k/JTCStamper/issues/2)で進捗を管理しています。Public化は試験と公開前確認の完了後に判断します。
 
+バージョンは[SemVer 2.0.0](https://semver.org/spec/v2.0.0.html)に従います。互換性の対象と0.x・プレビューの運用は[バージョン規約](docs/VERSIONING.md)を参照してください。
+
 ## 主な機能
 
 - 上段文字・表示日付・下段文字を持つ赤い印影。日付は通常当日で、［日付を指定］で過去・未来も選べます。表示例は `'26.09.25`。

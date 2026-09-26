@@ -11,6 +11,8 @@
 
 ## 版番号とパッケージ
 
+製品版番号はSemVer 2.0.0に従う。互換性の対象・0.xでの運用・公開済み版の不変性は[VERSIONING.md](VERSIONING.md)を参照。配布前にscripts/Test-ReleaseVersion.ps1を実行する。
+
 Directory.Build.propsのVersionが基準。EXEのProductVersionは「版番号+コミット」、Aboutは版番号・コミット・通常版／軽量版を表示する。AssemblyVersion/FileVersionは.NETの4数値形式なのでプレリリース名を含めない。配布識別にはProductVersionを使用する。
 
 変更履歴を更新し、クリーンなコミットへ `v<Version>` のGitタグを付ける。タグpushもWindows CIを実行する。タグ名とVersionが一致しなければ失敗する。タグを作るだけではGitHub ReleaseやPublic化を実施しない。

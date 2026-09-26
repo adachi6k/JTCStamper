@@ -11,7 +11,8 @@ try {
     if ($LASTEXITCODE -ne 0 -or $changes) { throw 'Commit source changes before packaging.' }
     [xml]$properties = Get-Content Directory.Build.props -Raw
     $version = [string]$properties.Project.PropertyGroup.Version
-    if ($version -notmatch '^[0-9]+\.[0-9]+\.[0-9]+(?:-[a-zA-Z0-9.]+)?$') { throw 'Invalid package version.' }
+    . (Join-Path $PSScriptRoot 'ReleaseVersion.ps1')
+    if (!(Test-ReleaseVersion $version)) { throw 'Version must be SemVer MAJOR.MINOR.PATCH[-prerelease], without build metadata (the SDK adds the Git revision).' }
     $tag = git tag --points-at HEAD
     if ($env:GITHUB_REF_TYPE -eq 'tag' -and $env:GITHUB_REF_NAME -ne "v$version") { throw 'Tag and product version disagree.' }
     $output = Join-Path $root 'dist/packages'
