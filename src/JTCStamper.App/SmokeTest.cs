@@ -120,8 +120,13 @@ internal static class SmokeTest
                         Require(screen.CandidateCount == 1 && !screen.IsBusy, "Verification did not resume after cancellation.");
                         void SaveVerificationPreview(string kind)
                         {
+                            screen.Background = window.Background ?? Brushes.White; screen.Foreground = window.Foreground;
+                            screen.FontFamily = window.FontFamily; screen.FontSize = window.FontSize;
                             screen.Measure(new Size(960, 620)); screen.Arrange(new Rect(0, 0, 960, 620)); screen.UpdateLayout();
-                            var image = new RenderTargetBitmap(960, 620, 96, 96, PixelFormats.Pbgra32); image.Render(screen);
+                            var image = new RenderTargetBitmap(960, 620, 96, 96, PixelFormats.Pbgra32);
+                            var background = new DrawingVisual();
+                            using (var context = background.RenderOpen()) context.DrawRectangle(screen.Background, null, new Rect(0, 0, 960, 620));
+                            image.Render(background); image.Render(screen);
                             var pngEncoder = new PngBitmapEncoder(); pngEncoder.Frames.Add(BitmapFrame.Create(image));
                             using var file = File.Create(Path.Combine(root, "verification-" + kind + "-" + phase + ".png")); pngEncoder.Save(file);
                         }
