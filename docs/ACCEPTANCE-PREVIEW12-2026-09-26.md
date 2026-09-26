@@ -9,3 +9,14 @@
 表示の状態遷移検証は固定イベントID/固定コードの合成印影に変更。製品の生成・照合・配点アルゴリズムと独立精度評価を変更していない。固定fixtureの成功をコード全域の復号率として報告しない。生成→コピーの試験は既存の別チェックを維持する。
 
 修正後はCIと最終EXEの受入で再確認する。旧候補の失敗を成功に上書きしない。
+
+
+## 修正後の配布候補
+
+製品843606032c36da9242fc4a37f7c15dba8895320a、CI36208686077全ジョブ成功。Core47、Windows156成功/実clipboard6省略、容量不足8件、保存中断、別Windows移行を確認。固定fixtureの表示テストを含む。
+
+同じ通常版/Lite EXEの実Windows受入は20成功・2省略・失敗0。ランナーは変更不要の3a9ede5ビルド。旧preview.11からの更新・ロック置換拒否・旧版復帰、通常版/Lite交換、長い保存先、実クリップボード競合と復旧を確認。WordはPaste、PowerPointはPasteSpecial(6)経路で画素/alpha/寸法保持と保存再読込を確認。Excelは既存プロセスを保護するため省略（過去の所有者Standard確認を両版の今回成功へ拡張しない）。
+
+対象EXEのSHA-256はCI・配布ZIP・実機報告で一致。Standard: E6EA4BA54673A6CD2F574720416E6958D71D344129FA9085C731EC3E97631D10、Lite: 62A2549225DEC91595FA39FD07D4DF71E0966B5E7061A00BAF47376C7728EF90。OS/Office/非管理者状態等は生データtest-results/acceptance-preview12-fixed-2026-09-26.jsonを参照。
+
+未完: GUI細目、今回省略のExcel、未試験貼付形式、実スリープ、OneDrive条件。EMFは初回PNGプレビュー外の後続要件として#5に維持。全Issue完了・Public化は未実施。
