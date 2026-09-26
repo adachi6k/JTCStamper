@@ -1,0 +1,16 @@
+{
+  "scope": "All locally reachable branches, tags and remote-tracking refs; compared remote heads/tags separately",
+  "revision": "3a9ede593e42fb36961879de4f927c0cf7b04ec5",
+  "commits": 86,
+  "blobs": 635,
+  "removedStampBlobReachable": false,
+  "removedZipPathReachable": false,
+  "credentialPatternFindings": [],
+  "privateDataFilenames": [],
+  "imageArchiveFontPaths": [
+    "src/JTCStamper.App/Assets/jtc-icon.png",
+    "src/JTCStamper.App/Assets/jtc.ico"
+  ],
+  "machinePathFiles": [],
+  "limits": "Pattern scan cannot prove absence of every secret. Author identity and historical machine paths may be present. Unreachable GitHub objects explicitly accepted by owner; not scanned or claimed erased."
+}
