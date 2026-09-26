@@ -140,7 +140,7 @@ internal static class SmokeTest
                             return false;
                         }
                         Require(ResultText("scoreExplanation").Text.Contains("PNGファイル全体") &&
-                            !InExpander(ResultText("scoreExplanation")) && !InExpander(ResultText("meaning")),
+                            !InExpander(ResultText("scoreExplanation")) && !InExpander(ResultText("candidateCaution")),
                             "Exact evidence or its meaning was hidden in collapsed details.");
                         using (var encoded = new MemoryStream())
                         {
@@ -152,7 +152,7 @@ internal static class SmokeTest
                         }
                         SaveVerificationPreview("candidate");
                         Require(screen.CandidateCount == 1 && ResultText("scoreExplanation").Text.Contains("点数") &&
-                            !ResultText("scoreVerdict").Text.Contains("OK") && ResultText("candidateCaution").Text.Contains("確率ではありません"),
+                            !ResultText("scoreVerdict").Text.Contains("OK") && ResultText("candidateCaution").Text.Contains("そのままコピー"),
                             "Re-encoded candidate was presented as an exact or authenticity confirmation.");
                         await screen.VerifyBytesAsync([1, 2, 3]).WaitAsync(TimeSpan.FromSeconds(15));
                         Require(screen.CandidateCount == 0 && screen.ResultTitle == "照合を完了できませんでした", "Broken image kept an old match.");

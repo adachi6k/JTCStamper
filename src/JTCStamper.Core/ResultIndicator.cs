@@ -13,7 +13,7 @@ public sealed record ResultIndicator(IndicatorTone Tone, string Value, string La
         string value = !maximum && score >= .9995 ? "< 1.000" : score.ToString("0.000", CultureInfo.InvariantCulture);
         return new(maximum ? IndicatorTone.Success : IndicatorTone.Caution, value,
             maximum ? "✓ 履歴候補とのスコア最大" : "⚠ 似ている履歴の候補")
-        { Explanation = "文字の形と短いコードを比べた点数です。\n1.000でも、元のPNGと同じ画像だと確定したわけではありません。" };
+        { Explanation = "1.000は、文字の形とコードが履歴候補と一致した点数です。\n画像全体の一致とは別です。" };
     }
     public static ResultIndicator Exact(bool original = false) => new(IndicatorTone.Success, "一致", "✓ 保存された生成記録と一致")
     { Explanation = original ? "原本の記録ID・認証情報・内容が、保存された生成記録と一致しました。" : "PNGファイル全体が、生成時に保存した画像と一致しました。" };

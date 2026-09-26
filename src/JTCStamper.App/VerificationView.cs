@@ -129,7 +129,6 @@ public sealed class VerificationView : UserControl
         codeFilter.Checked += Recompare; codeFilter.Unchecked += Recompare;
         var footer = new TextBlock { Text = "この照合は、保存した生成履歴との対応を調べるものです。利用の許可や貼付完了を証明するものではありません。",
             TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 6, 0, 0) };
-        DockPanel.SetDock(footer, Dock.Bottom); panel.Children.Add(footer);
         var body = new Grid { Margin = new Thickness(0, 8, 0, 0) };
         body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(.9, GridUnitType.Star) });
         body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(10) });
@@ -165,8 +164,6 @@ public sealed class VerificationView : UserControl
         scoreCard.Child = scoreContent; scoreCard.Background = Brushes.LightGray; scoreValue.Foreground = scoreVerdict.Foreground = Brushes.Black;
         results.Children.Add(scoreCard);
         results.Children.Add(candidateCaution);
-        results.Children.Add(new TextBlock { Text = "この結果で分からないこと", FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 8, 0, 3) });
-        results.Children.Add(new TextBlock { Text = VerificationMessages.UsageLimit, FontSize = 16, TextWrapping = TextWrapping.Wrap });
         var candidateInfo = new Grid { Margin = new Thickness(0, 6, 0, 4) };
         candidateInfo.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(112) });
         candidateInfo.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -181,11 +178,11 @@ public sealed class VerificationView : UserControl
         nextCandidate.Click += (_, _) => SelectCandidate(candidateIndex + 1);
         results.Children.Add(title);
         Section("確認できたこと", result);
-        Section("結果の意味", meaning);
         Section("次に確認すること", nextStep);
         var detailPanel = new StackPanel();
         detailPanel.Children.Add(candidateDetails); detailPanel.Children.Add(scoreHelp);
-        detailPanel.Children.Add(technical);
+        detailPanel.Children.Add(meaning); detailPanel.Children.Add(technical);
+        detailPanel.Children.Add(footer);
         detailPanel.Children.Add(new TextBlock { Text = "照合に使う生成履歴の保存先：" + storageRoot, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 0) });
         results.Children.Add(new Expander { Header = "内訳・読取・検索の詳細", Content = detailPanel, Margin = new Thickness(0, 8, 0, 0) });
         results.Children.Add(new Expander { Header = "対応スコアの配点と限界", Margin = new Thickness(0, 8, 0, 0),
@@ -235,7 +232,7 @@ public sealed class VerificationView : UserControl
         if (SelectedCandidate is not Candidate item) return;
         candidatePosition.Text = $"{candidateIndex + 1} / {candidateRows.Length}";
         PaintIndicator(item.Score is double score ? ResultIndicator.Candidate(score) : ResultIndicator.Exact(lastOriginal));
-        candidateCaution.Text = item.Score.HasValue ? "本物である確率ではありません。候補の文字・日付と生成履歴を確認してください。" : "一致は保存記録との比較結果です。本物であることや使用許可の証明ではありません。";
+        candidateCaution.Text = VerificationMessages.UsageLimit;
         var g = item.Generation;
         candidateText.Text = $"表示日付：{g.Stamp.DisplayDate:yyyy/MM/dd}\n上段文字：{g.Stamp.Name}\n下段文字：{g.Stamp.Bottom}\n生成：{g.CreatedUtc.ToLocalTime():yyyy/MM/dd HH:mm:ss}";
         candidateDetails.Text = item.Evidence + $"\n記録ID：{g.EventId}\n";
