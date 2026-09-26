@@ -26,3 +26,17 @@ CIは生成されたdistのEXEをそのままWindowsスモークに渡し、起�
 CI成功はOfficeやDPI等を含む全受入試験の成功ではない。未実施は#5/#13などに残し、最終配布可否は#1/#2で判断する。
 
 配布撤回・EXEだけの交換・ロールバック・個人データの保全はDISTRIBUTION.mdを参照。タグを移動して既存成果物を別コードへ付け替えず、修正版には新しいバージョンを使用する。
+
+## 開発環境で起動する
+
+Windowsとglobal.jsonで指定した.NET SDKを用意し、リポジトリのルートで実行する。
+
+```powershell
+dotnet run --project src/JTCStamper.App -c Release
+# 通常版・軽量版のEXEを生成
+.\publish-all.cmd
+# コミット済みソースからZIP・ハッシュを生成
+pwsh -File .\scripts\New-ReleasePackages.ps1
+```
+
+EXEの出力先はdist/win-x64とdist/lite-win-x64、ZIPとchecksums.jsonはdist/packages。利用者はビルドせず、GitHub Releasesの通常版ZIPから起動できる。
