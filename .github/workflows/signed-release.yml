@@ -1,0 +1,97 @@
+name: Signed release candidate
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: signed-release
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: windows-2025
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68
+        with:
+          global-json-file: global.json
+      - name: Check version and core behavior
+        shell: pwsh
+        run: |
+          ./scripts/Test-ReleaseVersion.ps1
+          dotnet run --project tests/JTCStamper.Checks -c Release
+          if ($LASTEXITCODE -ne 0) { throw 'Core checks failed.' }
+      - name: Build packages and verify signing implementation
+        shell: pwsh
+        run: |
+          ./scripts/New-ReleasePackages.ps1
+          ./scripts/Test-CodeSigning.ps1
+      - name: Test unsigned source packages
+        shell: pwsh
+        run: ./scripts/Invoke-WindowsSmoke.ps1
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: unsigned-input-${{ github.sha }}
+          path: dist/packages/
+          if-no-files-found: error
+          retention-days: 3
+  sign:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    environment: release-signing
+    runs-on: windows-2025
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68
+        with:
+          global-json-file: global.json
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: unsigned-input-${{ github.sha }}
+          path: unsigned-input
+      - name: Sign only verified packages and remove imported key
+        shell: pwsh
+        env:
+          JTC_SIGNING_PFX: ${{ secrets.SIGNING_PFX_BASE64 }}
+          JTC_SIGNING_PASSWORD: ${{ secrets.SIGNING_PFX_PASSWORD }}
+          JTC_SIGNING_CERT_SHA256: ${{ vars.SIGNING_CERTIFICATE_SHA256 }}
+        run: ./scripts/Invoke-CiSigning.ps1 -InputDirectory unsigned-input -OutputDirectory signed-output -ExpectedRevision $env:GITHUB_SHA
+      - name: Verify signed archives and test EXEs after key cleanup
+        shell: pwsh
+        run: |
+          $checks = Get-Content signed-output/checksums.json -Raw | ConvertFrom-Json
+          foreach ($item in $checks) {
+            $zip = Join-Path signed-output $item.File
+            if ((Get-FileHash $zip -Algorithm SHA256).Hash -ne $item.Sha256) { throw 'Signed ZIP hash mismatch.' }
+            $dest = Join-Path $env:RUNNER_TEMP ('signed-' + $item.Build.Variant)
+            Expand-Archive $zip $dest
+            $exe = Join-Path $dest JTCStamper.App.exe
+            if ((Get-FileHash $exe -Algorithm SHA256).Hash -ne $item.Build.ExeSha256) { throw 'Signed EXE hash mismatch.' }
+            $sig = Get-AuthenticodeSignature $exe
+            if ($sig.SignerCertificate.Thumbprint -ne $item.Build.Signing.Thumbprint) { throw 'Signer mismatch.' }
+            if (Test-Path "Cert:\CurrentUser\My\$($sig.SignerCertificate.Thumbprint)") { throw 'Signing key was not removed.' }
+          }
+          ./scripts/Invoke-WindowsSmoke.ps1 -StandardExe (Join-Path $env:RUNNER_TEMP 'signed-Standard/JTCStamper.App.exe') -LiteExe (Join-Path $env:RUNNER_TEMP 'signed-Lite/JTCStamper.App.exe')
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: signed-packages-${{ github.sha }}
+          path: |
+            signed-output/*.zip
+            signed-output/checksums.json
+            signed-output/JTCStamper-signing.cer
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload post-sign test reports only
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: signed-smoke-${{ github.sha }}
+          path: test-results/windows-smoke/
+          if-no-files-found: ignore
+          retention-days: 14
