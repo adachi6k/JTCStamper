@@ -8,7 +8,7 @@ Set-StrictMode -Version Latest
 if ($CertificateThumbprint -notmatch '\A[0-9A-Fa-f]{40}\z') { throw 'Expected an explicit certificate thumbprint.' }
 $cert = Get-Item -LiteralPath "Cert:\CurrentUser\My\$CertificateThumbprint"
 if (!$cert.HasPrivateKey -or $cert.NotBefore -gt (Get-Date) -or $cert.NotAfter -le (Get-Date)) { throw 'Signing certificate has no private key or is outside its validity period.' }
-if ('1.3.6.1.5.5.7.3.3' -notin @($cert.EnhancedKeyUsageList.ObjectId.Value)) { throw 'Code-signing EKU is required.' }
+if ('1.3.6.1.5.5.7.3.3' -notin @($cert.Extensions | Where-Object { $_.Oid.Value -eq '2.5.29.37' } | ForEach-Object { $_.EnhancedKeyUsages } | ForEach-Object { $_.Value })) { throw 'Code-signing EKU is required.' }
 if ($cert.Subject -ne $cert.Issuer) { throw 'This workflow is for self-signed certificates only.' }
 $file = (Resolve-Path -LiteralPath $Path).Path
 if ([IO.Path]::GetExtension($file) -ne '.exe') { throw 'Only release EXE files are supported.' }
