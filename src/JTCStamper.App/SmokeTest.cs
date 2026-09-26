@@ -118,6 +118,37 @@ internal static class SmokeTest
                         Require(!screen.IsBusy && screen.CandidateCount == 0 && screen.ResultTitle == "照合を中止しました", "Cancelled result was published as a match or not cleared.");
                         await screen.VerifyBytesAsync(stored!).WaitAsync(TimeSpan.FromSeconds(15));
                         Require(screen.CandidateCount == 1 && !screen.IsBusy, "Verification did not resume after cancellation.");
+                        void SaveVerificationPreview(string kind)
+                        {
+                            screen.Measure(new Size(960, 620)); screen.Arrange(new Rect(0, 0, 960, 620)); screen.UpdateLayout();
+                            var image = new RenderTargetBitmap(960, 620, 96, 96, PixelFormats.Pbgra32); image.Render(screen);
+                            var pngEncoder = new PngBitmapEncoder(); pngEncoder.Frames.Add(BitmapFrame.Create(image));
+                            using var file = File.Create(Path.Combine(root, "verification-" + kind + "-" + phase + ".png")); pngEncoder.Save(file);
+                        }
+                        SaveVerificationPreview("exact");
+                        TextBlock ResultText(string field) => (TextBlock)typeof(VerificationView).GetField(field,
+                            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.GetValue(screen)!;
+                        bool InExpander(DependencyObject element)
+                        {
+                            for (DependencyObject? current = element; current is not null; current = LogicalTreeHelper.GetParent(current))
+                                if (current is Expander) return true;
+                            return false;
+                        }
+                        Require(ResultText("scoreExplanation").Text.Contains("PNGファイル全体") &&
+                            !InExpander(ResultText("scoreExplanation")) && !InExpander(ResultText("meaning")),
+                            "Exact evidence or its meaning was hidden in collapsed details.");
+                        using (var encoded = new MemoryStream())
+                        {
+                            var encoder = new BmpBitmapEncoder();
+                            using var input = new MemoryStream(stored!);
+                            encoder.Frames.Add(BitmapFrame.Create(input, BitmapCreateOptions.None, BitmapCacheOption.OnLoad));
+                            encoder.Save(encoded);
+                            await screen.VerifyBytesAsync(encoded.ToArray()).WaitAsync(TimeSpan.FromSeconds(15));
+                        }
+                        SaveVerificationPreview("candidate");
+                        Require(screen.CandidateCount == 1 && ResultText("scoreExplanation").Text.Contains("点数") &&
+                            !ResultText("scoreVerdict").Text.Contains("OK") && ResultText("candidateCaution").Text.Contains("確率ではありません"),
+                            "Re-encoded candidate was presented as an exact or authenticity confirmation.");
                         await screen.VerifyBytesAsync([1, 2, 3]).WaitAsync(TimeSpan.FromSeconds(15));
                         Require(screen.CandidateCount == 0 && screen.ResultTitle == "照合を完了できませんでした", "Broken image kept an old match.");
                         await screen.VerifyBytesAsync(new byte[32 * 1024 * 1024 + 1]);

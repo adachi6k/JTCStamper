@@ -29,6 +29,7 @@ public sealed class VerificationView : UserControl
     Candidate? SelectedCandidate => candidateIndex >= 0 && candidateIndex < candidateRows.Length ? candidateRows[candidateIndex] : null;
     readonly TextBlock scoreValue = new() { FontSize = 44, FontWeight = FontWeights.SemiBold, Text = "—" };
     readonly TextBlock scoreVerdict = new() { FontSize = 19, FontWeight = FontWeights.SemiBold, TextWrapping = TextWrapping.Wrap, Text = "画像を選択してください" };
+    readonly TextBlock scoreExplanation = new() { FontSize = 16, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 6, 0, 0) };
     readonly Border scoreCard = new() { CornerRadius = new CornerRadius(10), Padding = new Thickness(10), Margin = new Thickness(0, 4, 0, 8) };
     readonly TextBlock candidateText = new() { FontSize = 18, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 4, 0, 4) };
     readonly TextBlock candidateDetails = new() { FontSize = 15, TextWrapping = TextWrapping.Wrap };
@@ -159,11 +160,13 @@ public sealed class VerificationView : UserControl
         nextStep.Text = "［ファイルを選択…］または［クリップボードの画像を照合］を押してください。";
         results.Children.Add(candidateHeading);
         var scoreContent = new StackPanel();
-        scoreContent.Children.Add(new TextBlock { Text = "履歴との対応", FontSize = 16 });
-        scoreContent.Children.Add(scoreValue); scoreContent.Children.Add(scoreVerdict);
+        scoreContent.Children.Add(new TextBlock { Text = "このPCの生成履歴との照合", FontSize = 16 });
+        scoreContent.Children.Add(scoreValue); scoreContent.Children.Add(scoreVerdict); scoreContent.Children.Add(scoreExplanation);
         scoreCard.Child = scoreContent; scoreCard.Background = Brushes.LightGray; scoreValue.Foreground = scoreVerdict.Foreground = Brushes.Black;
         results.Children.Add(scoreCard);
         results.Children.Add(candidateCaution);
+        results.Children.Add(new TextBlock { Text = "この結果で分からないこと", FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 8, 0, 3) });
+        results.Children.Add(new TextBlock { Text = VerificationMessages.UsageLimit, FontSize = 16, TextWrapping = TextWrapping.Wrap });
         var candidateInfo = new Grid { Margin = new Thickness(0, 6, 0, 4) };
         candidateInfo.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(112) });
         candidateInfo.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -178,10 +181,11 @@ public sealed class VerificationView : UserControl
         nextCandidate.Click += (_, _) => SelectCandidate(candidateIndex + 1);
         results.Children.Add(title);
         Section("確認できたこと", result);
+        Section("結果の意味", meaning);
         Section("次に確認すること", nextStep);
         var detailPanel = new StackPanel();
         detailPanel.Children.Add(candidateDetails); detailPanel.Children.Add(scoreHelp);
-        detailPanel.Children.Add(meaning); detailPanel.Children.Add(technical);
+        detailPanel.Children.Add(technical);
         detailPanel.Children.Add(new TextBlock { Text = "照合に使う生成履歴の保存先：" + storageRoot, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 8, 0, 0) });
         results.Children.Add(new Expander { Header = "内訳・読取・検索の詳細", Content = detailPanel, Margin = new Thickness(0, 8, 0, 0) });
         results.Children.Add(new Expander { Header = "対応スコアの配点と限界", Margin = new Thickness(0, 8, 0, 0),
@@ -205,7 +209,7 @@ public sealed class VerificationView : UserControl
     }
     void PaintIndicator(ResultIndicator indicator)
     {
-        scoreValue.Text = indicator.Value; scoreVerdict.Text = indicator.Label;
+        scoreValue.Text = indicator.Value; scoreVerdict.Text = indicator.Label; scoreExplanation.Text = indicator.Explanation;
         scoreCard.Background = indicator.Tone switch
         {
             IndicatorTone.Success => new SolidColorBrush(Color.FromRgb(16, 100, 55)),
@@ -230,8 +234,8 @@ public sealed class VerificationView : UserControl
         candidateImageDescription.Text = candidateText.Text = candidateDetails.Text = candidateCaution.Text = "";
         if (SelectedCandidate is not Candidate item) return;
         candidatePosition.Text = $"{candidateIndex + 1} / {candidateRows.Length}";
-        PaintIndicator(item.Score is double score ? ResultIndicator.Candidate(score) : ResultIndicator.Exact());
-        candidateCaution.Text = item.Score.HasValue ? "暫定スコアです。1.000でも真正性の証明ではありません。" : "保存された生成記録と一致しました。貼付完了の証明ではありません。";
+        PaintIndicator(item.Score is double score ? ResultIndicator.Candidate(score) : ResultIndicator.Exact(lastOriginal));
+        candidateCaution.Text = item.Score.HasValue ? "本物である確率ではありません。候補の文字・日付と生成履歴を確認してください。" : "一致は保存記録との比較結果です。本物であることや使用許可の証明ではありません。";
         var g = item.Generation;
         candidateText.Text = $"表示日付：{g.Stamp.DisplayDate:yyyy/MM/dd}\n上段文字：{g.Stamp.Name}\n下段文字：{g.Stamp.Bottom}\n生成：{g.CreatedUtc.ToLocalTime():yyyy/MM/dd HH:mm:ss}";
         candidateDetails.Text = item.Evidence + $"\n記録ID：{g.EventId}\n";
@@ -278,7 +282,7 @@ public sealed class VerificationView : UserControl
     }
     void Progress(string text)
     {
-        scoreValue.Text = "…"; scoreVerdict.Text = "照合中"; scoreCard.Background = Brushes.LightGray; ((StackPanel)scoreCard.Child).SetValue(TextElement.ForegroundProperty, Brushes.Black); foreach (TextBlock block in ((StackPanel)scoreCard.Child).Children) block.Foreground = Brushes.Black;
+        scoreExplanation.Text = ""; scoreValue.Text = "…"; scoreVerdict.Text = "照合中"; scoreCard.Background = Brushes.LightGray; ((StackPanel)scoreCard.Child).SetValue(TextElement.ForegroundProperty, Brushes.Black); foreach (TextBlock block in ((StackPanel)scoreCard.Child).Children) block.Foreground = Brushes.Black;
         title.Text = "照合中…"; result.Text = text; meaning.Text = nextStep.Text = technical.Text = "";
         scoreHelp.Visibility = Visibility.Collapsed; candidateHeading.Text = "生成履歴";
     }

@@ -10,6 +10,7 @@ public sealed record ImageSearchEvidence(int? Code, int CandidateCount, int Code
 // Presentation only: a visual candidate must never be promoted to an exact/authenticated match.
 public static class VerificationMessages
 {
+    public const string UsageLimit = "この結果では、誰が貼ったか・使用が許可されていたか・貼付が完了したかは分かりません。\n保存画像を他人がそのままコピーした場合も一致します。無断コピーは見分けられません。";
     public const string ScoreHelp = "履歴との対応スコア（暫定）は確率ではありません。文字の形は最大0.300、コード一致は0.700です。1.000でも原本・PNGの完全一致や真正性を意味しません。";
     public const string MethodHelp = "上段文字・日付・下段文字の領域を別々に比較し、それぞれ最大0.100を加点します。96×96にそろえ、±8度の回転と1画素のずれを許容します。文字の意味を読むOCRではなく、形の比較です。空白や画素不足の領域には加点しません。\nコードは位置マーカー・CRC検査を通過して読み取れた12ビットが履歴と一致した場合に0.700、不一致・未読取は0です。読取信頼度の連続評価や部分一致への加点は行いません。CRCや冗長情報は別の証拠として加点しません。\n配点は暫定で、確率としての校正はしていません。同じ文字・同じ短いコードを持つ別イベントも高得点になります。完全一致の確認は原本の認証情報・PNG全体との照合で別に行います。";
     public static string ShapeEvidence(int? readCode, int? candidateCode, TextSimilarity text)

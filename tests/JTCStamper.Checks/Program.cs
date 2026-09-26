@@ -559,6 +559,11 @@ try
         Assert(ResultIndicator.Empty(true).Tone == IndicatorTone.NoCandidate);
         Assert(ResultIndicator.Empty(false).Tone == IndicatorTone.Caution);
         Assert(ResultIndicator.Exact().Value == "一致");
+        Assert(!ResultIndicator.Candidate(1).Label.Contains("OK"));
+        Assert(ResultIndicator.Candidate(1).Explanation.Contains("確定したわけではありません"));
+        Assert(ResultIndicator.Exact().Explanation.Contains("PNGファイル全体"));
+        Assert(ResultIndicator.Exact(true).Explanation.Contains("認証情報"));
+        Assert(VerificationMessages.UsageLimit.Contains("そのままコピー") && VerificationMessages.UsageLimit.Contains("無断コピーは見分けられません"));
         Throws(() => ResultIndicator.Candidate(double.NaN));
     });
     Check("delete-all-history-preserves-key-owner-and-next-generation", dir =>
