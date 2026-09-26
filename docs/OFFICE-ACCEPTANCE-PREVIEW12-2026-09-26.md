@@ -22,3 +22,7 @@
 APIの定義はMicrosoft公式資料で確認：[Excel Worksheet.PasteSpecial](https://learn.microsoft.com/en-us/office/vba/api/excel.worksheet.pastespecial)、[Word貼付形式](https://learn.microsoft.com/en-us/office/vba/api/word.wdpastedatatype)、[PowerPoint Shapes.Paste](https://learn.microsoft.com/en-us/office/vba/api/powerpoint.shapes.paste)、[Excel Application.Hwnd](https://learn.microsoft.com/en-us/office/vba/api/excel.application.hwnd)。実際の成否は本試験の観測結果。
 
 試験結果を受け、通常の全面受入ではWordを確認済みの通常貼付に限定し、`--office-only`の互換性調査ではDIB指定を維持した。この経路選択の整理は初回ランナーとExcel再試験の後に行った。生データのランナーハッシュは実行時のものを保持する。
+
+## 手動試験の残条件
+
+所有者へスリープ復帰後の当日表示・コピー/貼付・履歴1件増加・アプリ再起動後の保持を依頼し、「今は未実施」と回答を受領。未実施のまま#5へ残す。今回のOffice成功をスリープ試験の成功へ拡張しない。
