@@ -43,6 +43,9 @@ jobs:
       - name: Build versioned distribution packages
         shell: pwsh
         run: ./scripts/New-ReleasePackages.ps1
+      - name: Self-signed Authenticode checks (ephemeral certificate, no trust installation)
+        shell: pwsh
+        run: ./scripts/Test-CodeSigning.ps1
       - name: Real disk-full recovery on a disposable 256 MiB VHD
         shell: pwsh
         run: ./scripts/Invoke-DiskFull.ps1

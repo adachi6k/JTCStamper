@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param()
+param([string]$SigningCertificateThumbprint)
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $root = Split-Path $PSScriptRoot -Parent
@@ -29,17 +29,24 @@ try {
         $exe = Join-Path $publish 'JTCStamper.App.exe'
         $info = [Diagnostics.FileVersionInfo]::GetVersionInfo($exe)
         if ($info.ProductVersion -ne "$version+$revision") { throw "Unexpected EXE version: $($info.ProductVersion)" }
+        $signing = $null
+        if ($SigningCertificateThumbprint) {
+            $signing = & (Join-Path $PSScriptRoot 'Sign-ReleaseExecutable.ps1') -Path $exe -CertificateThumbprint $SigningCertificateThumbprint
+        }
         $stage = Join-Path ([IO.Path]::GetTempPath()) ('JTCStamper-Package-' + [Guid]::NewGuid().ToString('N'))
         New-Item -ItemType Directory $stage | Out-Null
         try {
             # Explicit allowlist: never package a user's journal, key or settings.
             Copy-Item -LiteralPath $exe -Destination $stage
             $guide = Get-Content docs/DISTRIBUTION.md -Raw
+            if ($signing) {
+                $guide = "This EXE is self-signed. Windows does not trust this certificate by default; SmartScreen warnings may remain. No timestamp. Signer: $($signing.Thumbprint)`r`n`r`n" + $guide
+            }
             [IO.File]::WriteAllText((Join-Path $stage 'README.txt'), "$($variant.Name) / $version`r`n`r`n$guide", [Text.UTF8Encoding]::new($true))
             foreach ($notice in @('LICENSE', 'NOTICE', 'THIRD-PARTY-NOTICES.txt')) { Copy-Item -LiteralPath (Join-Path $root $notice) -Destination $stage }
             $metadata = [ordered]@{
                 Version = $version; Revision = $revision; Tags = @($tag)
-                Variant = $variant.Name; Runtime = 'win-x64'
+                Variant = $variant.Name; Runtime = 'win-x64'; Signing = $signing
                 ExeSha256 = (Get-FileHash $exe -Algorithm SHA256).Hash
                 ExeBytes = (Get-Item $exe).Length
             }

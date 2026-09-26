@@ -43,3 +43,8 @@ appearance-*.tmp
 
 # Passphrase-protected migration archives
 *.jtcportable
+
+# Code-signing private material
+*.pfx
+*.p12
+*.key
