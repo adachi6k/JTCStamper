@@ -4,6 +4,8 @@
 
 氏名や部署名を入れた日付印を、Word・Excel・PowerPointへ貼り付けられるWindowsアプリです。作成した印影は履歴に残り、あとから用途のメモを追加できます。アカウント登録や中央サーバーは不要です。
 
+> 次版0.2.0は準備中です。20bit化に伴い旧12bit印影の照合互換性が変わります。公開版の利用者は更新前に[変更履歴](CHANGELOG.md)を確認してください。
+
 **[ダウンロード](https://github.com/adachi6k/JTCStamper/releases)** · [使い始める](#使い始める) · [変更履歴](CHANGELOG.md)
 
 ![印影を作成する画面。文字と当日の日付を確認し、青い「生成してPNGコピー」ボタンでコピーできます。](docs/images/create-light.png)

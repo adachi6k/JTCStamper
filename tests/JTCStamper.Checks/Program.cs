@@ -16,6 +16,48 @@ void Throws(Action action) { try { action(); } catch { return; } throw new Excep
 var stamp = new Stamp("山田", new DateOnly(1900, 1, 1), "確認");
 try
 {
+    Check("generation-purpose-roundtrip-backup-and-append", dir =>
+    {
+        using var journal = new Journal(Path.Combine(dir, "journal"), key);
+        var clipboard = new FakeClipboard();
+        var copy = new CopyService(journal, clipboard);
+        var note = "見積書 ABC\n確認用";
+        var id = copy.GenerateCodedAndCopy(stamp, _ => [1, 2, 3], initialAnnotation: note, dateMode: "Specified");
+        var original = journal.Read()[0].Signed;
+        var g = new VerificationService(journal).ReadGenerations().Single();
+        Assert(g.InitialAnnotation == note && g.DateMode == "Specified" && clipboard.Calls == 1);
+        journal.Annotate(id, "訂正：別の宛先");
+        Assert(journal.Read()[0].Signed == original);
+        Assert(GenerationContext.FollowUps(id, journal.Read()).Contains("訂正"));
+        var backup = Path.Combine(dir, "backup.jtcb");
+        PortableBackup.Save(backup, "test-purpose-passphrase", key, journal.Read().Select(x => x.Signed).ToArray());
+        var restored = PortableBackup.Read(backup, "test-purpose-passphrase");
+        Assert(restored.Records[0] == original);
+        var path = Path.Combine(dir, "journal", "000000000001.json");
+        File.WriteAllText(path, File.ReadAllText(path).Replace("ABC", "XYZ"));
+        Throws(() => journal.Read());
+    });
+    Check("generation-purpose-validation-and-save-failure", dir =>
+    {
+        using var journal = new Journal(dir, key);
+        var clipboard = new FakeClipboard();
+        var copy = new CopyService(journal, clipboard);
+        Throws(() => copy.GenerateCodedAndCopy(stamp, _ => [1], initialAnnotation: new string('a', 2001)));
+        Assert(clipboard.Calls == 0 && journal.Read().Count == 0);
+        foreach(var boundary in new[] { "Generated", "CopyRequested" })
+        {
+            Throws(() => new CopyService(new FullDiskWriter(journal, boundary, 112), clipboard)
+                .GenerateCodedAndCopy(stamp, _ => [1], initialAnnotation: "用途"));
+            Assert(clipboard.Calls == 0);
+        }
+        var id = copy.GenerateCodedAndCopy(stamp with { Renderer = RingCode.PlainRenderer }, _ => [1], initialAnnotation: new string('a', 2000));
+        Assert(new VerificationService(journal).ReadGenerations().Single(x => x.EventId == id).InitialAnnotation!.Length == 2000);
+        var blank = copy.GenerateCodedAndCopy(stamp, _ => [1], initialAnnotation: "  ");
+        Assert(new VerificationService(journal).ReadGenerations().Single(x => x.EventId == blank).InitialAnnotation is null);
+        Throws(() => new CopyService(new FullDiskWriter(journal, "CopyCompleted", 112), clipboard)
+            .GenerateCodedAndCopy(stamp, _ => [1], initialAnnotation: "結果未保存"));
+        Assert(clipboard.Calls == 3);
+    });
     Check("large-history-parallel-read-keeps-chain-and-error-semantics", dir =>
     {
         using var journal = new Journal(dir, key);
@@ -667,16 +709,16 @@ try
         var before = journal.Read().ToArray();
         Throws(() => new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, _ => throw new InvalidOperationException("Render failed")));
         Assert(before.SequenceEqual(journal.Read()) && clipboard.Calls == 1);
-        Throws(() => RingCode.Validate(stamp with { GeometryCode = 4096 }));
+        Throws(() => RingCode.Validate(stamp with { GeometryCode = RingCode20.MaxValue + 1 }));
         Throws(() => RingCode.Validate(stamp));
-        Throws(() => RingCode.Validate(stamp with { Renderer = "unsupported", GeometryCode = 0 }));
+        Throws(() => RingCode.Validate(stamp with { Renderer = "wpf-v5-gap12", GeometryCode = 0 }));
         Directory.CreateDirectory(Path.Combine(dir, "000000000004.json"));
         Throws(() => new CopyService(journal, clipboard).GenerateCodedAndCopy(stamp, _ => [4, 5, 6]));
         Assert(clipboard.Calls == 1 && before.SequenceEqual(journal.Read()));
     });
-    Check("ring12-all-values-crc-and-validation", dir =>
+    Check("ring20-sampled-values-crc-and-boundaries", dir =>
     {
-        foreach (int code in Enumerable.Range(0, 4096))
+        foreach (int code in Enumerable.Range(0, 4096).Select(i => (i * 251) & RingCode20.MaxValue).Concat(new[] { RingCode20.MaxValue, 0xAAAAA, 0x55555 }))
         {
             var cells = RingCode.Encode(code);
             Assert(RingCode.ReadCells(cells) == code);
@@ -686,14 +728,14 @@ try
             }
         }
         RingCode.Validate(stamp with { GeometryCode = 0xABC });
-        Throws(() => RingCode.Encode(4096));
-        Throws(() => RingCode.Validate(stamp with { GeometryCode = 4096 }));
+        Throws(() => RingCode.Encode(RingCode20.MaxValue + 1));
+        Throws(() => RingCode.Validate(stamp with { GeometryCode = RingCode20.MaxValue + 1 }));
     });
     Check("unsupported-record-does-not-block-current-history", dir =>
     {
         using var journal = new Journal(dir, key);
         var oldId = Guid.NewGuid();
-        var oldStamp = stamp with { Renderer = "unsupported", GeometryCode = 0 };
+        var oldStamp = stamp with { Renderer = "wpf-v5-gap12", GeometryCode = 0 };
         var original = journal.Append("Generated", oldId, new Generation(oldId, DateTimeOffset.UtcNow, oldStamp, new string('A', 64)));
         var currentId = new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, _ => [8, 9]);
         var verify = new VerificationService(journal);
@@ -703,7 +745,7 @@ try
         Assert(all.Count == 1 && all.Single(x => x.EventId == currentId).Stamp.Renderer == RingCode.Renderer);
         Assert(journal.Read()[0].Signed == original);
     });
-    Check("ring12-raster-size-rotation-and-controls", dir =>
+    Check("ring20-raster-size-rotation-and-controls", dir =>
     {
         int correct = 0;
         foreach (int size in new[] { 88, 176 }) foreach (double rotation in new[] { -4.0, 0, 4.0 })
@@ -712,7 +754,7 @@ try
             var red = RingFixture(size, code, rotation);
             var box = new ImageRegion(0, 0, size, size);
             var reading = RingCode.Decode(red, size, size, box);
-            if (reading.Code != code) throw new Exception($"ring12 size={size} rotation={rotation} expected={code} actual={reading.Code} {reading.Reason}");
+            if (reading.Code != code) throw new Exception($"ring20 size={size} rotation={rotation} expected={code} actual={reading.Code} {reading.Reason}");
             correct++;
         }
         Console.WriteLine($"  synthetic ring decoding {correct}/36 (not real-image accuracy)");
@@ -724,7 +766,7 @@ try
         Assert(RingCode.Decode(new float[88 * 88], 88, 88, new(0, 0, 88, 88)).Code is null);
         Assert(RingCode.Decode(RingFixture(66, 0, 0), 66, 66, new(0, 0, 66, 66)).Code is null);
     });
-    Check("gap12-disconnected-circle-discovery", dir =>
+    Check("gap20-disconnected-circle-discovery", dir =>
     {
         foreach (int size in new[] { 88, 176, 352 })
         {
@@ -747,7 +789,7 @@ try
 finally { Directory.Delete(root, true); CryptographicOperations.ZeroMemory(key); }
 static float[] RingFixture(int size, int code, double rotation)
 {
-    var red = SeparatorFixture(size, RingCode.SeparatorDifference(code), rotation);
+    var red = new float[size*size];
     var cells = RingCode.Encode(code);
     var axes = Enumerable.Range(0, RingCode.CellCount).Where(i => cells[i]).Select(i =>
     {
@@ -769,9 +811,20 @@ static float[] RingFixture(int size, int code, double rotation)
                     double along = xx * a.Cos + yy * a.Sin, across = -xx * a.Sin + yy * a.Cos;
                     if (along > 0 && Math.Abs(Math.Atan2(across, along) * 180 / Math.PI) < RingCode.GapDegrees / 2) { ink = false; break; }
                 }
+            double rot = rotation*Math.PI/180;
+            double lx=xx*Math.Cos(rot)+yy*Math.Sin(rot), ly=-xx*Math.Sin(rot)+yy*Math.Cos(rot);
+            for(int row=0;row<2;row++)
+            {
+                double angle=(row==0?1:-1)*RingCode.SeparatorDifference(code)/2*Math.PI/180;
+                double v=ly-(row==0?-15:15);
+                double t=lx*Math.Cos(angle)+v*Math.Sin(angle), normal=-lx*Math.Sin(angle)+v*Math.Cos(angle);
+                bool line=Math.Abs(normal)<0.55 && lx*lx+ly*ly<43*43;
+                for(int j=0;j<2;j++) if(cells[32+row*2+j] && Math.Abs(t-(j==0?-24:24))<1.6) line=false;
+                ink |= line;
+            }
             if (ink) hit++;
         }
-        red[y * size + x] = Math.Max(red[y * size + x], hit / 16f * 0.64f);
+        red[y * size + x] = hit / 16f * 0.64f;
     }
     return red;
 }

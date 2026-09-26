@@ -54,6 +54,13 @@ public sealed class VerificationView : UserControl
     ImageRegion? selectedRegion;
     readonly CheckBox codeFilter = new() { Content = "読めた印影コードで候補を絞る", IsChecked = true, IsEnabled = false };
     IReadOnlyList<Generation> history = [];
+    IReadOnlyList<VerifiedEntry> contextEntries = [];
+    async Task LoadContext(CancellationToken token)
+    {
+        var snapshot = await Task.Run(() => service.ReadHistory(token), token);
+        token.ThrowIfCancellationRequested();
+        history = snapshot.Generations; contextEntries = snapshot.Entries;
+    }
     readonly List<StampTemplate> templates = [];
     string coverage = "";
     bool busy;
@@ -99,7 +106,8 @@ public sealed class VerificationView : UserControl
         if (original)
         {
             var value = await Task.Run(() => service.Original(new UTF8Encoding(false, true).GetString(bytes).TrimStart('\uFEFF'), token), token);
-            token.ThrowIfCancellationRequested(); Display(value);
+            token.ThrowIfCancellationRequested();
+            await LoadContext(token); Display(value);
         }
         else await LoadImage(bytes, null, token);
     }
@@ -234,7 +242,7 @@ public sealed class VerificationView : UserControl
         PaintIndicator(item.Score is double score ? ResultIndicator.Candidate(score) : ResultIndicator.Exact(lastOriginal));
         candidateCaution.Text = VerificationMessages.UsageLimit;
         var g = item.Generation;
-        candidateText.Text = $"表示日付：{g.Stamp.DisplayDate:yyyy/MM/dd}\n上段文字：{g.Stamp.Name}\n下段文字：{g.Stamp.Bottom}\n生成：{g.CreatedUtc.ToLocalTime():yyyy/MM/dd HH:mm:ss}";
+        candidateText.Text = GenerationContext.Describe(g) + "\n" + GenerationContext.CopyState(g.EventId, contextEntries) + "\n" + GenerationContext.FollowUps(g.EventId, contextEntries) + "\n" + $"表示日付：{g.Stamp.DisplayDate:yyyy/MM/dd}\n上段文字：{g.Stamp.Name}\n下段文字：{g.Stamp.Bottom}";
         candidateDetails.Text = item.Evidence + $"\n記録ID：{g.EventId}\n";
         try
         {
@@ -349,12 +357,12 @@ public sealed class VerificationView : UserControl
         {
             var exact = await Task.Run(() => service.Image(bytes, token), token);
             token.ThrowIfCancellationRequested();
-            if (exact.Status != VerificationStatus.NoRecord) { Display(exact); return; }
+            if (exact.Status != VerificationStatus.NoRecord) { await LoadContext(token); Display(exact); return; }
             bitmap = await Task.Run(() => DecodeInput(bytes), token);
             token.ThrowIfCancellationRequested();
         }
         if (bitmap is null || (long)bitmap.PixelWidth * bitmap.PixelHeight > 12_000_000) { Failed("画像は1200万画素以内にしてください。"); return; }
-        // Keep source pixels: shrinking a whole document can erase the 12-bit marks.
+        // Keep source pixels: shrinking a whole document can erase the 20-bit marks.
         source = bitmap;
         source.Freeze(); Draw(null);
         var width = source.PixelWidth; var height = source.PixelHeight;
@@ -364,7 +372,7 @@ public sealed class VerificationView : UserControl
         var found = await Task.Run(() => ImageSearch.Detect(mask, width, height, token), token);
         token.ThrowIfCancellationRequested();
         Progress("生成履歴の印面を準備しています…");
-        history = await Task.Run(() => service.ReadGenerations(token), token);
+        await LoadContext(token);
         token.ThrowIfCancellationRequested();
         var groups = HistoryReferences.LatestImages(history, 301);
         int skipped = 0;
@@ -394,25 +402,25 @@ public sealed class VerificationView : UserControl
         if (source is null || mask is null) return;
         selectedRegion = region;
         SetCandidates([]); Draw(region); Progress("選択した印影を履歴と比較しています…");
-        history = await Task.Run(() => service.ReadGenerations(token), token);
+        await LoadContext(token);
         token.ThrowIfCancellationRequested();
         var width = source.PixelWidth; var height = source.PixelHeight;
         var ink = await Task.Run(() => ImageSearch.Normalize(mask, width, height, region), token);
         token.ThrowIfCancellationRequested();
         var crop = new CroppedBitmap(source, new Int32Rect(region.X, region.Y, region.Width, region.Height));
-        var red = RingCode.RedStrength(ToPixels(crop), region.Width, region.Height);
+        var pixels = ToPixels(crop);
         var localBox = new ImageRegion(0, 0, region.Width, region.Height);
-        var reading = await Task.Run(() => RingCode.Decode(red, region.Width, region.Height, localBox, token), token);
+        var reading = await Task.Run(() => GeometryReading.Read(pixels, region.Width, region.Height, localBox, token), token);
         token.ThrowIfCancellationRequested();
         bool filter = codeFilter.IsChecked == true && reading.Code.HasValue;
-        var references = templates.Where(t => !filter || t.Stamp.GeometryCode == reading.Code).ToArray();
-        var ranked = await Task.Run(() => ImageSearch.Rank(ink, references, reading.Code, token), token);
+        var references = templates.Where(t => !filter || reading.Matches(t.Stamp)).ToArray();
+        var ranked = await Task.Run(() => ImageSearch.Rank(ink, references, reading.Code, token, reading.Renderer), token);
         token.ThrowIfCancellationRequested();
         var rows = ranked.SelectMany(x => HistoryReferences.Matching(history, x)
-            .Select(g => new Candidate(g, VerificationMessages.ShapeEvidence(reading.Code, g.Stamp.GeometryCode, x.Text), CorrespondenceScore.Calculate(x.Text, reading.Code, g.Stamp.GeometryCode).Total))).ToArray();
+            .Select(g => new Candidate(g, VerificationMessages.ShapeEvidence(g.Stamp.Renderer == reading.Renderer ? reading.Code : null, g.Stamp.GeometryCode, x.Text), CorrespondenceScore.Calculate(x.Text, g.Stamp.Renderer == reading.Renderer ? reading.Code : null, g.Stamp.GeometryCode).Total))).ToArray();
         SetCandidates(rows);
-        int codeMatches = reading.Code.HasValue ? rows.Count(x => x.Generation.Stamp.GeometryCode == reading.Code) : 0;
-        int codeHistory = reading.Code.HasValue ? history.Count(x => x.Stamp.GeometryCode == reading.Code) : 0;
+        int codeMatches = reading.Code.HasValue ? rows.Count(x => reading.Matches(x.Generation.Stamp)) : 0;
+        int codeHistory = reading.Code.HasValue ? history.Count(x => reading.Matches(x.Stamp)) : 0;
         candidateHeading.Text = $"生成履歴候補（スコア順）：{rows.Length}件";
         scoreHelp.Visibility = rows.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
         var message = history.Count == 0
@@ -420,7 +428,7 @@ public sealed class VerificationView : UserControl
                 "この保存先には、対応する形式の生成記録がありません。", "この保存先についての結果です。偽造という意味ではありません。",
                 "生成したときの履歴の保存先を確認してください。")
             : VerificationMessages.Image(new(reading.Code, rows.Length, codeMatches, codeHistory, templates.Count, filter));
-        Present(message, (reading.Code is int decoded ? $"読取コード：{RingCode.Label(decoded)}（12ビット）\n" : "コード未読取：" + reading.Reason + "\n") +
+        Present(message, (reading.Code is int decoded ? $"読取コード：{reading.Label}（{reading.Bits}ビット）\n" : "コード未読取：" + reading.Reason + "\n") +
             (filter ? "同じコードの履歴に絞っています。" : "コードによる絞り込みは適用していません。") + "\n" + coverage +
             "\n従来の内側全体の形比較が0.72以上の候補から、対応スコア順で上位8画像の記録を表示します。0.72は候補抽出用で、対応スコアの基準ではありません。文字・日付は目視で確認してください。");
     }

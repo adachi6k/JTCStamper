@@ -24,7 +24,7 @@ public static class VerificationMessages
     }
     public static VerificationMessage Image(ImageSearchEvidence e)
     {
-        if (e.Code is < 0 or > 4095 || e.CandidateCount < 0 || e.CodeMatchedCandidates < 0 || e.CodeHistoryCount < 0 || e.ComparedStampCount < 0 ||
+        if (e.Code is < 0 or > RingCode20.MaxValue || e.CandidateCount < 0 || e.CodeMatchedCandidates < 0 || e.CodeHistoryCount < 0 || e.ComparedStampCount < 0 ||
             e.CodeMatchedCandidates > e.CandidateCount || e.CodeMatchedCandidates > e.CodeHistoryCount ||
             (e.Code is null && (e.CodeMatchedCandidates != 0 || e.CodeHistoryCount != 0)) ||
             (e.ComparedStampCount == 0 && e.CandidateCount > 0) ||

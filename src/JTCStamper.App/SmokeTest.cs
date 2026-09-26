@@ -425,6 +425,8 @@ internal static class SmokeTest
                 try
                 {
                     copyWindow.Show(); await copyWindow.InitializationPending.WaitAsync(TimeSpan.FromSeconds(30));
+                    var purpose = (TextBox)copyWindow.FindName("PurposeInput");
+                    purpose.Text = "○○社向け見積書\n初回メモ";
                     var second = new FakeClipboard();
                     var clipboard = new CallbackClipboard(_ =>
                     {
@@ -442,6 +444,7 @@ internal static class SmokeTest
                         copyWindow.Close(); Require(copyWindow.IsVisible, "Copy closed before the completion record.");
                     });
                     Require(await copyWindow.CopyAsync(clipboard).WaitAsync(TimeSpan.FromSeconds(30)), "Copy operation failed.");
+                    Require(purpose.Text == "", "Successful copy retained the previous recipient.");
                     Require(clipboard.Calls == 1 && second.Calls == 0 && !Directory.Exists(otherFolder), "Rejected operations had side effects.");
                     Require(!copyWindow.IsVisible, "Successful copy did not finish the deferred close.");
                     var key = KeyStore.Load(folder);
@@ -450,6 +453,7 @@ internal static class SmokeTest
                         using var reopened = new Journal(Path.Combine(folder, "journal"), key);
                         Require(reopened.Read().Select(x => x.Entry.Kind).SequenceEqual(new[] { "Generated", "CopyRequested", "CopyCompleted" }),
                             "Deferred close lost or duplicated copy records.");
+                        Require(new VerificationService(reopened).ReadGenerations().Single().InitialAnnotation == "○○社向け見積書\n初回メモ", "Initial purpose was not saved.");
                     }
                     finally { CryptographicOperations.ZeroMemory(key); }
                 }
@@ -466,6 +470,8 @@ internal static class SmokeTest
                     try
                     {
                         copyWindow.Show(); await copyWindow.InitializationPending.WaitAsync(TimeSpan.FromSeconds(30));
+                        var purpose = (TextBox)copyWindow.FindName("PurposeInput");
+                        purpose.Text = "失敗後も保持する用途メモ";
                         if (!afterClipboard) Directory.CreateDirectory(block); // Real atomic-publish rejection, not a full-disk claim.
                         var clipboard = new CallbackClipboard(_ =>
                         {
@@ -473,6 +479,7 @@ internal static class SmokeTest
                             copyWindow.Close();
                         });
                         Require(!await copyWindow.CopyAsync(clipboard).WaitAsync(TimeSpan.FromSeconds(30)), "Failed write was reported as success.");
+                        Require(purpose.Text == "失敗後も保持する用途メモ", "Failure cleared the purpose draft.");
                         Require(clipboard.Calls == (afterClipboard ? 1 : 0), "Clipboard order violated write-before-copy.");
                         Require(copyWindow.IsVisible && !copyWindow.IsStoreBusy &&
                             ((TextBlock)copyWindow.FindName("Status")).Text.Contains("成功扱いにしていません"),
@@ -712,10 +719,10 @@ internal static class SmokeTest
                 finally { CryptographicOperations.ZeroMemory(key); }
             });
 
-            Check("ring12-rendered-decoding-and-controls", () =>
+            Check("ring20-rendered-decoding-and-controls", () =>
             {
                 var observations = new List<object>(); int correct = 0, wrong = 0, unreadable = 0, flatClassified = 0, mimicClassified = 0;
-                foreach (string name in new[] { "JTC", "田中" }) foreach (int code in new[] { 0, 1, 0x555, 0xAAA, 0xABC, 4095 })
+                foreach (string name in new[] { "JTC", "田中" }) foreach (int code in new[] { 0, 1, 0x55555, 0xAAAAA, 0xABCDE, 1048575 })
                 foreach (int diameter in new[] { 88, 176 }) foreach (int condition in new[] { 0, 1, 2 })
                 {
                     var specimen = stamp with { Name = name, Renderer = RingCode.Renderer, GeometryCode = code };
@@ -732,14 +739,14 @@ internal static class SmokeTest
                     if (mimic.Code is not null) mimicClassified++;
                     observations.Add(new { Kind = "imitation-with-valid-code", Expected = (int?)null, Reading = mimic });
                 }
-                File.WriteAllText(Path.Combine(root, $"ring12-{phase}.json"), JsonSerializer.Serialize(new
+                File.WriteAllText(Path.Combine(root, $"ring20-{phase}.json"), JsonSerializer.Serialize(new
                 {
                     SchemaVersion = 1, EncodedTotal = 72, Correct = correct, WrongCode = wrong, Unreadable = unreadable,
                     UnencodedControls = 3, UnencodedClassified = flatClassified, ImitationControls = 3, ImitationClassified = mimicClassified,
                     AuthenticationFalseAcceptanceRate = "NOT EVALUATED: decoding is candidate retrieval, not authentication", Observations = observations
                 }, new JsonSerializerOptions { WriteIndented = true }));
                 Require(correct == 72 && wrong == 0 && unreadable == 0 && flatClassified == 0,
-                    $"Ring12: correct={correct}/72 wrong={wrong} unreadable={unreadable} flatClassified={flatClassified}/3; see ring12 report.");
+                    $"Ring20: correct={correct}/72 wrong={wrong} unreadable={unreadable} flatClassified={flatClassified}/3; see ring20 report.");
             });
 
             if (phase == "seed")

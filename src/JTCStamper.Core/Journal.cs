@@ -6,7 +6,7 @@ using System.Text.Json;
 namespace JTCStamper.Core;
 
 public sealed record Stamp(string Name, DateOnly DisplayDate, string Bottom, string Renderer = RingCode.Renderer, int? GeometryCode = null);
-public sealed record Generation(Guid EventId, DateTimeOffset CreatedUtc, Stamp Stamp, string PngSha256, string? PngBase64 = null);
+public sealed record Generation(Guid EventId, DateTimeOffset CreatedUtc, Stamp Stamp, string PngSha256, string? PngBase64 = null, string? InitialAnnotation = null, string? DateMode = null);
 public sealed record Entry(int Version, long Sequence, string PreviousMac, string Kind, Guid EventId,
     DateTimeOffset RecordedUtc, string Payload);
 public sealed record SignedEntry(string EntryJson, string Mac);
@@ -183,19 +183,22 @@ public interface IClipboard { void Copy(byte[] png); }
 public sealed class CopyService(IJournalWriter journal, IClipboard clipboard)
 {
     public VerifiedHistory? CompletedHistory { get; private set; }
-    public Guid GenerateCodedAndCopy(Stamp stamp, Func<Stamp, byte[]> render, bool captureHistory = false)
+    public Guid GenerateCodedAndCopy(Stamp stamp, Func<Stamp, byte[]> render, bool captureHistory = false, string? initialAnnotation = null, string? dateMode = null)
     {
         CompletedHistory = null;
+        if (initialAnnotation?.Length > 2000) throw new ArgumentException("用途メモは2000文字以内です。");
+        if (dateMode is not null and not "Today" and not "Specified") throw new ArgumentException("日付モードが不正です。");
+        initialAnnotation = string.IsNullOrWhiteSpace(initialAnnotation) ? null : initialAnnotation;
         var id = Guid.NewGuid();
         if (stamp.Renderer != RingCode.Renderer && stamp.Renderer != RingCode.PlainRenderer) throw new NotSupportedException("対応していない印影形式です。");
         var coded = stamp with { GeometryCode = stamp.Renderer == RingCode.PlainRenderer ? null : RingCode.ForEvent(id) };
         RingCode.Validate(coded);
         var png = render(coded);
-        return SaveAndCopy(id, coded, png, captureHistory);
+        return SaveAndCopy(id, coded, png, captureHistory, initialAnnotation, dateMode);
     }
-    Guid SaveAndCopy(Guid id, Stamp stamp, byte[] png, bool captureHistory)
+    Guid SaveAndCopy(Guid id, Stamp stamp, byte[] png, bool captureHistory, string? initialAnnotation, string? dateMode)
     {
-        var generation = new Generation(id, DateTimeOffset.UtcNow, stamp, Convert.ToHexString(SHA256.HashData(png)), Convert.ToBase64String(png));
+        var generation = new Generation(id, DateTimeOffset.UtcNow, stamp, Convert.ToHexString(SHA256.HashData(png)), Convert.ToBase64String(png), initialAnnotation, dateMode);
         journal.Append("Generated", id, generation);
         journal.Append("CopyRequested", id, new { Format = "PNG" });
         try { clipboard.Copy(png); }

@@ -70,7 +70,7 @@
                     <MenuItem x:Name="DarkThemeItem" Header="ダーク" Tag="Dark" IsCheckable="True" Click="ThemeClick"/>
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="ヘルプ(_H)" Style="{StaticResource CompactCaptionMenuItem}"><MenuItem Header="バージョン情報" Click="AboutClick"/></MenuItem>
+            <MenuItem Header="ヘルプ(_H)" Style="{StaticResource CompactCaptionMenuItem}"><MenuItem Header="印影照合について" Click="VerificationHelpClick"/><Separator/><MenuItem Header="バージョン情報" Click="AboutClick"/></MenuItem>
             </Menu>
             <!-- Blank space remains HTCAPTION; caption glyphs are rendered explicitly. -->
             <Border x:Name="TitleDragArea" Grid.Column="2" Background="Transparent"/>
@@ -133,6 +133,8 @@
                 </StackPanel>
                 <TextBlock Text="下段文字"/><TextBox x:Name="BottomInput" Text="(印)" MaxLength="16" TextChanged="InputsChanged"/>
                 <CheckBox x:Name="PlainMode" Content="プレーン印影（幾何コードを埋め込まない）" Checked="PlainModeChanged" Unchecked="PlainModeChanged" Margin="0,6,0,4"/>
+                <TextBlock Text="用途・貼付先（任意）" Margin="0,4,0,0"/>
+                <TextBox x:Name="PurposeInput" MaxLength="2000" AcceptsReturn="True" TextWrapping="Wrap" Height="52" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="用途・貼付先（任意）" ToolTip="例：○○社向け見積書に使用予定。印影には表示されません。"/>
                 <Button x:Name="CopyButton" Style="{DynamicResource AccentButtonStyle}" HorizontalAlignment="Stretch" Padding="12,7" Margin="0,6,0,4" Content="生成して PNG コピー" Click="CopyClick"/>
                 <TextBlock x:Name="ModeHelp" Text="円周の短い欠けは生成時に決まります。" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
             </StackPanel>
@@ -154,6 +156,7 @@
                                                 <Grid.ColumnDefinitions><ColumnDefinition Width="48"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                                                 <Border Background="White" Margin="0,0,8,0"><Image Source="{Binding Thumbnail}" Height="40" Width="40" ToolTip="{Binding ImageDescription}"/></Border>
                                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding PurposeLabel}" TextTrimming="CharacterEllipsis"/>
                                                     <TextBlock Text="{Binding StampLabel}" FontSize="15" TextTrimming="CharacterEllipsis"/>
                                                     <TextBlock Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis"><Run Text="{Binding GeneratedLabel}"/><Run Text="  ／  "/><Run Text="{Binding CopyState}"/></TextBlock>
                                                 </StackPanel>

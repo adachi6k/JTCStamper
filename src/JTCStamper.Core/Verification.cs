@@ -50,10 +50,10 @@ public sealed class VerificationService(Journal journal)
     public IReadOnlyList<Generation> ReadGenerations(CancellationToken cancellationToken = default) => Generations(cancellationToken).Select(x => x.Generation).ToArray();
 
     // A fresh authenticated snapshot per operation; Journal re-reads every file even on cache hits.
-    public VerifiedHistory ReadHistory()
+    public VerifiedHistory ReadHistory(CancellationToken cancellationToken = default)
     {
-        var entries = journal.Read();
-        return FromVerifiedEntries(entries);
+        var entries = journal.ReadVerified(cancellationToken).ToArray();
+        return new(entries, Generations(entries, cancellationToken).Select(x => x.Generation).ToArray());
     }
 
     // Only Journal / this service supplies entries already authenticated in this operation.
@@ -108,7 +108,7 @@ public sealed class VerificationService(Journal journal)
     {
         if (entry.Version != 1 || entry.Kind != "Generated" || entry.EventId == Guid.Empty)
             throw new InvalidDataException();
-        if (!IsCurrent(entry)) throw new NotSupportedException("対応していない印影形式です。現在の12ビット形式とプレーン形式を照合できます。");
+        if (!IsCurrent(entry)) throw new NotSupportedException("対応していない印影形式です。20ビット形式とプレーン形式を照合できます。");
         var g = JsonSerializer.Deserialize<Generation>(entry.Payload) ?? throw new InvalidDataException();
         if (g.EventId != entry.EventId || g.Stamp is null || g.PngSha256 is null ||
             g.PngSha256.Length != 64 || !g.PngSha256.All(Uri.IsHexDigit)) throw new InvalidDataException();

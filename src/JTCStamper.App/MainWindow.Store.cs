@@ -154,6 +154,8 @@ public partial class MainWindow
         Stamp stamp;
         try { RefreshToday(); stamp = Current(); }
         catch (Exception ex) { Status.Text = "コピーできません: " + ex.Message; return Task.FromResult(false); }
+        var purpose = PurposeInput.Text;
+        var dateMode = dateSelection.IsSpecified ? "Specified" : "Today";
         var source = journal;
         return RunStoreOperationAsync("生成・コピーの記録を保存しています…", "成功扱いにしていません。クリップボードに画像が残っている可能性があります。 ", async () =>
         {
@@ -167,7 +169,7 @@ public partial class MainWindow
                     {
                         var bitmap = StampRenderer.Render(coded); Preview.Source = bitmap;
                         return StampRenderer.Png(bitmap);
-                    }), captureHistory: true);
+                    }), captureHistory: true, initialAnnotation: purpose, dateMode: dateMode);
                     // Use only this operation's just-authenticated completion snapshot.
                     // Later selections, copies and verifications re-read the current files.
                     return (id, copy.CompletedHistory is { } snapshot ? BuildHistoryRows(snapshot) : ReadHistoryRows(source));
@@ -179,7 +181,8 @@ public partial class MainWindow
                 throw;
             }
             ApplyHistoryRows(completed.Rows, completed.Id); historyReady = true;
-            Status.Text = $"PNGコピーと記録が完了しました。貼付は未確認です。イベントID: {completed.Id}";
+            PurposeInput.Clear();
+            Status.Text = "コピーして履歴を保存しました。";
         });
     }
 
@@ -206,7 +209,7 @@ public partial class MainWindow
             var state = completed.Contains(g.EventId) ? "コピー記録あり" : "コピー未完了／不明";
             var created = $"{g.CreatedUtc.ToLocalTime():yyyy/MM/dd HH:mm:ss}";
             var stamp = $"表示日付 '{g.Stamp.DisplayDate:yy.MM.dd}  上段 {g.Stamp.Name}  下段 {g.Stamp.Bottom}";
-            return new HistoryRow(g.EventId, $"表示日付 {g.Stamp.DisplayDate:yyyy/MM/dd}  上段 {g.Stamp.Name}  下段 {g.Stamp.Bottom}  ／ 生成 {created}  {state}", "生成 " + created, stamp, state);
+            return new HistoryRow(g.EventId, $"表示日付 {g.Stamp.DisplayDate:yyyy/MM/dd}  上段 {g.Stamp.Name}  下段 {g.Stamp.Bottom}  ／ 生成 {created}  {state}  ／ {GenerationContext.Summary(g)}", "生成 " + created, stamp, state, PurposeLabel: GenerationContext.Summary(g));
         }).ToList();
         return new(rows, generations.Take(3).ToArray());
     }

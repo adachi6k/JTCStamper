@@ -8,7 +8,7 @@ public sealed record CorrespondenceScore(TextSimilarity Text, double CodeContrib
     {
         foreach (double value in new[] { text.Name, text.Date, text.Bottom })
             if (!double.IsFinite(value) || value < 0 || value > 1) throw new ArgumentOutOfRangeException(nameof(text));
-        if (readCode is < 0 or > 4095 || candidateCode is < 0 or > 4095) throw new ArgumentOutOfRangeException(nameof(readCode));
+        if (readCode is < 0 or > RingCode20.MaxValue || candidateCode is < 0 or > RingCode20.MaxValue) throw new ArgumentOutOfRangeException(nameof(readCode));
         return new(text, readCode.HasValue && readCode == candidateCode ? 0.7 : 0);
     }
 }

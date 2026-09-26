@@ -86,7 +86,7 @@ public partial class MainWindow : Window
     string? settingsPath;
     readonly string appearanceRoot;
     string storageRoot = AppContext.BaseDirectory;
-    public sealed record HistoryRow(Guid Id, string Label, string GeneratedLabel, string StampLabel, string CopyState, ImageSource? Thumbnail = null, string ImageDescription = "");
+    public sealed record HistoryRow(Guid Id, string Label, string GeneratedLabel, string StampLabel, string CopyState, ImageSource? Thumbnail = null, string ImageDescription = "", string PurposeLabel = "");
     public MainWindow() : this(AppContext.BaseDirectory) { }
     internal MainWindow(string dataRoot)
     {
@@ -148,6 +148,12 @@ public partial class MainWindow : Window
         if (dialog.ShowDialog() == true) await SwitchJournalAsync(dialog.FolderName);
     }
     void ExitClick(object sender, RoutedEventArgs e) => Close();
+    void VerificationHelpClick(object sender, RoutedEventArgs e) => MessageBox.Show(this,
+        "画像照合は、自分のPCに保存した生成履歴を探す補助機能です。印影の真正性（本物であること）を保証するものではありません。\n\n" +
+        "幾何コードは候補を絞る目印で、同じコードが複数の生成履歴に割り当てられることがあります。\n\n" +
+        "1.000は履歴候補との比較点数で、本物である確率ではありません。保存画像をそのままコピーしたものは見分けられません。\n\n" +
+        "一致する履歴がなくても、偽造とは断定できません。候補の生成日時や注釈とあわせて確認してください。",
+        "印影照合について", MessageBoxButton.OK, MessageBoxImage.Information);
     void AboutClick(object sender, RoutedEventArgs e) => MessageBox.Show(this,
         "JTC Stamper\nJust To Confirm — 確認した、その記録を。\n\n" + BuildIdentity.Description, "バージョン情報", MessageBoxButton.OK, MessageBoxImage.Information);
     Stamp Current()
@@ -160,7 +166,7 @@ public partial class MainWindow : Window
             if (!DateTime.TryParse(DateInput.Text, out var specified)) throw new ArgumentException("有効な指定日を入力してください。");
             dateSelection.Specify(DateOnly.FromDateTime(specified));
         }
-        return new(NameInput.Text.Trim(), dateSelection.Resolve(), BottomInput.Text.Trim(), PlainMode.IsChecked == true ? RingCode.PlainRenderer : RingCode.Renderer);
+        return new(NameInput.Text.Trim(), dateSelection.Resolve(), BottomInput.Text.Trim(), PlainMode.IsChecked == true ? RingCode.PlainRenderer : RingCode20.Renderer);
     }
     void DateModeClick(object sender, RoutedEventArgs e)
     {
@@ -201,7 +207,7 @@ public partial class MainWindow : Window
             var stamp = Current();
             bool plain = stamp.Renderer == RingCode.PlainRenderer;
             Preview.Source = StampRenderer.Render(stamp with { GeometryCode = plain ? null : 0 });
-            ModeHelp.Text = plain ? "円の欠け・横線の傾き・コード埋め込みなし。生成記録は保存します。" : "円周の短い欠けは生成時に決まります。";
+            ModeHelp.Text = plain ? "円の欠け・横線の傾き・コード埋め込みなし。生成記録は保存します。" : "印影の短い欠けは生成時に決まります。";
         }
         catch { Preview.Source = null; }
     }
@@ -235,7 +241,7 @@ public partial class MainWindow : Window
         if (entry.Kind != "Generated") return entry.Payload;
         var generation = JsonSerializer.Deserialize<Generation>(entry.Payload);
         if (generation is null) return "生成記録を読めません";
-        return $"表示日付：{generation.Stamp.DisplayDate:yyyy/MM/dd}\n上段文字：{generation.Stamp.Name}\n下段文字：{generation.Stamp.Bottom}\n" +
+        return GenerationContext.Describe(generation) + "\n" + $"表示日付：{generation.Stamp.DisplayDate:yyyy/MM/dd}\n上段文字：{generation.Stamp.Name}\n下段文字：{generation.Stamp.Bottom}\n" +
             (generation.Stamp.Renderer == RingCode.PlainRenderer ? "プレーン印影" : "幾何コード付き印影") +
             (generation.PngBase64 is null ? "\n画像本体は未保存" : "\n生成時のPNGを保存済み");
     }

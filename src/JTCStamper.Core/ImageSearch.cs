@@ -69,7 +69,8 @@ public static class ImageSearch
                     // more circular box from a coarser search, without expanding into nearby ink.
                     if (mapped.X <= old.X && mapped.Y <= old.Y &&
                         mapped.X + mapped.Width >= old.X + old.Width && mapped.Y + mapped.Height >= old.Y + old.Height &&
-                        (double)mapped.Width * mapped.Height <= 1.15 * old.Width * old.Height &&
+                        (double)mapped.Width * mapped.Height <= 1.5 * old.Width * old.Height &&
+                        Math.Abs((double)mapped.Width / mapped.Height - 1) <= 0.04 &&
                         Math.Abs(Math.Log((double)mapped.Width / mapped.Height)) < Math.Abs(Math.Log((double)old.Width / old.Height)))
                         found[duplicate] = mapped;
                 }
@@ -170,7 +171,7 @@ public static class ImageSearch
         }
         return output;
     }
-    public static IReadOnlyList<VisualCandidate> Rank(bool[] ink, IReadOnlyList<StampTemplate> templates, int? readCode = null, CancellationToken cancellationToken = default)
+    public static IReadOnlyList<VisualCandidate> Rank(bool[] ink, IReadOnlyList<StampTemplate> templates, int? readCode = null, CancellationToken cancellationToken = default, string? codeRenderer = null)
     {
         cancellationToken.ThrowIfCancellationRequested();
         if (ink.Length != Side * Side || templates.Any(x => x.Ink.Length != Side * Side)) throw new ArgumentException();
@@ -188,7 +189,7 @@ public static class ImageSearch
             }
             if (best >= 0.72) ranked.Add(new(template.Stamp, best, rotation, text, template.PngSha256));
         }
-        return ranked.OrderByDescending(x => CorrespondenceScore.Calculate(x.Text, readCode, x.Stamp.GeometryCode).Total).ThenByDescending(x => x.Score).Take(8).ToArray();
+        return ranked.OrderByDescending(x => CorrespondenceScore.Calculate(x.Text, codeRenderer is null || x.Stamp.Renderer == codeRenderer ? readCode : null, x.Stamp.GeometryCode).Total).ThenByDescending(x => x.Score).Take(8).ToArray();
     }
     // Normalized circle bounds: exclude the two separators near y=31 and y=64.
     // Keep the three text bands independent so a large name cannot dominate the date.

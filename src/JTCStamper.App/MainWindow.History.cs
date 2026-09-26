@@ -26,7 +26,7 @@ public partial class MainWindow
             var image = HistoryImage.Load(generation);
             HistoryPreview.Source = image.Image;
             HistoryImageDescription.Text = image.Description;
-            Details.Text = string.Join(Environment.NewLine + Environment.NewLine, records
+            Details.Text = GenerationContext.Describe(generation) + "\n" + GenerationContext.CopyState(row.Id, records) + "\n" + GenerationContext.FollowUps(row.Id, records) + "\n\n" + string.Join(Environment.NewLine + Environment.NewLine, records
                 .Select(x => $"{x.Entry.Kind}  {x.Entry.RecordedUtc:O}\nID: {row.Id}\n{HistoryPayload(x.Entry)}"));
         }
         catch (OperationCanceledException) when (cancellation.IsCancellationRequested) { }
