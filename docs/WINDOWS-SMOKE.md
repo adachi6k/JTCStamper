@@ -120,3 +120,9 @@ GitHub Actionsにも組み込み、公開対象は`storage-failures.json`だけ�
 
 
 容量不足の再現手順・対象・安全上の制限は[DISK-FULL.md](DISK-FULL.md)に記載しています。実行結果は対応する検証レポートで確認し、例外注入と実VHDの結果を分けて扱います。
+
+## Office経路だけの受入
+
+WindowsAcceptanceの通常の専用ルート構成に対し、`--office-only`で両版seedとOfficeの通常/形式指定貼付、`--office-excel-only`でExcelに限定した確認を実行する。初回と同じマーカー/専用TEMP/クリップボード保全の要件を使う。これは製品EXEの起動オプションではない。結果名とPasteMethodで経路を区別し、未対応の形式指定も失敗として記録する。成功だけに絞らない。Excelは新規PIDを確認できない場合に既存ブックへ触れず省略する。詳細と公式API参照はOFFICE-ACCEPTANCE-PREVIEW12-2026-09-26.md。
+
+通常の全面受入は確認済みのPNG経路を検査する（Wordは通常貼付のみ）。`--office-only`は互換性調査として未対応のWord DIB指定も含めるため、その拒否によって終了コード1になる。これをPNG受入の成功へ読み替えず、経路別の結果を見る。

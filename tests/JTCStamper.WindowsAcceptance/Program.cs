@@ -18,7 +18,9 @@ internal static partial class Program
     static int Main(string[] args)
     {
         if (args.Length == 2 && args[0] == "--hold-clipboard") return HoldClipboard(args[1]);
-        if (args.Length is not (1 or 2) || (args.Length == 2 && args[1] is not ("--skip-office" or "--environment-only" or "--arguments-only"))) return 2;
+        if (args.Length is not (1 or 2) || (args.Length == 2 && args[1] is not ("--skip-office" or "--environment-only" or "--arguments-only" or "--office-only" or "--office-excel-only"))) return 2;
+        bool excelOnly = args.Length == 2 && args[1] == "--office-excel-only";
+        bool officeOnly = excelOnly || (args.Length == 2 && args[1] == "--office-only");
         bool skipOffice = args.Length == 2 && args[1] == "--skip-office";
         bool environmentOnly = args.Length == 2 && args[1] == "--environment-only";
         root = Path.GetFullPath(args[0]);
@@ -39,10 +41,13 @@ internal static partial class Program
             if (environmentOnly) { EnvironmentCases(standard, lite, temp); return failed ? 1 : 0; }
             try { saved = CloneClipboard(); clipboardReady = true; }
             catch (Exception ex) { Result("clipboard-preservation", "skipped", ex.GetType().Name); }
-            if (clipboardReady) ClipboardContention();
-            EnvironmentCases(standard, lite, temp);
-            var absent = Start(lite, ["--smoke-test"], "missing-runtime", false);
-            Result("lite-runtime-missing-diagnostic", absent.ExitCode != 0 && absent.Error.Contains(".NET") ? "passed" : "failed", new { absent.ExitCode });
+            if (!officeOnly)
+            {
+                if (clipboardReady) ClipboardContention();
+                EnvironmentCases(standard, lite, temp);
+                var absent = Start(lite, ["--smoke-test"], "missing-runtime", false);
+                Result("lite-runtime-missing-diagnostic", absent.ExitCode != 0 && absent.Error.Contains(".NET") ? "passed" : "failed", new { absent.ExitCode });
+            }
             foreach (var (name, initial, replacement) in new[] { ("standard", standard, lite), ("lite", lite, standard) })
             {
                 var folder = Path.Combine(temp, "日本語 空白-" + name + "-" + Guid.NewGuid().ToString("N"));
@@ -50,7 +55,7 @@ internal static partial class Program
                 File.WriteAllText(Path.Combine(data, ".jtc-smoke-root"), "JTCStamper isolated smoke data v1");
                 var exe = Path.Combine(folder, "JTCStamper.App.exe"); File.Copy(initial, exe);
                 bool groupPassed = true;
-                foreach (var phase in new[] { "seed", "restart", "replacement" })
+                foreach (var phase in officeOnly ? new[] { "seed" } : new[] { "seed", "restart", "replacement" })
                 {
                     if (phase == "replacement") File.Copy(replacement, exe, true);
                     var testPhase = phase == "seed" ? "seed" : "verify";
@@ -67,7 +72,7 @@ internal static partial class Program
                     if (!passed) { groupPassed = false; break; }
                 }
                 if (clipboardReady && !skipOffice && groupPassed)
-                    RunOfficeSuite(data, name + "-");
+                    RunOfficeSuite(data, name + "-", excelOnly, probeUnsupported: officeOnly && !excelOnly);
             }
             if (skipOffice) Result("office-paste-save-reopen", "skipped", "Explicit diagnostic option --skip-office.");
         }
@@ -151,7 +156,7 @@ internal static partial class Program
         if (sequence != JTCStamper.App.NativeClipboard.SequenceNumber) throw new InvalidDataException("Clipboard changed during preservation.");
         return clone;
     }
-    static void RunOfficeSuite(string dataRoot, string prefix)
+    static void RunOfficeSuite(string dataRoot, string prefix, bool excelOnly = false, bool probeUnsupported = false)
     {
         var png = JTCStamper.App.NativeClipboard.ReadPng().Bytes
             ?? throw new InvalidDataException("PNG clipboard missing after smoke.");
@@ -164,10 +169,11 @@ internal static partial class Program
             Result(prefix + "office-source-matches-history", "passed");
         }
         finally { CryptographicOperations.ZeroMemory(key); }
-        foreach (var product in new[] { "Word", "Excel", "PowerPoint" })
+        foreach (var product in excelOnly ? new[] { "Excel" } : new[] { "Word", "Excel", "PowerPoint" })
+        foreach (var route in product == "Word" && !probeUnsupported ? new[] { "normal" } : new[] { "normal", "specified" })
         {
-            try { OfficePaste(product, png, prefix); }
-            catch (Exception ex) { Result(prefix + product + "-paste-save-reopen", "failed", ex.GetBaseException().Message); }
+            try { OfficePaste(product, png, prefix, route); }
+            catch (Exception ex) { Result(prefix + product + "-" + route + "-paste-save-reopen", "failed", ex.GetBaseException().Message); }
             finally
             {
                 // Release only this runner's no-longer-referenced COM wrappers after
@@ -177,15 +183,45 @@ internal static partial class Program
             }
         }
     }
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    static extern uint GetWindowThreadProcessId(IntPtr hwnd, out uint processId);
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
-    static void OfficePaste(string product, byte[] png, string prefix)
+    static void OfficePaste(string product, byte[] png, string prefix, string route)
     {
         // Only create and close synthetic documents. Never quit a pre-existing Office process.
+        string resultName = prefix + product + "-" + route + "-paste-save-reopen";
+        string pasteMethod = route == "normal" ? "Paste" : product == "Word" ? "PasteSpecial(DataType=5/DIB)" : product == "Excel" ? "Worksheet.PasteSpecial(Format=0/PNG)" : "Shapes.PasteSpecial(6/PNG)";
         var processName = product == "Word" ? "WINWORD" : product == "Excel" ? "EXCEL" : "POWERPNT";
-        bool existed = Process.GetProcessesByName(processName).Length != 0;
-        if (existed && product != "PowerPoint") { Result(prefix + product + "-paste-save-reopen", "skipped", "Existing user application; left untouched."); return; }
+        var previousProcesses = Process.GetProcessesByName(processName);
+        var previousIds = previousProcesses.Select(p => p.Id).ToHashSet();
+        foreach (var process in previousProcesses) process.Dispose();
+        bool existed = previousIds.Count != 0;
+        if (existed && product == "Word") { Result(resultName, "skipped", "Existing user application; left untouched."); return; }
         var type = Type.GetTypeFromProgID(product + ".Application") ?? throw new NotSupportedException(product + " is not installed.");
         dynamic app = Activator.CreateInstance(type)!;
+        bool ownsApplication = !existed;
+        uint isolatedProcessId = 0;
+        if (product == "Excel")
+        {
+            // Identify the COM server before creating or activating any workbook.
+            // Never edit or quit an Excel process that existed before this test.
+            try
+            {
+                GetWindowThreadProcessId(new IntPtr((long)app.Hwnd), out isolatedProcessId);
+                ownsApplication = isolatedProcessId != 0 && !previousIds.Contains((int)isolatedProcessId);
+                if (!ownsApplication)
+                {
+                    Result(resultName, "skipped", "COM server is not an isolated new Excel process; left untouched.");
+                    System.Runtime.InteropServices.Marshal.FinalReleaseComObject(app);
+                    return;
+                }
+            }
+            catch
+            {
+                System.Runtime.InteropServices.Marshal.FinalReleaseComObject(app);
+                throw;
+            }
+        }
         dynamic? document = null; string version = app.Version;
         var extension = product == "Word" ? ".docx" : product == "Excel" ? ".xlsx" : ".pptx";
         var path = Path.Combine(root, product + "-synthetic-" + Guid.NewGuid().ToString("N") + extension);
@@ -194,21 +230,25 @@ internal static partial class Program
         {
             if (product == "Word")
             {
-                document = app.Documents.Add(); document.Content.Paste();
+                document = app.Documents.Add();
+                if (route == "normal") document.Content.Paste(); else document.Content.PasteSpecial(DataType: 5);
                 count = (int)document.InlineShapes.Count; width = (double)document.InlineShapes[1].Width; height = (double)document.InlineShapes[1].Height;
                 document.SaveAs2(path, 16); document.Close(0); document = null; document = app.Documents.Open(path, ReadOnly: true);
                 if ((int)document.InlineShapes.Count != count) throw new InvalidDataException("Word image lost after reopen.");
             }
             else if (product == "Excel")
             {
-                document = app.Workbooks.Add(); dynamic sheet = document.Worksheets[1]; sheet.Paste();
+                document = app.Workbooks.Add(); dynamic sheet = document.Worksheets[1];
+                sheet.Activate(); sheet.Range["A1"].Select();
+                if (route == "normal") sheet.Paste(); else sheet.PasteSpecial(Format: 0);
                 count = (int)sheet.Shapes.Count; width = (double)sheet.Shapes.Item(1).Width; height = (double)sheet.Shapes.Item(1).Height;
                 document.SaveAs(path, 51); document.Close(false); document = null; document = app.Workbooks.Open(path, ReadOnly: true);
                 if ((int)document.Worksheets[1].Shapes.Count != count) throw new InvalidDataException("Excel image lost after reopen.");
             }
             else
             {
-                document = app.Presentations.Add(0); dynamic slide = document.Slides.Add(1, 12); slide.Shapes.PasteSpecial(6);
+                document = app.Presentations.Add(0); dynamic slide = document.Slides.Add(1, 12);
+                if (route == "normal") slide.Shapes.Paste(); else slide.Shapes.PasteSpecial(6);
                 count = (int)slide.Shapes.Count; width = (double)slide.Shapes.Item(1).Width; height = (double)slide.Shapes.Item(1).Height;
                 document.SaveAs(path, 24); document.Close(); document = null; document = app.Presentations.Open(path, -1, 0, 0);
                 if ((int)document.Slides[1].Shapes.Count != count) throw new InvalidDataException("PowerPoint image lost after reopen.");
@@ -232,9 +272,9 @@ internal static partial class Program
                 if (candidates.Count > 0) best = Math.Max(best, candidates[0].Score);
             }
             bool dimensionsPreserved = Math.Abs(width - original.Width / original.DpiX * 72) < 0.1 && Math.Abs(height - original.Height / original.DpiY * 72) < 0.1;
-            Result(prefix + product + "-paste-save-reopen", best >= 0.98 && pixelsPreserved && dimensionsPreserved && transparentPixels > 0 ? "passed" : "failed", new
+            Result(resultName, best >= 0.98 && pixelsPreserved && dimensionsPreserved && transparentPixels > 0 ? "passed" : "failed", new
             {
-                Version = version, Pictures = count, WidthPoints = width, HeightPoints = height,
+                Version = version, PasteMethod = pasteMethod, IsolatedExcelProcessId = isolatedProcessId, Pictures = count, WidthPoints = width, HeightPoints = height,
                 ExtractedImageShapeScore = best, PixelsIncludingAlphaPreserved = pixelsPreserved,
                 PngBytesPreserved = pngBytesPreserved, DimensionsPreserved = dimensionsPreserved,
                 OriginalTransparentPixels = transparentPixels
@@ -248,7 +288,7 @@ internal static partial class Program
             }
             finally
             {
-                if (!existed)
+                if (ownsApplication)
                 {
                     int remaining = product == "Word" ? (int)app.Documents.Count : product == "Excel" ? (int)app.Workbooks.Count : (int)app.Presentations.Count;
                     if (remaining == 0) app.Quit(); // Leave any document opened by the user during testing alone.
