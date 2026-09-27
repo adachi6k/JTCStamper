@@ -1,0 +1,136 @@
+{
+  "SchemaVersion": 1,
+  "Phase": "verify",
+  "StartedUtc": "2026-09-27T00:40:49.5213363+00:00",
+  "FinishedUtc": "2026-09-27T00:40:55.4870715+00:00",
+  "Framework": ".NET 10.0.12",
+  "Passed": true,
+  "ClipboardRequested": true,
+  "Checks": [
+    {
+      "Name": "verification-cancel-resume-invalid-input-and-stale-result",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "verification-many-stamps-honors-region-limit",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "main-tabs-preserve-view-and-inputs",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "integrated-title-menu-native-hit-testing",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "sidebar-and-theme-persistence-with-unchanged-stamp",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "status-details-menu-preserves-long-message-and-owner",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "today-default-and-explicit-date-button",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "real-window-startup-preview-and-icon",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "async-history-selection-integrity-and-note-drafts",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "async-startup-close-defers-until-store-is-released",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "async-startup-failure-retains-error-and-disabled-copy",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "async-copy-rejects-reentry-switch-and-defers-close-until-recorded",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "async-copy-failure-never-reports-success-or-hides-error-on-close",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "failed-async-store-switch-preserves-working-store",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "delete-screen-cancel-partial-failure-retry-and-regenerate",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "render-png-date-and-transparent-margin",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "plain-rendering-and-stored-history-image",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "image-search-rendered-document-and-jpeg",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "same-stamp-font-change-keeps-old-jpeg-candidates",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "windows-delete-failure-leaves-valid-prefix-and-can-retry",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "missing-and-damaged-key-never-recreated",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "ring20-rendered-decoding-and-controls",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "restart-and-executable-replacement-data-preserved",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "restored-backup-survives-process-and-edition-change",
+      "Status": "passed",
+      "Detail": null
+    },
+    {
+      "Name": "clipboard-survives-process-exit",
+      "Status": "passed",
+      "Detail": null
+    }
+  ]
+}

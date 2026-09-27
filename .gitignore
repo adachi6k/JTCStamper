@@ -39,7 +39,7 @@ appearance-*.tmp
 .jtc-write-*.tmp
 
 # Private PoC contains a real personal stamp; never reintroduce it.
-/reference/JTC-Stamper-Angle-PoC.zip
+JTC-Stamper-Angle-PoC.zip
 
 # Passphrase-protected migration archives
 *.jtcportable
@@ -48,3 +48,7 @@ appearance-*.tmp
 *.pfx
 *.p12
 *.key
+
+# Python experiment caches
+**/__pycache__/
+*.pyc

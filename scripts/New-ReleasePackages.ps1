@@ -38,7 +38,7 @@ try {
         try {
             # Explicit allowlist: never package a user's journal, key or settings.
             Copy-Item -LiteralPath $exe -Destination $stage
-            $guide = Get-Content docs/DISTRIBUTION.md -Raw
+            $guide = Get-Content docs/user/DISTRIBUTION.md -Raw
             if ($signing) {
                 $guide = "This EXE is self-signed. Windows does not trust this certificate by default; SmartScreen warnings may remain. No timestamp. Signer: $($signing.Thumbprint)`r`n`r`n" + $guide
             }

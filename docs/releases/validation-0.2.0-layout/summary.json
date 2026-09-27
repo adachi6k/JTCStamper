@@ -1,0 +1,64 @@
+{
+    "SchemaVersion":  1,
+    "RunId":  "0492ef7bf3bd49e68b0d0902f392f21b",
+    "Passed":  true,
+    "ClipboardRequested":  true,
+    "StandardSha256":  "3D5635294377728593202BDF857642C545C127C82826D17C2FB2C2F9F2A55F6B",
+    "LiteSha256":  "504CDE13EBA3797B34974C9D33308B89F2C894622FA5B307ACECDACC57190981",
+    "Runs":  [
+                 {
+                     "Name":  "standard-seed",
+                     "Passed":  true,
+                     "ExitCode":  0,
+                     "Detail":  "Requested checks passed. See skipped checks separately.",
+                     "Skipped":  [
+
+                                 ]
+                 },
+                 {
+                     "Name":  "standard-restart",
+                     "Passed":  true,
+                     "ExitCode":  0,
+                     "Detail":  "Requested checks passed. See skipped checks separately.",
+                     "Skipped":  [
+
+                                 ]
+                 },
+                 {
+                     "Name":  "standard-replacement",
+                     "Passed":  true,
+                     "ExitCode":  0,
+                     "Detail":  "Requested checks passed. See skipped checks separately.",
+                     "Skipped":  [
+
+                                 ]
+                 },
+                 {
+                     "Name":  "lite-seed",
+                     "Passed":  true,
+                     "ExitCode":  0,
+                     "Detail":  "Requested checks passed. See skipped checks separately.",
+                     "Skipped":  [
+
+                                 ]
+                 },
+                 {
+                     "Name":  "lite-restart",
+                     "Passed":  true,
+                     "ExitCode":  0,
+                     "Detail":  "Requested checks passed. See skipped checks separately.",
+                     "Skipped":  [
+
+                                 ]
+                 },
+                 {
+                     "Name":  "lite-replacement",
+                     "Passed":  true,
+                     "ExitCode":  0,
+                     "Detail":  "Requested checks passed. See skipped checks separately.",
+                     "Skipped":  [
+
+                                 ]
+                 }
+             ]
+}
