@@ -1,8 +1,10 @@
-# JTC Stamper
+# JTC Stamper — Windows用の日付印・電子印鑑アプリ
 
 **日付印を作って貼る。用途も、作った記録も残す。**
 
-氏名や部署名を入れた日付印を、Word・Excel・PowerPointへ貼り付けられるWindowsアプリです。作成時に用途や宛先をメモでき、あとから生成履歴を振り返れます。アカウント登録や中央サーバーは不要です。
+氏名や部署名を入れた日付印（デート印）を作り、透過PNGとしてWord・Excel・PowerPointへ貼り付けられる、無料・オープンソースのWindows用電子印鑑アプリです。作成時に用途や宛先をメモでき、あとから生成履歴を振り返れます。アカウント登録や中央サーバーは不要です。
+
+JTC Stamper is a free, open-source **date stamp / digital hanko app for Windows** with a Japanese interface. Create transparent PNG stamps for Word, Excel and PowerPoint, and keep local generation history with notes. No account or server required.
 
 **[ダウンロード](https://github.com/adachi6k/JTCStamper/releases)** · [使い始める](#使い始める) · [変更履歴](CHANGELOG.md)
 
