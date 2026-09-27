@@ -1,6 +1,6 @@
 # 0.2.0 リリース確認
 
-正式版番号は0.2.0。2026-09-27に所有者から公開承認。0.1.0からの新機能と12bit互換性削除を含む。最終コミットのCIと署名後試験の成功を確認してからタグ・Releaseを公開する。
+正式版番号は0.2.0。2026-09-27に所有者から公開承認。0.1.0からの新機能と12bit互換性削除を含む。最終コミット05ec505のCIと署名後試験の成功を確認してタグ・Releaseを公開済み。
 
 ## 1.0.0の判断
 
@@ -8,9 +8,9 @@
 
 ## 公開前ゲート
 
-- [ ] 最新コミットのWindows CI（Core、保存失敗、容量不足、WPF、別PC移行）
-- [ ] 最新WPF描画の20bit復号・プレーン対照。試作Python/EMFの精度を流用しない
-- [ ] GitHub Actionsによる署名済みStandard/Liteと署名後スモーク
+- [x] 最新コミットのWindows CI（Core、保存失敗、容量不足、WPF、別PC移行）
+- [x] 最新WPF描画の20bit復号・プレーン対照。試作Python/EMFの精度を流用しない
+- [x] GitHub Actionsによる署名済みStandard/Liteと署名後スモーク
 - [x] 変更履歴と互換性案内、パッケージのライセンス・署名・SHA256
 - [x] 公開用リリースノートと最終版番号の確定
 
@@ -19,3 +19,10 @@
 ## 実機確認
 
 整理後のWindows試験は[実行記録](LAYOUT-CHECK-2026-09-27.md)を参照。Core49件、通常版・Lite版の6フェーズ（PNGクリップボードを含む）成功。最終CI・署名結果のURLと配布物のハッシュはGitHub Releaseへ記載し、このコミットに対する確認証跡とする。
+
+## 公開結果
+
+- [v0.2.0 Release](https://github.com/adachi6k/JTCStamper/releases/tag/v0.2.0)
+- [最終Windows CI](https://github.com/adachi6k/JTCStamper/actions/runs/36285998062)：成功
+- [署名・署名後6フェーズ](https://github.com/adachi6k/JTCStamper/actions/runs/36285998183)：成功。CIのクリップボード試験は省略、実機確認は上記の記録を参照。
+- Standard/Liteの版番号・ソースコミット・EXE/ZIPハッシュ・ライセンス同梱を検証済み。ハッシュ一覧と公開証明書をReleaseに添付。
