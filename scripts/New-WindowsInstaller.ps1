@@ -6,11 +6,12 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
+Add-Type -AssemblyName System.IO.Compression.FileSystem
 $root = Split-Path $PSScriptRoot -Parent
 if (!$PackageDirectory) { $PackageDirectory = Join-Path $root 'dist/packages' }
 if (!$OutputDirectory) { $OutputDirectory = Join-Path $root 'dist/installers' }
 $packages = [IO.Path]::GetFullPath($PackageDirectory)
-$checks = @(Get-Content (Join-Path $packages 'checksums.json') -Raw | ConvertFrom-Json)
+$checks = @(Get-Content (Join-Path $packages 'checksums.json') -Raw | ConvertFrom-Json | ForEach-Object { $_ })
 $standard = @($checks | Where-Object { $_.Build.Variant -eq 'Standard' })
 if ($standard.Count -ne 1) { throw 'Expected exactly one Standard package.' }
 $item = $standard[0]
