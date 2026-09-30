@@ -30,14 +30,14 @@ JTC Stamper is a free, open-source **date stamp / digital hanko app for Windows*
    [配布ページ](https://github.com/adachi6k/JTCStamper/releases)の「Assets」から、名前に **`Standard`** が付いたZIPを選びます。通常版には実行に必要なものが含まれています。
 2. **ZIPを展開して起動**
 
-   書き込み可能なローカルフォルダーへ展開し、`JTCStamper.App.exe`を起動します。インストーラーや`start.cmd`は不要です。
+   書き込み可能なローカルフォルダーへ展開し、`JTCStamper.App.exe`を起動します。ZIP版はインストーラーや`start.cmd`不要です。通常版のインストーラーを使う場合はSetup EXEを起動してください。
 3. **文字・用途を入力してコピー**
 
    上段・下段の文字と日付を確認し、必要なら「用途・貼付先」を入力して **［生成してPNGコピー］**。WordやExcelなどへ切り替え、`Ctrl+V`で貼り付けます。
 
 すでに .NET 10 Desktop Runtime（x64）を導入している方には、小さい **Lite版** もあります。迷ったら通常版を選んでください。[起動・更新ガイド](docs/user/DISTRIBUTION.md)
 
-> 0.2.0のEXEは自己署名です。初回起動時にWindowsの警告が出る場合があります。
+> 0.2.1のEXEは自己署名です。Setup EXE自体は未署名で、Windowsの警告が出る場合があります。
 
 ## 履歴とバックアップ
 
@@ -64,9 +64,9 @@ JTC Stamper is a free, open-source **date stamp / digital hanko app for Windows*
 
 ## 0.1.0から更新する方へ
 
-**0.2.0では、旧12bit印影・原本・生成履歴は照合対象外です。** 自動変換はありません。履歴ファイルや鍵を自動で削除することもありません。
+**0.2.1でも、旧12bit印影・原本・生成履歴は照合対象外です。** 自動変換はありません。履歴ファイルや鍵を自動で削除することもありません。
 
-更新前にバックアップを取り、0.2.0は新しいフォルダーへ展開してください。旧履歴を参照する場合は0.1.0を残し、保存先を分けて使ってください。[更新手順](docs/user/DISTRIBUTION.md#010から020への更新)
+更新前にバックアップを取り、0.2.1は新しいフォルダーへ展開するかSetup EXEを使用してください。旧履歴を参照する場合は0.1.0を残し、保存先を分けて使ってください。[更新手順](docs/user/DISTRIBUTION.md#010から020への更新)
 
 ## 利用者向けガイド
 

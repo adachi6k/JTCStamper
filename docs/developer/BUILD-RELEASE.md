@@ -19,6 +19,8 @@ Directory.Build.propsのVersionが基準。EXEのProductVersionは「版番号+�
 
 scripts/New-ReleasePackages.ps1で同じコミットから通常版と軽量版を生成する。build.jsonとchecksums.jsonにソースコミット・タグ・版番号・形式・EXE SHA-256、さらにZIP SHA-256を記録する。ZIPの時刻等まで含むバイト単位の再現ビルドを保証しない。
 
+Windows用のユーザー別インストーラーは通常版ZIPから生成する。Inno Setup 6（CIでは6.7.1）を導入し、`pwsh -File .\scripts\New-WindowsInstaller.ps1 -IsccPath "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"` を実行する。生成先は `dist/installers`。署名済みリリース候補では署名済み通常版ZIPから同じスクリプトで生成し、`-PackageDirectory signed-output -OutputDirectory signed-installer` を指定する。インストーラー本体は署名されない（同梱EXEの署名とは別）。それぞれの `checksums.json` にインストーラーのSHA-256と元のビルド情報を記録する。公開前にはWindowsで導入・更新・アンインストールと履歴・鍵の保持を確認する。
+
 ## 成果物と試験の対応
 
 CIは生成されたdistのEXEをそのままWindowsスモークに渡し、起動・再起動・通常版／軽量版交換を検証する。パッケージとレポートのコミットとEXEハッシュを照合して保管する。配布先で取得したZIPのハッシュをchecksums.jsonと比較し、展開後のEXEもbuild.jsonと比較する。

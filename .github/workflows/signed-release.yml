@@ -43,7 +43,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     environment: release-signing
     runs-on: windows-2025
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -78,6 +78,14 @@ jobs:
             if (Test-Path "Cert:\CurrentUser\My\$($sig.SignerCertificate.Thumbprint)") { throw 'Signing key was not removed.' }
           }
           ./scripts/Invoke-WindowsSmoke.ps1 -StandardExe (Join-Path $env:RUNNER_TEMP 'signed-Standard/JTCStamper.App.exe') -LiteExe (Join-Path $env:RUNNER_TEMP 'signed-Lite/JTCStamper.App.exe')
+      - name: Build installer from signed Standard package
+        shell: pwsh
+        run: |
+          choco install innosetup --version=6.7.1 --yes --no-progress
+          if ($LASTEXITCODE -ne 0) { throw 'Inno Setup installation failed.' }
+          ./scripts/New-WindowsInstaller.ps1 -IsccPath "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" -PackageDirectory signed-output -OutputDirectory signed-installer
+          $item = Get-Content signed-installer/checksums.json -Raw | ConvertFrom-Json
+          if ((Get-FileHash (Join-Path signed-installer $item.File) -Algorithm SHA256).Hash -ne $item.Sha256) { throw 'Signed-source installer hash mismatch.' }
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: signed-packages-${{ github.sha }}
@@ -85,6 +93,7 @@ jobs:
             signed-output/*.zip
             signed-output/checksums.json
             signed-output/JTCStamper-signing.cer
+            signed-installer/
           if-no-files-found: error
           retention-days: 14
       - name: Upload post-sign test reports only

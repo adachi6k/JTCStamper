@@ -13,7 +13,7 @@ concurrency:
 jobs:
   smoke:
     runs-on: windows-2025
-    timeout-minutes: 25
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
@@ -43,6 +43,33 @@ jobs:
       - name: Build versioned distribution packages
         shell: pwsh
         run: ./scripts/New-ReleasePackages.ps1
+      - name: Build and exercise per-user installer
+        shell: pwsh
+        run: |
+          choco install innosetup --version=6.7.1 --yes --no-progress
+          if ($LASTEXITCODE -ne 0) { throw 'Inno Setup installation failed.' }
+          ./scripts/New-WindowsInstaller.ps1 -IsccPath "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          $item = Get-Content dist/installers/checksums.json -Raw | ConvertFrom-Json
+          $setup = Join-Path dist/installers $item.File
+          if ((Get-FileHash $setup -Algorithm SHA256).Hash -ne $item.Sha256) { throw 'Installer hash mismatch.' }
+          $destination = Join-Path $env:LOCALAPPDATA 'Programs\JTCStamper'
+          if (Test-Path $destination) { throw 'Installer test destination already exists.' }
+          $process = Start-Process -FilePath (Resolve-Path $setup) -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART' -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
+          $exe = Join-Path $destination 'JTCStamper.App.exe'
+          if ((Get-FileHash $exe -Algorithm SHA256).Hash -ne $item.Build.ExeSha256) { throw 'Installed EXE differs from package.' }
+          ./scripts/Invoke-WindowsSmoke.ps1 -StandardExe $exe
+          New-Item -ItemType Directory (Join-Path $destination 'journal') | Out-Null
+          Set-Content (Join-Path $destination 'journal\sentinel.txt') 'uninstall must preserve user data'
+          Set-Content (Join-Path $destination 'key.dpapi') 'synthetic test key'
+          $uninstall = Join-Path $destination 'unins000.exe'
+          $process = Start-Process -FilePath $uninstall -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART' -Wait -PassThru
+          if ($process.ExitCode -ne 0 -or (Test-Path $exe) -or
+              !(Test-Path (Join-Path $destination 'journal\sentinel.txt')) -or
+              !(Test-Path (Join-Path $destination 'key.dpapi'))) { throw 'Uninstall failed to remove the app while preserving user data.' }
+          Remove-Item -LiteralPath (Join-Path $destination 'journal\sentinel.txt'), (Join-Path $destination 'key.dpapi') -Force
+          Remove-Item -LiteralPath (Join-Path $destination 'journal') -Force
+          Remove-Item -LiteralPath $destination -Force
       - name: Self-signed Authenticode checks (ephemeral certificate, no trust installation)
         shell: pwsh
         run: ./scripts/Test-CodeSigning.ps1
@@ -69,6 +96,13 @@ jobs:
         with:
           name: packages-${{ github.sha }}
           path: dist/packages/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: installer-${{ github.sha }}
+          path: dist/installers/
           if-no-files-found: error
           retention-days: 14
 
