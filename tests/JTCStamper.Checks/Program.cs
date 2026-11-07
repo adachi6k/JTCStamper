@@ -16,6 +16,17 @@ void Throws(Action action) { try { action(); } catch { return; } throw new Excep
 var stamp = new Stamp("山田", new DateOnly(1900, 1, 1), "確認");
 try
 {
+    Check("msix-storage-is-package-specific-and-unpackaged-path-is-unchanged", dir =>
+    {
+        var exe = Path.Combine(dir, "readonly-app");
+        var appData = Path.Combine(dir, "user");
+        var test = JTCStamper.App.AppStorage.ResolveRoot(exe, appData, "JTCStamper.LocalTest_test");
+        var store = JTCStamper.App.AppStorage.ResolveRoot(exe, appData, "12345.JTCStamper_store");
+        Assert(test == Path.Combine(appData, "Packages", "JTCStamper.LocalTest_test", "LocalState"));
+        Assert(store != test && store != exe);
+        Assert(JTCStamper.App.AppStorage.ResolveRoot(exe, appData, null) == exe);
+        Assert(JTCStamper.App.AppStorage.DefaultRoot == AppContext.BaseDirectory);
+    });
     Check("generation-purpose-roundtrip-backup-and-append", dir =>
     {
         using var journal = new Journal(Path.Combine(dir, "journal"), key);

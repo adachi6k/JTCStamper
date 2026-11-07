@@ -11,6 +11,30 @@ concurrency:
   group: windows-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  msix:
+    runs-on: windows-2025
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - name: MSIX identity and configuration checks
+        shell: pwsh
+        run: ./scripts/Test-MsixPackaging.ps1
+      - name: Build unsigned local-test MSIX with Windows SDK validation
+        shell: pwsh
+        run: |
+          dotnet msbuild packaging/JTCStamper.Msix.proj /t:Build
+          if ($LASTEXITCODE -ne 0) { throw 'MSIX build failed.' }
+      - name: Upload test package and build evidence (not for Store submission)
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: msix-local-test-${{ github.sha }}
+          path: dist/msix/test/
+          if-no-files-found: error
+          retention-days: 14
+
   smoke:
     runs-on: windows-2025
     timeout-minutes: 35

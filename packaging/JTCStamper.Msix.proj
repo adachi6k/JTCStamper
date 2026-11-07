@@ -1,0 +1,9 @@
+<Project DefaultTargets="Build">
+  <PropertyGroup>
+    <MsixMode Condition="'$(MsixMode)' == ''">Test</MsixMode>
+    <StoreIdentityFile Condition="'$(StoreIdentityFile)' == ''">$(MSBuildThisFileDirectory)StoreIdentity.json</StoreIdentityFile>
+  </PropertyGroup>
+  <Target Name="Build">
+    <Exec Command="pwsh -NoProfile -File &quot;$(MSBuildThisFileDirectory)../scripts/New-MsixPackage.ps1&quot; -Mode &quot;$(MsixMode)&quot; -StoreIdentityFile &quot;$(StoreIdentityFile)&quot;" />
+  </Target>
+</Project>
