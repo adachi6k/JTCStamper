@@ -116,7 +116,7 @@ Start-Process explorer.exe "shell:AppsFolder\$($installed.PackageFamilyName)!App
 - [ ] Desktop Runtime未導入のクリーンなWindows 11 x64でインストールし、スタートメニューから起動。EXEを直接起動するだけの試験で代用しない。
 - [ ] 架空の氏名・部署・用途で生成。WordとExcelへクリップボード貼付し、色付き背景上でもPNG背景が透明であることを目視確認。ファイル保存のPNGも確認。
 - [ ] テーマを保存、印面設定を`.jtcstamp`へ保存、用途と注釈付き履歴を生成。終了・再起動後にテーマ・履歴が読め、設定ファイルを読み込めることを確認（印面設定は自動読込ではない）。
-- [ ] 履歴、`key.dpapi`、`appearance.json`が`%LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalState`へ保存され、読み取り専用WindowsAppsへ書き込まないことを確認。DPAPIで既存鍵を再読込できることも確認。
+- [ ] 履歴、`key.dpapi`、`appearance.json`が`%LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalState`へ保存され、読み取り専用WindowsAppsへ書き込まないことを確認。［履歴 → 既定の保存先を使用］でもLocalStateに戻ること、DPAPIで既存鍵を再読込できることも確認。
 - [ ] 同じテストName／Publisherと証明書で、版番号を増やした新パッケージを生成・署名し、`Add-AppxPackage`で更新。起動・鍵・履歴・テーマが保持されることを確認。テスト変更は製品の版番号更新とは分ける。
 - [ ] [移行手順](../user/DISTRIBUTION.md#store版への切り替え公開前の検証用)でSetup／ZIPからそれぞれ復元し、原本・用途・注釈・設定を照合。同じユーザー用バックアップの復元可否も確認する。
 - [ ] パッケージ外へバックアップ後、アンインストールを確認。LocalStateは削除され得るため、Setup版の「履歴を残す」と同一視しない。再インストール・バックアップ復元も確認。

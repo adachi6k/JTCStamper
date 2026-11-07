@@ -140,7 +140,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex) { Status.Text = "設定を保存できません: " + ex.Message; }
     }
-    async void DefaultHistoryClick(object sender, RoutedEventArgs e) => await SwitchJournalAsync(AppContext.BaseDirectory);
+    async void DefaultHistoryClick(object sender, RoutedEventArgs e) => await SwitchJournalAsync(AppStorage.DefaultRoot);
     async void ChooseHistoryClick(object sender, RoutedEventArgs e)
     {
         if (!CanStartStoreOperation()) return;

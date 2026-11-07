@@ -50,7 +50,7 @@
             <MenuItem Header="履歴(_R)" Style="{StaticResource CompactCaptionMenuItem}">
                 <MenuItem Header="生成履歴を表示" Click="ShowHistoryClick"/>
                 <Separator/>
-                <MenuItem Header="実行ファイルのフォルダーを使用" Click="DefaultHistoryClick"/>
+                <MenuItem Header="既定の保存先を使用" Click="DefaultHistoryClick"/>
                 <MenuItem Header="保存先を選択…" Click="ChooseHistoryClick"/>
                 <Separator/>
                 <MenuItem Header="履歴をバックアップ（同じWindowsユーザー用）…" Click="BackupHistoryClick"/>
