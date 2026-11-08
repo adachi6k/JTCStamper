@@ -20,11 +20,25 @@ try
     {
         var exe = Path.Combine(dir, "readonly-app");
         var appData = Path.Combine(dir, "user");
-        var test = JTCStamper.App.AppStorage.ResolveRoot(exe, appData, "JTCStamper.LocalTest_test");
-        var store = JTCStamper.App.AppStorage.ResolveRoot(exe, appData, "12345.JTCStamper_store");
+        var redirected = Path.Combine(appData, "Packages", "JTCStamper.LocalTest_test", "LocalCache", "Local");
+        string KnownFolder(Guid folder, uint flags)
+        {
+            Assert(folder == new Guid("F1B32785-6FBA-4FCF-9D55-7B8E7F157091"));
+            return flags == 0x00010000 ? appData : redirected;
+        }
+        var test = JTCStamper.App.AppStorage.ResolveRoot(exe, "JTCStamper.LocalTest_test", KnownFolder);
+        var store = JTCStamper.App.AppStorage.ResolveRoot(exe, "12345.JTCStamper_store", KnownFolder);
         Assert(test == Path.Combine(appData, "Packages", "JTCStamper.LocalTest_test", "LocalState"));
-        Assert(store != test && store != exe);
-        Assert(JTCStamper.App.AppStorage.ResolveRoot(exe, appData, null) == exe);
+        Assert(store == Path.Combine(appData, "Packages", "12345.JTCStamper_store", "LocalState"));
+        Assert(JTCStamper.App.AppStorage.ResolveRoot(exe, null, (_, _) => throw new Exception("Unpackaged storage must not query LocalAppData.")) == exe);
+        Throws(() => JTCStamper.App.AppStorage.ResolveRoot(exe, "JTCStamper.LocalTest_test", (_, _) => throw new IOException("Known folder lookup failed.")));
+        if (OperatingSystem.IsWindows())
+        {
+            var actual = JTCStamper.App.AppStorage.ResolveRoot(exe, "JTCStamper.LocalTest_test");
+            var expected = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "Packages", "JTCStamper.LocalTest_test", "LocalState");
+            Assert(actual == expected);
+        }
         Assert(JTCStamper.App.AppStorage.DefaultRoot == AppContext.BaseDirectory);
     });
     Check("generation-purpose-roundtrip-backup-and-append", dir =>

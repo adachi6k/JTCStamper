@@ -10,6 +10,9 @@ internal static class AppStorage
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
     static extern int GetCurrentPackageFamilyName(ref uint length, StringBuilder? familyName);
 
+    [DllImport("shell32.dll", ExactSpelling = true)]
+    static extern int SHGetKnownFolderPath(ref Guid folderId, uint flags, IntPtr token, out IntPtr path);
+
     internal static string DefaultRoot
     {
         get
@@ -28,11 +31,29 @@ internal static class AppStorage
                     family = buffer.ToString();
                 }
             }
-            return ResolveRoot(AppContext.BaseDirectory,
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), family);
+            return ResolveRoot(AppContext.BaseDirectory, family);
         }
     }
 
-    internal static string ResolveRoot(string executableDirectory, string localAppData, string? familyName) =>
-        familyName is null ? executableDirectory : Path.Combine(localAppData, "Packages", familyName, "LocalState");
+    internal static string ResolveRoot(string executableDirectory, string? familyName,
+        Func<Guid, uint, string>? getKnownFolderPath = null)
+    {
+        if (familyName is null) return executableDirectory;
+        var localAppDataId = new Guid("F1B32785-6FBA-4FCF-9D55-7B8E7F157091");
+        const uint noPackageRedirection = 0x00010000; // KF_FLAG_NO_PACKAGE_REDIRECTION
+        // Packaged processes otherwise receive a package-specific LocalAppData path.
+        var localAppData = (getKnownFolderPath ?? GetKnownFolderPath)(localAppDataId, noPackageRedirection);
+        return Path.Combine(localAppData, "Packages", familyName, "LocalState");
+    }
+
+    static string GetKnownFolderPath(Guid folderId, uint flags)
+    {
+        IntPtr path = IntPtr.Zero;
+        try
+        {
+            Marshal.ThrowExceptionForHR(SHGetKnownFolderPath(ref folderId, flags, IntPtr.Zero, out path));
+            return Marshal.PtrToStringUni(path) ?? throw new InvalidOperationException("LocalAppData path is unavailable.");
+        }
+        finally { Marshal.FreeCoTaskMem(path); }
+    }
 }

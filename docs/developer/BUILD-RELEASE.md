@@ -95,8 +95,12 @@ Partner CenterのMSIX提出ではこの**未署名`.msix`**をアップロード
 ローカルインストールのためだけに、テスト用MSIXのコピーを署名する。Windows SDKの`signtool.exe`をPATHへ追加し、以下を**使い捨てのテストPC**で実施する。証明書の信頼追加には管理者権限が必要。通常の利用者PCへテスト証明書の導入を案内しない。
 
 ```powershell
-$package = Get-ChildItem .\dist\msix\test\*-Test-x64.msix | Select-Object -First 1
-Copy-Item $package.FullName "$env:TEMP\JTCStamper-Test.msix"
+$build = Get-Content -LiteralPath .\dist\msix\test\build.json -Raw | ConvertFrom-Json
+$package = Join-Path .\dist\msix\test $build.File
+if ($build.Mode -ne 'Test' -or (Get-FileHash -LiteralPath $package -Algorithm SHA256).Hash -ne $build.Sha256) {
+    throw 'The test package does not match the latest build.json.'
+}
+Copy-Item -LiteralPath $package "$env:TEMP\JTCStamper-Test.msix"
 $cert = New-SelfSignedCertificate -Type CodeSigningCert `
     -Subject 'CN=JTCStamper Local Test' -CertStoreLocation Cert:\CurrentUser\My `
     -KeyAlgorithm RSA -KeyLength 2048 -HashAlgorithm SHA256
@@ -111,6 +115,8 @@ $installed = Get-AppxPackage -Name JTCStamper.LocalTest
 Start-Process explorer.exe "shell:AppsFolder\$($installed.PackageFamilyName)!App"
 ```
 
+署名対象は直前のビルドの`build.json`にある`File`で選び、署名前に`Sha256`を照合する。更新試験でも新しいパッケージの生成後にこの選択・照合を実行し、同じフォルダーに残っている旧版を選ばないようにする。
+
 試験後はアプリを閉じて`Remove-AppxPackage -Package $installed.PackageFullName`を実行し、作成した証明書だけを拇印で確認してCurrentUser\MyとLocalMachine\TrustedPeopleから削除する。PFXや私用データをCI artifactへ含めない。
 
 実機担当は次の各項目にOSビルド、Office版、パッケージ版／ハッシュ、実施日、結果を記録する。失敗・未実施を合格にしない。
@@ -118,7 +124,7 @@ Start-Process explorer.exe "shell:AppsFolder\$($installed.PackageFamilyName)!App
 - [ ] Desktop Runtime未導入のクリーンなWindows 11 x64でインストールし、スタートメニューから起動。EXEを直接起動するだけの試験で代用しない。
 - [ ] 架空の氏名・部署・用途で生成。WordとExcelへクリップボード貼付し、色付き背景上でもPNG背景が透明であることを目視確認。ファイル保存のPNGも確認。
 - [ ] テーマを保存、印面設定を`.jtcstamp`へ保存、用途と注釈付き履歴を生成。終了・再起動後にテーマ・履歴が読め、設定ファイルを読み込めることを確認（印面設定は自動読込ではない）。
-- [ ] 履歴、`key.dpapi`、`appearance.json`が`%LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalState`へ保存され、読み取り専用WindowsAppsへ書き込まないことを確認。［履歴 → 既定の保存先を使用］でもLocalStateに戻ること、DPAPIで既存鍵を再読込できることも確認。
+- [ ] 履歴、`key.dpapi`、`appearance.json`が`%LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalState`へ保存され、読み取り専用WindowsAppsへ書き込まないことを確認。パッケージ外のエクスプローラーでこの保存先を確認し、`LocalCache\Local\Packages\...`のような二重のパスになっていないことも確認する。［履歴 → 既定の保存先を使用］でもLocalStateに戻ること、DPAPIで既存鍵を再読込できることも確認。
 - [ ] 同じテストName／Publisherと証明書で、版番号を増やした新パッケージを生成・署名し、`Add-AppxPackage`で更新。起動・鍵・履歴・テーマが保持されることを確認。テスト変更は製品の版番号更新とは分ける。
 - [ ] [移行手順](../user/DISTRIBUTION.md#store版への切り替え公開前の検証用)でSetup／ZIPからそれぞれ復元し、原本・用途・注釈・設定を照合。同じユーザー用バックアップの復元可否も確認する。
 - [ ] パッケージ外へバックアップ後、アンインストールを確認。LocalStateは削除され得るため、Setup版の「履歴を残す」と同一視しない。再インストール・バックアップ復元も確認。
