@@ -93,6 +93,19 @@ public partial class MainWindow
         }
     }
 
+    internal Task<bool> SwitchToDefaultJournalAsync(Func<string>? resolveRoot = null)
+    {
+        if (!CanStartStoreOperation()) return Task.FromResult(false);
+        string root;
+        try { root = (resolveRoot ?? (() => AppStorage.DefaultRoot))(); }
+        catch (Exception ex)
+        {
+            Status.Text = "既定の保存先を取得できません: " + ex.Message;
+            return Task.FromResult(false);
+        }
+        return SwitchJournalAsync(root);
+    }
+
     internal Task<bool> SwitchJournalAsync(string root)
     {
         if (!CanStartStoreOperation()) return Task.FromResult(false);

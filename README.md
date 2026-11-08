@@ -10,7 +10,7 @@ JTC Stamper is a free, open-source **date stamp / digital hanko app for Windows*
 
 ![ライトモードの作成画面。上段・下段文字、日付、用途・貼付先を入力してPNGをコピーできます。](docs/images/create-light.png)
 
-*0.2.0の画面例です。表示内容はサンプルです。*
+*画面例です。表示内容はサンプルです。*
 
 ## できること
 
@@ -37,7 +37,9 @@ JTC Stamper is a free, open-source **date stamp / digital hanko app for Windows*
 
 すでに .NET 10 Desktop Runtime（x64）を導入している方には、小さい **Lite版** もあります。迷ったら通常版を選んでください。[起動・更新ガイド](docs/user/DISTRIBUTION.md)
 
-> 0.2.1のEXEは自己署名です。Setup EXE自体は未署名で、Windowsの警告が出る場合があります。
+> 配布物の署名状態は各リリースの説明を確認してください。未署名または自己署名の配布物では、Windowsの警告が出る場合があります。
+
+次の製品版は**1.0.0として準備中**です。現行の機能・保存形式を安定版の基準とし、以後は[SemVerの互換性規約](docs/developer/VERSIONING.md)に従います。Microsoft Store版はまだ公開されていません。現在の配布版は上記GitHub Releasesから入手してください。[MSIXビルド・提出・Windows検証の手順](docs/developer/BUILD-RELEASE.md#microsoft-store向けmsix)
 
 ## 履歴とバックアップ
 
@@ -45,7 +47,7 @@ JTC Stamper is a free, open-source **date stamp / digital hanko app for Windows*
 
 記録するのは**生成・コピー**です。貼付先への貼り付け完了を自動で確認する機能ではありません。
 
-履歴は基本的にアプリと同じフォルダーへ保存します。アプリのフォルダーごと削除すると履歴も失われます。［履歴］メニューからバックアップを作成し、PCを変えるときは「別PCへの移行用」を選んでください。[バックアップの手順](docs/user/BACKUP.md)
+ZIP／Setup版の履歴は基本的にアプリと同じフォルダーへ保存します。MSIX版はパッケージ専用の保存先を使います。保存先を削除・リセットする前に［履歴］メニューからバックアップを作成し、PCを変えるときは「別PCへの移行用」を選んでください。[バックアップの手順](docs/user/BACKUP.md)
 
 ## 画像照合について
 
@@ -62,11 +64,11 @@ JTC Stamper is a free, open-source **date stamp / digital hanko app for Windows*
 
 </details>
 
-## 0.1.0から更新する方へ
+## 互換性について
 
-**0.2.1でも、旧12bit印影・原本・生成履歴は照合対象外です。** 自動変換はありません。履歴ファイルや鍵を自動で削除することもありません。
+1.0.0では、0.2.1の20bit印影と保存形式を安定版の基準とします。0.1.0の旧12bit印影・原本・生成履歴は照合対象外で、自動変換はありません。旧データが必要な場合は、更新前にバックアップし、旧版の保存先を残してください。[旧版からの移行について](docs/user/DISTRIBUTION.md#010のデータを扱う場合)
 
-更新前にバックアップを取り、0.2.1は新しいフォルダーへ展開するかSetup EXEを使用してください。旧履歴を参照する場合は0.1.0を残し、保存先を分けて使ってください。[更新手順](docs/user/DISTRIBUTION.md#010から020への更新)
+配布経路を切り替える場合を含む更新手順は[起動・更新ガイド](docs/user/DISTRIBUTION.md)を参照してください。
 
 ## 利用者向けガイド
 

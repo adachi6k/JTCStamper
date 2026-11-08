@@ -52,3 +52,6 @@ JTC-Stamper-Angle-PoC.zip
 # Python experiment caches
 **/__pycache__/
 *.pyc
+
+# Partner Center identity supplied locally (example is tracked)
+/packaging/StoreIdentity.json

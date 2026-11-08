@@ -87,7 +87,7 @@ public partial class MainWindow : Window
     readonly string appearanceRoot;
     string storageRoot = AppContext.BaseDirectory;
     public sealed record HistoryRow(Guid Id, string Label, string GeneratedLabel, string StampLabel, string CopyState, ImageSource? Thumbnail = null, string ImageDescription = "", string PurposeLabel = "");
-    public MainWindow() : this(AppContext.BaseDirectory) { }
+    public MainWindow() : this(AppStorage.DefaultRoot) { }
     internal MainWindow(string dataRoot)
     {
         appearanceRoot = dataRoot;
@@ -140,7 +140,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex) { Status.Text = "設定を保存できません: " + ex.Message; }
     }
-    async void DefaultHistoryClick(object sender, RoutedEventArgs e) => await SwitchJournalAsync(AppContext.BaseDirectory);
+    async void DefaultHistoryClick(object sender, RoutedEventArgs e) => await SwitchToDefaultJournalAsync();
     async void ChooseHistoryClick(object sender, RoutedEventArgs e)
     {
         if (!CanStartStoreOperation()) return;

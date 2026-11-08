@@ -6,6 +6,8 @@
 |---|---|
 | `Publish-App.ps1 [-Variant All/Standard/Lite]` | 開発中のEXE生成。既定は両版 |
 | `New-ReleasePackages.ps1` | コミット済みソースから配布ZIP・ハッシュを作成 |
+| `New-MsixPackage.ps1 [-Mode Test/Store] [-StoreIdentityFile path]` | Windows SDKでランタイム同梱MSIXを生成（既定は提出不可のテスト用） |
+| `Test-MsixPackaging.ps1` | MSIX識別情報・版番号・プラットフォーム・ランタイム構成のチェック |
 | `Invoke-WindowsSmoke.ps1` | 配布EXEのスモーク |
 | `Invoke-DiskFull.ps1` | 専用VHDの容量不足試験（管理者権限が必要） |
 | `Test-ReleaseVersion.ps1` | バージョン規約のチェック |
