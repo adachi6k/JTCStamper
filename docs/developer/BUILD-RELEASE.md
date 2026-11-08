@@ -11,9 +11,11 @@
 
 ## 版番号とパッケージ
 
-製品版番号はSemVer 2.0.0に従う。互換性の対象・0.xでの運用・公開済み版の不変性は[VERSIONING.md](VERSIONING.md)を参照。配布前にscripts/Test-ReleaseVersion.ps1を実行する。
+製品版番号はSemVer 2.0.0に従う。1.0.0以降の互換性の対象・0.xでの運用履歴・公開済み版の不変性は[VERSIONING.md](VERSIONING.md)を参照。配布前にscripts/Test-ReleaseVersion.ps1とscripts/Test-MsixPackaging.ps1を実行する。
 
 Directory.Build.propsのVersionが基準。EXEのProductVersionは「版番号+コミット」、Aboutは版番号・コミット・通常版／軽量版を表示する。AssemblyVersion/FileVersionは.NETの4数値形式なのでプレリリース名を含めない。配布識別にはProductVersionを使用する。
+
+1.0.0では製品版番号`1.0.0`、Gitタグ`v1.0.0`、MSIX番号`1.0.0.0`を対応させる。MSIXは通常版の製品版番号に`.0`を付け、Store提出用ではメジャー番号が0の製品版を拒否する。
 
 変更履歴を更新し、クリーンなコミットへ `v<Version>` のGitタグを付ける。タグpushもWindows CIを実行する。タグ名とVersionが一致しなければ失敗する。タグを作るだけではGitHub ReleaseやPublic化を実施しない。
 

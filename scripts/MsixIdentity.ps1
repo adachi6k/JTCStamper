@@ -5,14 +5,18 @@ function Set-MsixIdentity {
         [string]$ProductVersion,
         [object]$StoreIdentity
     )
-    if ($ProductVersion -notmatch '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$') {
+    if ($ProductVersion -notmatch '\A(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\z') {
         throw 'MSIX requires a stable MAJOR.MINOR.PATCH product version.'
     }
-    foreach ($part in $ProductVersion.Split('.')) {
+    $parts = $ProductVersion.Split('.')
+    foreach ($part in $parts) {
         if ([long]$part -gt 65535) { throw 'MSIX version components must be at most 65535.' }
     }
-    if ($ProductVersion.Split('.')[0] -eq '0' -and $ProductVersion -eq '0.0.0') {
+    if ($ProductVersion -eq '0.0.0') {
         throw 'MSIX version must be greater than 0.0.0.0.'
+    }
+    if ($Mode -eq 'Store' -and $parts[0] -eq '0') {
+        throw 'Microsoft Store requires a product major version of at least 1.'
     }
     $Manifest.Package.Identity.Version = "$ProductVersion.0"
     if ($Mode -eq 'Store') {

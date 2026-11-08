@@ -39,7 +39,7 @@ JTC Stamper is a free, open-source **date stamp / digital hanko app for Windows*
 
 > 0.2.1のEXEは自己署名です。Setup EXE自体は未署名で、Windowsの警告が出る場合があります。
 
-Microsoft Store版は準備中で、まだ公開されていません。現在は上記GitHub Releasesから入手してください。[MSIXビルド・提出・Windows検証の手順](docs/developer/BUILD-RELEASE.md#microsoft-store向けmsix)
+次の製品版は**1.0.0として準備中**です。現行の機能・保存形式を安定版の基準とし、以後は[SemVerの互換性規約](docs/developer/VERSIONING.md)に従います。Microsoft Store版はまだ公開されていません。現在の配布版は上記GitHub Releasesから入手してください。[MSIXビルド・提出・Windows検証の手順](docs/developer/BUILD-RELEASE.md#microsoft-store向けmsix)
 
 ## 履歴とバックアップ
 
