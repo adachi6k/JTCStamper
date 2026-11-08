@@ -2,7 +2,7 @@
 
 ## ソースと依存関係
 
-- SDKはglobal.jsonの10.0.401、同じfeature band内のパッチ更新のみ許可する。SDK更新はレビュー付きコミットで行う。
+- SDKはglobal.jsonの10.0.403、同じfeature band内のパッチ更新のみ許可する。SDK更新はレビュー付きコミットで行う。
 - 現在の製品プロジェクトには外部PackageReferenceがない。.NET／WPFのframeworkとSDKが供給する依存物を使う。将来NuGet依存を追加する際はpackages.lock.jsonをコミットし、CIをlocked modeにする。
 - 通常版は選択されたSDKのランタイムパッチを同梱する。実バージョンは生成runtimeconfigから検証し、第三者通知との不一致ではパッケージ生成を停止する。通知を更新して差分レビュー後に再ビルドする。
 - Liteは.NET 10 Desktop Runtime x64に依存する。利用者はMicrosoftが提供するサポート中の最新パッチを適用する。
