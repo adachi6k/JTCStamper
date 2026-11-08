@@ -26,20 +26,64 @@ try
             Assert(folder == new Guid("F1B32785-6FBA-4FCF-9D55-7B8E7F157091"));
             return flags == 0x00010000 ? appData : redirected;
         }
-        var test = JTCStamper.App.AppStorage.ResolveRoot(exe, "JTCStamper.LocalTest_test", KnownFolder);
-        var store = JTCStamper.App.AppStorage.ResolveRoot(exe, "12345.JTCStamper_store", KnownFolder);
+        var test = JTCStamper.App.AppStorage.ResolveRoot(exe, "JTCStamper.LocalTest_test", exe, KnownFolder);
+        var store = JTCStamper.App.AppStorage.ResolveRoot(exe, "12345.JTCStamper_store", exe, KnownFolder);
         Assert(test == Path.Combine(appData, "Packages", "JTCStamper.LocalTest_test", "LocalState"));
         Assert(store == Path.Combine(appData, "Packages", "12345.JTCStamper_store", "LocalState"));
-        Assert(JTCStamper.App.AppStorage.ResolveRoot(exe, null, (_, _) => throw new Exception("Unpackaged storage must not query LocalAppData.")) == exe);
-        Throws(() => JTCStamper.App.AppStorage.ResolveRoot(exe, "JTCStamper.LocalTest_test", (_, _) => throw new IOException("Known folder lookup failed.")));
+        Assert(JTCStamper.App.AppStorage.ResolveRoot(exe, null, null, (_, _) => throw new Exception("Unpackaged storage must not query LocalAppData.")) == exe);
+        Throws(() => JTCStamper.App.AppStorage.ResolveRoot(exe, "JTCStamper.LocalTest_test", exe, (_, _) => throw new IOException("Known folder lookup failed.")));
         if (OperatingSystem.IsWindows())
         {
-            var actual = JTCStamper.App.AppStorage.ResolveRoot(exe, "JTCStamper.LocalTest_test");
+            var actual = JTCStamper.App.AppStorage.ResolveRoot(exe, "JTCStamper.LocalTest_test", exe);
             var expected = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "Packages", "JTCStamper.LocalTest_test", "LocalState");
             Assert(actual == expected);
         }
         Assert(JTCStamper.App.AppStorage.DefaultRoot == AppContext.BaseDirectory);
+    });
+    Check("msix-storage-requires-the-executable-at-the-package-root", dir =>
+    {
+        var package = Path.Combine(dir, "package");
+        var appData = Path.Combine(dir, "user");
+        var family = "12345.StoreIdentity_store";
+        var expected = Path.Combine(appData, "Packages", family, "LocalState");
+        foreach (var exe in new[] { package, package + Path.DirectorySeparatorChar, Path.Combine(package, ".") })
+            Assert(JTCStamper.App.AppStorage.ResolveRoot(exe, family, package, (_, _) => appData) == expected);
+        if (OperatingSystem.IsWindows())
+            Assert(JTCStamper.App.AppStorage.ResolveRoot(package.ToUpperInvariant(), family,
+                package + Path.DirectorySeparatorChar, (_, _) => appData) == expected);
+        foreach (var exe in new[] { Path.Combine(dir, "standalone"), package + "-copy", Path.Combine(package, "subdirectory"),
+            Path.Combine(package, "..", "standalone") })
+            Assert(JTCStamper.App.AppStorage.ResolveRoot(exe, family, package,
+                (_, _) => throw new Exception("An external EXE must not query package storage.")) == exe);
+        Assert(JTCStamper.App.AppStorage.ResolveRoot(package, family, null,
+            (_, _) => throw new Exception("A family name alone must not select package storage.")) == package);
+    });
+    Check("foreign-package-context-preserves-standalone-history-key-and-theme", dir =>
+    {
+        var exe = Path.Combine(dir, "standalone");
+        Directory.CreateDirectory(exe);
+        var keyPath = Path.Combine(exe, "key.dpapi");
+        var themePath = Path.Combine(exe, "appearance.json");
+        File.WriteAllBytes(keyPath, key); // Synthetic key; this Core test does not exercise DPAPI.
+        File.WriteAllText(themePath, "{\"theme\":\"synthetic\"}");
+        var theme = File.ReadAllBytes(themePath);
+        Guid id;
+        using (var journal = new Journal(Path.Combine(exe, "journal"), key))
+            id = new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, _ => [1, 2, 3]);
+        var before = Directory.GetFiles(Path.Combine(exe, "journal"), "*.json").ToDictionary(x => x, File.ReadAllBytes);
+        var foreignPackage = Path.Combine(dir, "other-app-package");
+        var resolved = JTCStamper.App.AppStorage.ResolveRoot(exe, "OtherApp.Host_foreign", foreignPackage,
+            (_, _) => throw new Exception("A foreign package must not select LocalState."));
+        Assert(resolved == exe && File.ReadAllBytes(Path.Combine(resolved, "key.dpapi")).SequenceEqual(key) &&
+            File.ReadAllBytes(Path.Combine(resolved, "appearance.json")).SequenceEqual(theme));
+        using (var journal = new Journal(Path.Combine(resolved, "journal"), File.ReadAllBytes(Path.Combine(resolved, "key.dpapi"))))
+        {
+            Assert(new VerificationService(journal).ReadGenerations().Single().EventId == id);
+            new CopyService(journal, new FakeClipboard()).GenerateCodedAndCopy(stamp, _ => [4, 5, 6]);
+            Assert(new VerificationService(journal).ReadGenerations().Count == 2);
+        }
+        Assert(before.All(x => File.ReadAllBytes(x.Key).SequenceEqual(x.Value)) && !Directory.Exists(foreignPackage));
     });
     Check("generation-purpose-roundtrip-backup-and-append", dir =>
     {

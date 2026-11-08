@@ -49,6 +49,7 @@ $current = Set-MsixIdentity -Manifest (New-TestManifest) -Mode Store -ProductVer
 if ($manifest.Package.Identity.Version -ne $current.Package.Identity.Version) {
     throw 'Manifest template version differs from the current product version.'
 }
+# AppStorage compares the EXE directory with GetCurrentPackagePath; the EXE must stay at the package root.
 if ($manifest.Package.Identity.ProcessorArchitecture -ne 'x64' -or
     $manifest.Package.Dependencies.TargetDeviceFamily.MinVersion -ne '10.0.22000.0' -or
     $manifest.Package.Applications.Application.Executable -ne 'JTCStamper.App.exe' -or

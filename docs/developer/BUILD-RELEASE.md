@@ -74,6 +74,8 @@ if ($LASTEXITCODE -ne 0) { throw 'MSIX build failed.' }
 
 製品版番号が`1.1.0-preview.1`や`1.2.3-rc.1`のようなプレリリースの場合、MSIXの構成チェック・生成・artifact保存をスキップし、既存EXE／ZIPのWindows検証は継続する。MSIX生成スクリプト自体は引き続きプレリリース版を拒否する。
 
+保存先の切り替えはパッケージIDの有無だけでは決めない。`GetCurrentPackagePath`のパッケージルートと`AppContext.BaseDirectory`を正規化して比較し、一致した場合だけそのパッケージのLocalStateを使用する。現在のマニフェストと生成処理はEXEをパッケージ直下に置き、この配置は`Test-MsixPackaging.ps1`で検査する。Store識別名の固定値には依存しない。別アプリのパッケージ情報を引き継いだ外部EXE／ZIPは、従来どおりEXEと同じフォルダーを既定とする。Coreチェックではこの場合の既存履歴の読込・追記、鍵・テーマの保持と、名前の前半が同じ別フォルダーを誤認しないことを検証する。
+
 ### 予約したStore製品への関連付け
 
 1. 所有者がPartner Centerで個人開発者登録・本人確認・規約同意を行い、「JTC Stamper」を予約する。
@@ -128,6 +130,7 @@ Start-Process explorer.exe "shell:AppsFolder\$($installed.PackageFamilyName)!App
 - [ ] 架空の氏名・部署・用途で生成。WordとExcelへクリップボード貼付し、色付き背景上でもPNG背景が透明であることを目視確認。ファイル保存のPNGも確認。
 - [ ] テーマを保存、印面設定を`.jtcstamp`へ保存、用途と注釈付き履歴を生成。終了・再起動後にテーマ・履歴が読め、設定ファイルを読み込めることを確認（印面設定は自動読込ではない）。
 - [ ] 履歴、`key.dpapi`、`appearance.json`が`%LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalState`へ保存され、読み取り専用WindowsAppsへ書き込まないことを確認。パッケージ外のエクスプローラーでこの保存先を確認し、`LocalCache\Local\Packages\...`のような二重のパスになっていないことも確認する。［履歴 → 既定の保存先を使用］でもLocalStateに戻ること、DPAPIで既存鍵を再読込できることも確認。
+- [ ] テスト用EXE／ZIPをAppData外の専用フォルダーへ展開し、架空の履歴・鍵・テーマを作る。[Invoke-CommandInDesktopPackage](https://learn.microsoft.com/en-us/powershell/module/appx/invoke-commandindesktoppackage?view=windowsserver2025-ps)で別パッケージの情報を持たせてそのEXEを起動し、既存履歴・テーマの読込と追記、［既定の保存先を使用］が同じフォルダーを維持することを確認する。起動したプロセスに実際に別パッケージのIDが付いていることと、別パッケージのLocalStateにJTCStamperの履歴・鍵・テーマを作らないことも確認する。
 - [ ] 同じテストName／Publisherと証明書で、版番号を増やした新パッケージを生成・署名し、`Add-AppxPackage`で更新。起動・鍵・履歴・テーマが保持されることを確認。テスト変更は製品の版番号更新とは分ける。
 - [ ] [移行手順](../user/DISTRIBUTION.md#store版への切り替え公開前の検証用)でSetup／ZIPからそれぞれ復元し、原本・用途・注釈・設定を照合。同じユーザー用バックアップの復元可否も確認する。
 - [ ] ドキュメントなどAppData外へバックアップ後、アンインストールを確認。LocalState外でもAppData内の新規ファイルはMSIXの仮想化により削除され得るため、Setup版の「履歴を残す」と同一視しない。再インストール・AppData外へのバックアップ復元も確認。
