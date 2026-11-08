@@ -63,6 +63,7 @@ Windows 11 x64、global.jsonの.NET SDK、PowerShell 7、Windows 10/11 SDK（Mak
 
 ```powershell
 pwsh -NoProfile -File .\scripts\Test-MsixPackaging.ps1
+if ($LASTEXITCODE -ne 0) { throw 'MSIX configuration checks failed.' }
 dotnet msbuild .\packaging\JTCStamper.Msix.proj /t:Build
 if ($LASTEXITCODE -ne 0) { throw 'MSIX build failed.' }
 ```
@@ -70,6 +71,8 @@ if ($LASTEXITCODE -ne 0) { throw 'MSIX build failed.' }
 既定は**提出不可のテスト用**。識別名は`JTCStamper.LocalTest`、Publisherは`CN=JTCStamper Local Test`、スタートメニュー表示にも`Local Test`を付ける。出力は`dist/msix/test/*-Test-x64.msix`と`build.json`。未署名なので、そのまま`Add-AppxPackage`でインストールできない。MakeAppxの標準マニフェスト検証を無効にせず、pack後のunpackでStandard EXEのSHA-256も照合する。
 
 `windows-smoke.yml`の独立した`msix`ジョブはWindows Server 2025上でこの生成を実行する。artifact名は`msix-local-test-<commit>`。これは**Windows SDKでのビルド検証**であり、Windows 11のインストール／パッケージ起動／Office検証ではない。`build.json`に識別情報・ソースコミット・SDK・版番号・EXE/MSIXハッシュ・未実施項目を保存する。未署名パッケージのハッシュは後からローカル署名すれば変わる。
+
+製品版番号が`1.1.0-preview.1`や`1.2.3-rc.1`のようなプレリリースの場合、MSIXの構成チェック・生成・artifact保存をスキップし、既存EXE／ZIPのWindows検証は継続する。MSIX生成スクリプト自体は引き続きプレリリース版を拒否する。
 
 ### 予約したStore製品への関連付け
 
@@ -127,7 +130,7 @@ Start-Process explorer.exe "shell:AppsFolder\$($installed.PackageFamilyName)!App
 - [ ] 履歴、`key.dpapi`、`appearance.json`が`%LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalState`へ保存され、読み取り専用WindowsAppsへ書き込まないことを確認。パッケージ外のエクスプローラーでこの保存先を確認し、`LocalCache\Local\Packages\...`のような二重のパスになっていないことも確認する。［履歴 → 既定の保存先を使用］でもLocalStateに戻ること、DPAPIで既存鍵を再読込できることも確認。
 - [ ] 同じテストName／Publisherと証明書で、版番号を増やした新パッケージを生成・署名し、`Add-AppxPackage`で更新。起動・鍵・履歴・テーマが保持されることを確認。テスト変更は製品の版番号更新とは分ける。
 - [ ] [移行手順](../user/DISTRIBUTION.md#store版への切り替え公開前の検証用)でSetup／ZIPからそれぞれ復元し、原本・用途・注釈・設定を照合。同じユーザー用バックアップの復元可否も確認する。
-- [ ] パッケージ外へバックアップ後、アンインストールを確認。LocalStateは削除され得るため、Setup版の「履歴を残す」と同一視しない。再インストール・バックアップ復元も確認。
+- [ ] ドキュメントなどAppData外へバックアップ後、アンインストールを確認。LocalState外でもAppData内の新規ファイルはMSIXの仮想化により削除され得るため、Setup版の「履歴を残す」と同一視しない。再インストール・AppData外へのバックアップ復元も確認。
 - [ ] Store識別情報受領後はStore提出パッケージでもWindows App Certification Kitを実行し、報告を保管。ローカル試験にはPublisherが一致する証明書を使用する。
 - [ ] 公開後、実際のStoreから無料で新規インストール・起動・生成・貼付を確認する。
 

@@ -498,6 +498,42 @@ internal static class SmokeTest
                 }
             });
 
+            await CheckAsync("default-store-lookup-failure-preserves-edits-and-working-store", async () =>
+            {
+                var folder = Path.Combine(root, "default-store-failure-" + Guid.NewGuid().ToString("N"));
+                var storeWindow = new MainWindow(folder);
+                var name = (TextBox)storeWindow.FindName("NameInput");
+                var note = (TextBox)storeWindow.FindName("NoteInput");
+                var purpose = (TextBox)storeWindow.FindName("PurposeInput");
+                var originalName = name.Text;
+                try
+                {
+                    storeWindow.Show();
+                    await storeWindow.InitializationPending.WaitAsync(TimeSpan.FromSeconds(30));
+                    var clipboard = new FakeClipboard();
+                    Require(await storeWindow.CopyAsync(clipboard), "Could not prepare the working history.");
+                    await storeWindow.HistoryDetailsPending;
+                    var key = File.ReadAllBytes(Path.Combine(folder, "key.dpapi"));
+                    var before = Directory.GetFiles(Path.Combine(folder, "journal"), "*.json")
+                        .ToDictionary(x => x, File.ReadAllBytes);
+                    name.Text = "未保存の印面"; note.Text = "未保存の注釈"; purpose.Text = "未保存の用途";
+                    Require(!await storeWindow.SwitchToDefaultJournalAsync(() => throw new IOException("Synthetic default-folder lookup failure.")),
+                        "Failed default-folder lookup was reported as success.");
+                    Require(storeWindow.IsVisible && !storeWindow.IsStoreBusy &&
+                        ((TextBlock)storeWindow.FindName("Status")).Text.Contains("既定の保存先を取得できません") &&
+                        name.Text == "未保存の印面" && note.Text == "未保存の注釈" && purpose.Text == "未保存の用途" &&
+                        storeWindow.HasUnsavedSettings && storeWindow.HasUnsavedNotes,
+                        "Default-folder lookup failure lost edits, closed the window, or hid its error.");
+                    Require(before.All(x => File.ReadAllBytes(x.Key).SequenceEqual(x.Value)) &&
+                        File.ReadAllBytes(Path.Combine(folder, "key.dpapi")).SequenceEqual(key), "Lookup failure changed history or its key.");
+                    name.Text = originalName; storeWindow.ClearNoteDrafts();
+                    Require(await storeWindow.CopyAsync(clipboard) && clipboard.Calls == 2 &&
+                        ((ListBox)storeWindow.FindName("History")).Items.Count == 2,
+                        "Default-folder lookup failure destroyed the working store.");
+                }
+                finally { name.Text = originalName; storeWindow.ClearNoteDrafts(); purpose.Clear(); storeWindow.Close(); }
+            });
+
             await CheckAsync("failed-async-store-switch-preserves-working-store", async () =>
             {
                 var folder = Path.Combine(root, "store-switch-" + Guid.NewGuid().ToString("N"));

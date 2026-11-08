@@ -19,15 +19,29 @@ jobs:
       - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           global-json-file: global.json
+      - name: Determine MSIX version eligibility
+        id: msix_version
+        shell: pwsh
+        run: |
+          . ./scripts/ReleaseVersion.ps1
+          [xml]$properties = Get-Content Directory.Build.props -Raw
+          $version = [string]$properties.Project.PropertyGroup.Version
+          if (!(Test-ReleaseVersion $version)) { throw "Invalid product version: $version" }
+          $stable = !$version.Contains('-')
+          "stable=$($stable.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
+          if (!$stable) { Write-Host "Skipping MSIX checks, build and artifact upload for prerelease $version." }
       - name: MSIX identity and configuration checks
+        if: steps.msix_version.outputs.stable == 'true'
         shell: pwsh
         run: ./scripts/Test-MsixPackaging.ps1
       - name: Build unsigned local-test MSIX with Windows SDK validation
+        if: steps.msix_version.outputs.stable == 'true'
         shell: pwsh
         run: |
           dotnet msbuild packaging/JTCStamper.Msix.proj /t:Build
           if ($LASTEXITCODE -ne 0) { throw 'MSIX build failed.' }
       - name: Upload test package and build evidence (not for Store submission)
+        if: steps.msix_version.outputs.stable == 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: msix-local-test-${{ github.sha }}
