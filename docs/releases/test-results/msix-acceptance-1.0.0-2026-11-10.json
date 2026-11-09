@@ -1,0 +1,309 @@
+{
+  "schema_version": 1,
+  "scope": "Selected MSIX acceptance checks on the existing owner Windows PC; not completion of the full release checklist",
+  "executed_dates": [
+    "2026-11-09",
+    "2026-11-10"
+  ],
+  "timezone": "Asia/Tokyo",
+  "source_revision": "195af78a876eb05b95cc7ba3c9cc16315ecad8f7",
+  "product_version": "1.0.0",
+  "ci": {
+    "run_url": "https://github.com/adachi6k/JTCStamper/actions/runs/42502344154",
+    "artifact_id": 13625782232,
+    "mode": "Test",
+    "unsigned_package_file": "JTCStamper-1.0.0.0-Test-x64.msix",
+    "unsigned_package_sha256": "E154495CA6706C93DF0113918395CC0F2941B5DEEEEDD2501B43D7D89C9FF285"
+  },
+  "environment": {
+    "os": "Windows 11 Pro",
+    "os_build": 26200,
+    "architecture": "x64",
+    "desktop_runtime_already_installed": true,
+    "windows_sandbox_available": false,
+    "office_version": "16.0",
+    "office_full_update_build_recorded": false
+  },
+  "packages": {
+    "identity": "JTCStamper.LocalTest",
+    "publisher": "CN=JTCStamper Local Test",
+    "initial_version": "1.0.0.0",
+    "update_fixture_version": "1.0.1.0",
+    "update_fixture_change": "AppxManifest.xml package version only; same application binaries",
+    "initial_signed_sha256": "785D2BB7B5560BAABCDDFB66F88AAF0C0FD46A412EAD928DF50B9B72F0156AF5",
+    "update_signed_sha256": "338771149257A446DDC02FC225E8AEBB23E0F57D6F3CE532E7E203C795071C7B",
+    "exe_sha256": "3D1F02516ACEDE596EFA12994B5F46EBF7A5BB7E5955F5C20B017A3F604F9A3F",
+    "installed_exe_matches_ci": true,
+    "activation": "shell:AppsFolder with the installed package AUMID",
+    "runtime_package_identity_verified": true
+  },
+  "checks": [
+    {
+      "number": 1,
+      "name": "signed_package_install_and_identity",
+      "result": "passed"
+    },
+    {
+      "number": 2,
+      "name": "launch_and_localstate",
+      "result": "passed"
+    },
+    {
+      "number": 3,
+      "name": "generation_and_clipboard",
+      "result": "passed"
+    },
+    {
+      "number": 4,
+      "name": "restart_key_history_theme_persistence",
+      "result": "passed"
+    },
+    {
+      "number": 5,
+      "name": "package_update_key_history_theme_persistence",
+      "result": "passed"
+    },
+    {
+      "number": 6,
+      "name": "same_user_backup_restore",
+      "result": "passed"
+    },
+    {
+      "number": 7,
+      "name": "uninstall_removes_localstate_preserves_external_backup",
+      "result": "passed"
+    },
+    {
+      "number": 8,
+      "name": "reinstall_empty_history",
+      "result": "passed"
+    },
+    {
+      "number": 9,
+      "name": "portable_backup_authentication_and_key_reprotection",
+      "result": "passed"
+    },
+    {
+      "number": 10,
+      "name": "restored_history_open",
+      "result": "passed"
+    },
+    {
+      "number": 11,
+      "name": "saved_stamp_settings_open",
+      "result": "passed"
+    },
+    {
+      "number": 12,
+      "name": "word_clipboard_save_reopen_transparency",
+      "result": "passed"
+    },
+    {
+      "number": 13,
+      "name": "excel_clipboard_save_reopen_transparency",
+      "result": "passed"
+    }
+  ],
+  "baseline": {
+    "files": {
+      "key.dpapi": "722a2600cee35bf6bcfd25584b4d8a2b1b2f677e81b7fdfcadb177ece075fce4",
+      "appearance.json": "6301644a3abdffd33b7ac6463f53a65252d0b4a0fa34712e1487f25d86d6aa0f",
+      "journal/000000000001.json": "9fcfdebe6a17265f1c9ad2b0121c78712feeb09997125bd6c7e8b479addaaa29",
+      "journal/000000000002.json": "058f5f0ee928c67ed44fcbea683e31a8392d541a0a881a47f461d24d7a33965a",
+      "journal/000000000003.json": "89bba0f1f91048e2bdee8f2b138c045f9a41ceac14113a2dc802846e9ff3ba90"
+    },
+    "journal_records": 3,
+    "external_files": {
+      "portable.jtcportable": {
+        "size": 84314,
+        "sha256": "dc6696c0c80d3d1a86cceac053f02ffd82d05335b0982ee66ff7f1e57681e06a"
+      },
+      "same-user.jtcbackup": {
+        "size": 84809,
+        "sha256": "144a3d9d080ecf703015a0957aa9f2ea1410c5de1b8d48e83ab457af32ce2024"
+      },
+      "settings.jtcstamp": {
+        "size": 127,
+        "sha256": "68150ed1e96b751edbe70f5df241230d16d8d15ef90e13d43d5362bbf9465052"
+      }
+    }
+  },
+  "app_restart": {
+    "stage": "restarted",
+    "local_state_exists": true,
+    "files": {
+      "key.dpapi": true,
+      "appearance.json": true,
+      "journal/000000000001.json": true,
+      "journal/000000000002.json": true,
+      "journal/000000000003.json": true
+    },
+    "external_files": {
+      "portable.jtcportable": true,
+      "same-user.jtcbackup": true,
+      "settings.jtcstamp": true
+    },
+    "theme": {
+      "Version": 1,
+      "Theme": "Dark"
+    }
+  },
+  "package_update": {
+    "stage": "updated",
+    "local_state_exists": true,
+    "files": {
+      "key.dpapi": true,
+      "appearance.json": true,
+      "journal/000000000001.json": true,
+      "journal/000000000002.json": true,
+      "journal/000000000003.json": true
+    },
+    "external_files": {
+      "portable.jtcportable": true,
+      "same-user.jtcbackup": true,
+      "settings.jtcstamp": true
+    },
+    "theme": {
+      "Version": 1,
+      "Theme": "Dark"
+    }
+  },
+  "uninstall": {
+    "stage": "uninstalled",
+    "local_state_exists": false,
+    "files": {
+      "key.dpapi": false,
+      "appearance.json": false,
+      "journal/000000000001.json": false,
+      "journal/000000000002.json": false,
+      "journal/000000000003.json": false
+    },
+    "external_files": {
+      "portable.jtcportable": true,
+      "same-user.jtcbackup": true,
+      "settings.jtcstamp": true
+    }
+  },
+  "same_user_restore": {
+    "restored_folders": 1,
+    "files": {
+      "key.dpapi": true,
+      "journal/000000000001.json": true,
+      "journal/000000000002.json": true,
+      "journal/000000000003.json": true
+    }
+  },
+  "portable_restore": {
+    "restored_folders": 1,
+    "history_matches": {
+      "journal/000000000001.json": true,
+      "journal/000000000002.json": true,
+      "journal/000000000003.json": true
+    },
+    "key_reprotected": true
+  },
+  "office": {
+    "word": {
+      "App": "Word",
+      "Passed": true,
+      "Version": "16.0",
+      "PastedShapes": 1,
+      "ReopenedShapes": 1,
+      "WidthPoints": 72,
+      "HeightPoints": 72,
+      "DimensionsPreserved": true,
+      "ClipboardSha256": "8B1FD9C011FC57C0A3BCB789C01DEB420DD44ECF418D67C7B82D0AABC77EACC2",
+      "SaveMethod": "UI Save As; COM SaveAs2 timed out",
+      "QuitOwnedInstance": true,
+      "SavedDocumentUnchanged": true,
+      "FinishedUtc": "2026-11-09T15:01:55.9490073Z"
+    },
+    "excel": {
+      "App": "Excel",
+      "Passed": true,
+      "Version": "16.0",
+      "PastedShapes": 1,
+      "ReopenedShapes": 1,
+      "WidthPoints": 72.00054931640625,
+      "HeightPoints": 72.00054931640625,
+      "DimensionsPreserved": true,
+      "ClipboardSha256": "8B1FD9C011FC57C0A3BCB789C01DEB420DD44ECF418D67C7B82D0AABC77EACC2",
+      "QuitOwnedInstance": true,
+      "FinishedUtc": "2026-11-09T14:59:06.7265817Z"
+    },
+    "png_comparison": {
+      "word": {
+        "embedded_png_count": 1,
+        "bytes_identical": true,
+        "rgba_pixels_identical": true,
+        "dimensions": [
+          384,
+          384
+        ],
+        "transparent_pixels": 127788,
+        "partially_transparent_pixels": 19668,
+        "source_sha256": "8b1fd9c011fc57c0a3bcb789c01deb420dd44ecf418d67c7b82d0aabc77eacc2",
+        "embedded_sha256": "8b1fd9c011fc57c0a3bcb789c01deb420dd44ecf418d67c7b82d0aabc77eacc2",
+        "passed": true
+      },
+      "excel": {
+        "embedded_png_count": 1,
+        "bytes_identical": true,
+        "rgba_pixels_identical": true,
+        "dimensions": [
+          384,
+          384
+        ],
+        "transparent_pixels": 127788,
+        "partially_transparent_pixels": 19668,
+        "source_sha256": "8b1fd9c011fc57c0a3bcb789c01deb420dd44ecf418d67c7b82d0aabc77eacc2",
+        "embedded_sha256": "8b1fd9c011fc57c0a3bcb789c01deb420dd44ecf418d67c7b82d0aabc77eacc2",
+        "passed": true
+      }
+    },
+    "colored_background_visual_check": "passed for Word and Excel"
+  },
+  "automation_note": "Word COM SaveAs2 waited without completing; only the owned worker was stopped. UI Save As and read-only COM reopening completed successfully.",
+  "not_covered_by_this_run": [
+    "Clean Windows without .NET Desktop Runtime",
+    "Portable backup restoration on a different physical PC",
+    "Migration from separate Setup and ZIP installations with comparison of originals, purpose, annotations and settings",
+    "External EXE launched with another package identity",
+    "Return to default storage using the menu command",
+    "Editing annotations after generation",
+    "PNG file export from the app (embedded PNG retention in Office files was checked)",
+    "Windows App Certification Kit on the real Store-identity package",
+    "Store submission and installation from the published Store listing"
+  ],
+  "cleanup": {
+    "Passed": true,
+    "StartedUtc": "2026-11-09T15:10:49.7321795Z",
+    "PackageRemoved": true,
+    "LocalStateRemoved": true,
+    "SigningCertificateRemoved": true,
+    "PrivateKeyRemoved": true,
+    "Clipboard": "Cleared only the matching synthetic PNG",
+    "WindowsTestDirectoriesRemoved": true,
+    "TrustRemoved": true,
+    "Status": "Completed",
+    "FinishedUtc": "2026-11-09T15:12:08.7649820Z"
+  },
+  "original_evidence": {
+    "local_directory": "test-results/msix-acceptance-195af78/",
+    "tracked": false,
+    "file_sha256": {
+      "acceptance-status.json": "f43cf9d4af51ae61486d84ea75f4b37143241d45d3cd5c21545bfa1b408e09fb",
+      "baseline.json": "ff19a9079e9593fc12c9a23293f1ed5a15fcc293f3ff8c34d933d6983eebdde5",
+      "check-restarted.json": "f36819ba7cbebc6d818a95d848f456b804f5380e045e22c97e9ee49e89fe0b30",
+      "check-updated.json": "a0dacbaa3a6efcf2c62774075647653f901d6b957b252fdc983834976b8d671e",
+      "check-uninstalled.json": "d5a45730fc3ec8863dd34d01bca097dd4a74cd509fdbe40622be0d199d532a2c",
+      "restore-sameuser.json": "affb209ac949ea8debed47e97eff431b9dd7586ff88102afa5491e9f5b14d821",
+      "restore-portable.json": "4c3acc2ccb7f7c75df7bfadacef1102696c33f6ca2a30d1a36160a2fd8fe6af7",
+      "office-word.json": "7dc537d64f0bf70067b277c787b1535d84fb8f18c851d33835b0ab256dd33f56",
+      "office-excel.json": "ce50dfa737c4a211c105bac89446c3144b1257156035e6c37517e15248572c06",
+      "office-png-verification.json": "017fa7774d6c159e62793cf074733b372fe587eb5e4cc86472371802462c706b",
+      "cleanup.json": "a4a4bad033254cb0849e2fdd3e18f89d90ef96b649a9ad07c238e255b4f370cc"
+    }
+  },
+  "data_handling": "Only aggregate results and hashes of synthetic test artifacts are retained here. No private keys, history payloads, backups, personal Windows paths, process IDs, screenshots or Office document metadata."
+}
