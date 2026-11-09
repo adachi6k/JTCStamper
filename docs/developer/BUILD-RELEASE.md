@@ -97,7 +97,7 @@ Partner CenterのMSIX提出ではこの**未署名`.msix`**をアップロード
 
 ### ローカル署名とWindows 11実機の受入試験
 
-実施記録：[1.0.0 MSIX実機受入（2026-11-09〜10）](../releases/ACCEPTANCE-MSIX-1.0.0-2026-11-10.md)。今回実施した13項目の合格と未確認事項を記録している。下記チェックリスト全体の完了を示すものではない。
+実施記録：[1.0.0 MSIX実機受入（2026-11-09〜10）](../releases/ACCEPTANCE-MSIX-1.0.0-2026-11-10.md)、[移行・ID継承の追加受入（2026-11-10）](../releases/ACCEPTANCE-MSIX-FOLLOWUP-2026-11-10.md)。実施結果と保留事項を記録している。下記チェックリスト全体の完了を示すものではない。
 
 ローカルインストールのためだけに、テスト用MSIXのコピーを署名する。Windows SDKの`signtool.exe`をPATHへ追加し、以下を**使い捨てのテストPC**で実施する。証明書の信頼追加には管理者権限が必要。通常の利用者PCへテスト証明書の導入を案内しない。
 
@@ -129,7 +129,7 @@ Start-Process explorer.exe "shell:AppsFolder\$($installed.PackageFamilyName)!App
 実機担当は次の各項目にOSビルド、Office版、パッケージ版／ハッシュ、実施日、結果を記録する。失敗・未実施を合格にしない。
 
 - [ ] Desktop Runtime未導入のクリーンなWindows 11 x64でインストールし、スタートメニューから起動。EXEを直接起動するだけの試験で代用しない。
-- [ ] 架空の氏名・部署・用途で生成。WordとExcelへクリップボード貼付し、色付き背景上でもPNG背景が透明であることを目視確認。ファイル保存のPNGも確認。
+- [ ] 架空の氏名・部署・用途で生成。WordとExcelへクリップボード貼付し、色付き背景上でもPNG背景が透明であることを目視確認。［原本を保存］で保存した`.jtc`内部のPNGも確認。
 - [ ] テーマを保存、印面設定を`.jtcstamp`へ保存、用途と注釈付き履歴を生成。終了・再起動後にテーマ・履歴が読め、設定ファイルを読み込めることを確認（印面設定は自動読込ではない）。
 - [ ] 履歴、`key.dpapi`、`appearance.json`が`%LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalState`へ保存され、読み取り専用WindowsAppsへ書き込まないことを確認。パッケージ外のエクスプローラーでこの保存先を確認し、`LocalCache\Local\Packages\...`のような二重のパスになっていないことも確認する。［履歴 → 既定の保存先を使用］でもLocalStateに戻ること、DPAPIで既存鍵を再読込できることも確認。
 - [ ] テスト用EXE／ZIPをAppData外の専用フォルダーへ展開し、架空の履歴・鍵・テーマを作る。[Invoke-CommandInDesktopPackage](https://learn.microsoft.com/en-us/powershell/module/appx/invoke-commandindesktoppackage?view=windowsserver2025-ps)で別パッケージの情報を持たせてそのEXEを起動し、既存履歴・テーマの読込と追記、［既定の保存先を使用］が同じフォルダーを維持することを確認する。起動したプロセスに実際に別パッケージのIDが付いていることと、別パッケージのLocalStateにJTCStamperの履歴・鍵・テーマを作らないことも確認する。

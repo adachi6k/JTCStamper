@@ -270,8 +270,8 @@
     "Migration from separate Setup and ZIP installations with comparison of originals, purpose, annotations and settings",
     "External EXE launched with another package identity",
     "Return to default storage using the menu command",
-    "Editing annotations after generation",
-    "PNG file export from the app (embedded PNG retention in Office files was checked)",
+    "Appending follow-up annotations after generation",
+    "Signed .jtc original export and verification of its embedded PNG (Office embedded PNG retention was already checked)",
     "Windows App Certification Kit on the real Store-identity package",
     "Store submission and installation from the published Store listing"
   ],
@@ -305,5 +305,6 @@
       "cleanup.json": "a4a4bad033254cb0849e2fdd3e18f89d90ef96b649a9ad07c238e255b4f370cc"
     }
   },
-  "data_handling": "Only aggregate results and hashes of synthetic test artifacts are retained here. No private keys, history payloads, backups, personal Windows paths, process IDs, screenshots or Office document metadata."
+  "data_handling": "Only aggregate results and hashes of synthetic test artifacts are retained here. No private keys, history payloads, backups, personal Windows paths, process IDs, screenshots or Office document metadata.",
+  "followup_record": "msix-followup-1.0.0-2026-11-10.json"
 }

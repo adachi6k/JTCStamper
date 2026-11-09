@@ -1,0 +1,302 @@
+{
+  "schema_version": 1,
+  "executed_date": "2026-11-10",
+  "timezone": "Asia/Tokyo",
+  "scope": "Additional tests possible on the existing owner Windows PC; remaining environment-dependent checks deferred by owner",
+  "source_revision": "c3db4c1ba08975e153bc45a35d1c386af4a1d751",
+  "product_version": "1.0.0",
+  "package_version": "1.0.0.0",
+  "ci": {
+    "run_id": 42644745865,
+    "source_revision": "c3db4c1ba08975e153bc45a35d1c386af4a1d751",
+    "html_url": "https://github.com/adachi6k/JTCStamper/actions/runs/42644745865",
+    "jobs": [
+      {
+        "id": 129254862103,
+        "name": "msix",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 129254862640,
+        "name": "smoke",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 129254862788,
+        "name": "migration-export",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 129255308667,
+        "name": "migration-import",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "msix_artifact_id": 13687106052,
+  "environment": {
+    "os": "Windows 11 Pro",
+    "os_build": 26200,
+    "architecture": "x64",
+    "desktop_runtime_already_installed": true,
+    "windows_sandbox_executable_present": false,
+    "hyperv_management_cmdlets_present": false,
+    "additional_windows_pc_available": false
+  },
+  "packages": {
+    "initial_identity": "JTCStamper.LocalTest",
+    "host_identity": "JTCStamper.IdentityHost.C3DB4C1",
+    "unsigned_msix_sha256": "926D0E954973EC8258FC851B3A3A8630CC62198BE090C4E9E268ECEA524F1BE5",
+    "signed_test_msix_sha256": "317AD8D20DFB2824D269888EC3110BD8C415E6B31207CB9ABE66525A30CC0082",
+    "signed_identity_host_msix_sha256": "6681E8434EC6B4B2D37519D9D431622407496C6AB8C5BC9D8B94C59D11B31CC5",
+    "exe_sha256": "78B972BE2D64CC3B18C2565CC31E7D0A5388FD2DCB260F299F346B5ADCBE2735"
+  },
+  "legacy_release": {
+    "tag": "v0.2.1",
+    "source_revision": "76ce50d816ede804787ae632f998f61a4b958255",
+    "standard_zip_sha256": "162637aaaa761f7e488df483620300f8ab1212dec3efc6b4f759486a186ea263",
+    "exe_sha256": "08E5143EFCA8A8F14813B2DB6ABE1B499F2B6372471DE533E9F3A8153183C01C",
+    "downloaded_asset_hashes_verified": true,
+    "setup_source": "Isolated copy of the installed 0.2.1 EXE; personal history excluded",
+    "zip_source": "Downloaded public 0.2.1 Standard ZIP, hash-verified before extraction",
+    "setup_installer_rerun": false
+  },
+  "legacy_seed_and_restart": {
+    "setup": {
+      "Target": "Setup",
+      "LegacyVersion": "0.2.1",
+      "Files": {
+        "key.dpapi": "F38E07662387B5FBB33DB582D2B81C292C590515FA76BB9512AB0C02CDAA9EF3",
+        "appearance.json": "6301644A3ABDFFD33B7AC6463F53A65252D0B4A0FA34712E1487F25D86D6AA0F",
+        "journal\\000000000001.json": "1A4261134336A42F32ABC8CBCE83CCC353C7288F13845C308DDD8F3E22CE8FF2",
+        "journal\\000000000002.json": "86DF4688FCEE97D1801E4E9D6C6EA8F868C79C4D5315B936ED966D532FDE6D7D",
+        "journal\\000000000003.json": "A4AC4B5C84FCECAF70ED652394A769D1FB2891AC484BB96DACF18EF61146E24D",
+        "journal\\000000000004.json": "21416C3D1F630057795B5C0B0F66CB3E06EA059D6DA93C2716A93F785AF3C7ED",
+        "journal\\000000000005.json": "CFBE53E8D4A0F2AD585676E53C79072122A26E61CEA136757D55D8C44BB2AE64"
+      },
+      "HistoryCount": 5,
+      "GeneratedCount": 1,
+      "AnnotationCount": 2,
+      "Passed": true,
+      "RestartPreserved": true
+    },
+    "zip": {
+      "Target": "Zip",
+      "LegacyVersion": "0.2.1",
+      "Files": {
+        "key.dpapi": "0E41D124974B881ADC2E4AFBD9E35B05C373CE1A4916B86FF175BD5E25D6200A",
+        "appearance.json": "6301644A3ABDFFD33B7AC6463F53A65252D0B4A0FA34712E1487F25D86D6AA0F",
+        "journal\\000000000001.json": "5C33703654E9CD399A4856C06AC571841857EEF1D5BC99DF3C4CAE6EB482E857",
+        "journal\\000000000002.json": "CE52DC76CC427D206EE0FFF41E9702F8591665501B4CB502BBD3E794C15505D0",
+        "journal\\000000000003.json": "5A1FDC4E9F589C9ED0B7BA7E89BA6D1E150306677CDCE378CBB1B42CF612B838",
+        "journal\\000000000004.json": "D20FEDB0A4BDD542F882E6DA6D3D44E4363C207F353C0537724617C27E4619DE",
+        "journal\\000000000005.json": "A3F75EAEFB0D12A47E99A226624A89F83699A1746C79EAA67EB986583BD61523"
+      },
+      "HistoryCount": 5,
+      "GeneratedCount": 1,
+      "AnnotationCount": 2,
+      "Passed": true,
+      "RestartPreserved": true
+    }
+  },
+  "migration_cases": [
+    {
+      "Source": "Setup",
+      "Mode": "Portable",
+      "Passed": true,
+      "SourceVersion": "0.2.1",
+      "TargetVersion": "1.0.0",
+      "FileByteMatches": {
+        "key.dpapi": false,
+        "journal\\000000000001.json": true,
+        "journal\\000000000002.json": true,
+        "journal\\000000000003.json": true,
+        "journal\\000000000004.json": true,
+        "journal\\000000000005.json": true
+      },
+      "KeyHandling": "Reprotected",
+      "PurposeAndTwoAnnotationsVisible": true,
+      "AdditionalAnnotationSaved": true,
+      "AnnotationCountAfterAppend": 3,
+      "OriginalBytesIdentical": true,
+      "StampSettingsLoaded": true,
+      "DefaultStorageReturnedToLocalState": true,
+      "LegacySourceUnchanged": true
+    },
+    {
+      "Source": "Setup",
+      "Mode": "SameUser",
+      "Passed": true,
+      "SourceVersion": "0.2.1",
+      "TargetVersion": "1.0.0",
+      "FileByteMatches": {
+        "key.dpapi": true,
+        "journal\\000000000001.json": true,
+        "journal\\000000000002.json": true,
+        "journal\\000000000003.json": true,
+        "journal\\000000000004.json": true,
+        "journal\\000000000005.json": true
+      },
+      "KeyHandling": "Preserved",
+      "PurposeAndTwoAnnotationsVisible": true,
+      "AdditionalAnnotationSaved": true,
+      "AnnotationCountAfterAppend": 3,
+      "OriginalBytesIdentical": true,
+      "StampSettingsLoaded": true,
+      "DefaultStorageReturnedToLocalState": true,
+      "LegacySourceUnchanged": true
+    },
+    {
+      "Source": "Zip",
+      "Mode": "Portable",
+      "Passed": true,
+      "SourceVersion": "0.2.1",
+      "TargetVersion": "1.0.0",
+      "FileByteMatches": {
+        "key.dpapi": false,
+        "journal\\000000000001.json": true,
+        "journal\\000000000002.json": true,
+        "journal\\000000000003.json": true,
+        "journal\\000000000004.json": true,
+        "journal\\000000000005.json": true
+      },
+      "KeyHandling": "Reprotected",
+      "PurposeAndTwoAnnotationsVisible": true,
+      "AdditionalAnnotationSaved": true,
+      "AnnotationCountAfterAppend": 3,
+      "OriginalBytesIdentical": true,
+      "StampSettingsLoaded": true,
+      "DefaultStorageReturnedToLocalState": true,
+      "LegacySourceUnchanged": true
+    },
+    {
+      "Source": "Zip",
+      "Mode": "SameUser",
+      "Passed": true,
+      "SourceVersion": "0.2.1",
+      "TargetVersion": "1.0.0",
+      "FileByteMatches": {
+        "key.dpapi": true,
+        "journal\\000000000001.json": true,
+        "journal\\000000000002.json": true,
+        "journal\\000000000003.json": true,
+        "journal\\000000000004.json": true,
+        "journal\\000000000005.json": true
+      },
+      "KeyHandling": "Preserved",
+      "PurposeAndTwoAnnotationsVisible": true,
+      "AdditionalAnnotationSaved": true,
+      "AnnotationCountAfterAppend": 3,
+      "OriginalBytesIdentical": true,
+      "StampSettingsLoaded": true,
+      "DefaultStorageReturnedToLocalState": true,
+      "LegacySourceUnchanged": true
+    }
+  ],
+  "original_and_png_verification": {
+    "setup": {
+      "passed": true,
+      "original_sha256": "1a4261134336a42f32abc8cbce83ccc353c7288f13845c308ddd8f3e22ce8ff2",
+      "png_sha256": "3804f1c04b0396d3baca9b204080059b22fbc6ceaf1ccf48d5f096522e0004ba",
+      "png_dimensions": [
+        384,
+        384
+      ],
+      "portable_original_bytes_match": true,
+      "same_user_original_bytes_match": true,
+      "embedded_png_matches_declared_hash": true
+    },
+    "zip": {
+      "passed": true,
+      "original_sha256": "5c33703654e9cd399a4856c06ac571841857eef1d5bc99df3c4cae6eb482e857",
+      "png_sha256": "94dd31ef805d0541629efca8d5c5115032bccbdf8bd12209030c8748d83f9df5",
+      "png_dimensions": [
+        384,
+        384
+      ],
+      "portable_original_bytes_match": true,
+      "same_user_original_bytes_match": true,
+      "embedded_png_matches_declared_hash": true
+    }
+  },
+  "inherited_package_identity": {
+    "Passed": true,
+    "SourceRevision": "c3db4c1ba08975e153bc45a35d1c386af4a1d751",
+    "InheritedFamily": "JTCStamper.IdentityHost.C3DB4C1_4yx9289nrzz4j",
+    "ActualProcessIdentityVerified": true,
+    "OriginalFileHashes": {
+      "key.dpapi": "858F76BDE322402F22E2E1CF6B3B1F9233AF107CDE0FC55D61253C7965A3E0A1",
+      "appearance.json": "6301644A3ABDFFD33B7AC6463F53A65252D0B4A0FA34712E1487F25D86D6AA0F",
+      "journal\\000000000001.json": "785D03F115537BF891E8275D4497A8A56DC2A376C90C2792EEE7CD1C86E738FC",
+      "journal\\000000000002.json": "CAD984C541793CE6D39CA4BF5D3300A92CC38C423C1283435A4886AF237ACF0F",
+      "journal\\000000000003.json": "1CCE2E1EFA88CFA8E10243F7ADCA9D4C6CCD86139DD72C9779A506FA6A6FD8DF"
+    },
+    "ExistingKeyHistoryThemePreserved": true,
+    "DefaultMenuReturnedToExecutableDirectory": true,
+    "GeneratedCountAfter": 2,
+    "AnnotationCountAfter": 1,
+    "HistoryRecordsAfter": 7,
+    "HostJtcDataFiles": 0,
+    "StandaloneRestartReadAppendedData": true,
+    "ThemeVisualCheck": "passed: inherited-loaded.png shows the saved Dark theme"
+  },
+  "operation_clarification": "The app appends annotations and exports a signed .jtc original containing PNG bytes. Existing-note replacement and standalone PNG file export are not UI operations tested here.",
+  "deferred_by_owner": [
+    {
+      "check": "Clean Windows 11 without .NET Desktop Runtime",
+      "reason": "No separate Windows environment currently available"
+    },
+    {
+      "check": "Portable restoration on a different physical PC",
+      "reason": "No second Windows PC currently available"
+    }
+  ],
+  "remaining_store_work": [
+    "Real Store identity package and Windows App Certification Kit",
+    "Store submission and post-publication installation"
+  ],
+  "cleanup": {
+    "Passed": true,
+    "StartedUtc": "2026-11-09T15:57:07.2247594Z",
+    "OriginalSetupExeUnchanged": true,
+    "TestPackagesRemoved": true,
+    "LocalStateRemoved": true,
+    "TrustRemoved": true,
+    "SigningCertificateRemoved": true,
+    "PrivateKeyRemoved": true,
+    "Clipboard": "Cleared matching synthetic PNG",
+    "WindowsTestDirectoriesRemoved": true,
+    "HostDataRootRemoved": true,
+    "FinishedUtc": "2026-11-09T15:57:10.0181140Z"
+  },
+  "trust_controller_cleanup": {
+    "Imported": true,
+    "TrustRemoved": true,
+    "StartedUtc": "2026-11-09T15:37:53.9722592Z",
+    "Status": "Cleanup requested",
+    "FinishedUtc": "2026-11-09T15:57:09.5983660Z"
+  },
+  "original_evidence": {
+    "local_directory": "test-results/msix-followup-c3db4c1/",
+    "tracked": false,
+    "sha256": {
+      "ci.json": "15c58be818c0e48b2e26065faef3cb03889d2670d651d6fb90a44597d4c29d26",
+      "legacy-installed.json": "9005cb1718537049484f2aaa03f717ded9ebd561b64dca7697e46eb9b4cc4320",
+      "baseline-setup.json": "99a8ed1883f4e22bf68053e95a09751746314c2d6ac0286acdcd97dd4c683cf0",
+      "baseline-zip.json": "f197e89f8e4a72b319c4db356aad30cdbbcc66864542a28d1312e4a122b4ec1d",
+      "restore-setup-portable.json": "f2b460685bea2bbd5618817123c4a1325f5952ef508c7ab68834e8d64e454643",
+      "restore-setup-sameuser.json": "c021f219709f0e178b37cfdc4b94b187fb1887dffdb69ac9eaeb7f3fa8d173d8",
+      "restore-zip-portable.json": "5e1e82c1c0aa2191ffb621f214b716f64dfa3b69aeee8085f08f54563887a4e1",
+      "restore-zip-sameuser.json": "f93fc2a4faeabefbd3f15c098d15e5cde093d029852edc5cef028a0e3651ad27",
+      "inherited-identity.json": "f1804c2e04fdf2c107c7ec87d73066f5f1feeb3018d9e13d8a955d7c46696716",
+      "original-png-verification.json": "d79916bdc9149ab7c58db097a6ef3c48a8294b512732b38aaec8c07e818363fd",
+      "cleanup.json": "c88bff611bd232b95a340ef731d2ce5b95c430a560f6d859451200b9f7fc9278",
+      "trust-finished.json": "16acab7a7a7857ca8190e34d04eafc5d9b1b1d796d2633ed006f445c4f5de20a"
+    }
+  },
+  "data_handling": "Aggregate results and synthetic file hashes only; no personal paths, process IDs, private keys, history payloads, backups, screenshots or Office metadata."
+}
